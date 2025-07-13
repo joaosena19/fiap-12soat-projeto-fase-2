@@ -15,6 +15,7 @@ Aqui está a aplicação da Linguagem Ubíqua do DDD, separada por subdomínios.
 **OS**: mesmo que Ordem de Serviço.  
 **Sistema**: software desenvolvido para esta solução, responde a comandos dos Usuários, aplica regras de negócio e realiza ações automáticas.  
 **Status**: situação possível para uma Ordem de Serviço, altera de acordo com as ações do Sistema, padronizado em:
+
   - **Recebida**: primeiro Status, atribuído assim que a Ordem de Serviço é criada.
   - **Em Diagnóstico**: segundo Status, representa que a Ordem de Serviço está sendo diagnosticada por um mecânico.
   - **Aguardando Aprovação**: terceiro Status, representa que o Veículo já foi diagnosticado, o Orçamento já foi gerado, e resta que o Cliente indique se aprova ou não que a Execução se inicie.
@@ -22,6 +23,7 @@ Aqui está a aplicação da Linguagem Ubíqua do DDD, separada por subdomínios.
   - **Finalizada**: quinto Status, indica que o Mecânico terminou a Execução da Ordem de Serviço.
   - **Entregue**: sexto Status, indica que o Cliente retirou o Veículo após a Ordem de Serviço ter sido Finalizada.
   - **Cancelada**: indica que a Ordem de Serviço teve seu processo parado e não irá mais avançar para outros Status. Normalmente, esse Status é atribuído quando o Cliente não aprova o Orçamento.  
+  
 **Usuário**: pessoas que interagem diretamente com o sistema, no caso, o Administrador.  
 
 ### Subdomínio: Gestão de Cadastros
