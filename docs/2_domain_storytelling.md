@@ -11,5 +11,5 @@
 
 
 ---
-Anterior: [Introdução](1_introducao) 
-Próximo: [Event Storming](3_event_storming)
+Anterior: [Introdução](1_introducao.md) 
+Próximo: [Event Storming](3_event_storming.md)

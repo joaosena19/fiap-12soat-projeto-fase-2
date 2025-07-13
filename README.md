@@ -23,7 +23,7 @@ Email: joaosenadainese@gmail.com
 
 # Documentação
 
-Disponível na pasta `docs`. Acesse diretamente [clicando aqui](./docs/1_introducao).
+Disponível na pasta `docs`. Acesse diretamente [clicando aqui](./docs/1_introducao.md).
 
 # Instalação
 
