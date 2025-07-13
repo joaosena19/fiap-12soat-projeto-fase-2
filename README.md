@@ -1,21 +1,15 @@
 # Identificação
 
-Aluno: João Pedro Sena Dainese
+Aluno: João Pedro Sena Dainese  
+Registro FIAP: RM365182  
 
 
-Registro FIAP: RM365182
+Turma 12SOAT - Software Architecure  
+Grupo individual  
+Grupo 120  
 
-Turma 12SOAT - Software Architecure
-
-
-Grupo individual
-
-Grupo 120
-
-
-Discord: joaodainese
-
-Email: joaosenadainese@gmail.com
+Discord: joaodainese  
+Email: joaosenadainese@gmail.com  
 
 # Introdução
 
