@@ -1,4 +1,4 @@
-# 2. Domain Storytelling
+# 4. Domain Storytelling
 
 **Versão animada:**  
 ![Domain Storytelling Animado](attachments/domain_storytelling_animado.svg)
@@ -11,5 +11,5 @@
 
 
 ---
-Anterior: [Introdução](1_introducao.md)  
-Próximo: [Event Storming](3_event_storming.md)
+Anterior: [Dicionário](3_dicionario.md)  
+Próximo: [Event Storming](5_event_storming.md)
