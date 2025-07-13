@@ -21,7 +21,7 @@ Aqui está a aplicação da Linguagem Ubíqua do DDD, separada por subdomínios.
   - **Em Execução**: quarto Status, indica que o Cliente aprovou o Orçamento, e o Mecânico está executando a Ordem de Serviço.
   - **Finalizada**: quinto Status, indica que o Mecânico terminou a Execução da Ordem de Serviço.
   - **Entregue**: sexto Status, indica que o Cliente retirou o Veículo após a Ordem de Serviço ter sido Finalizada.
-  - **Cancelada**: indica que a Ordem de Serviço teve seu processo parado e não irá mais avançar para outros Status. Normalmente, esse Status é atribuído quando o Cliente não aprova o Orçamento.
+  - **Cancelada**: indica que a Ordem de Serviço teve seu processo parado e não irá mais avançar para outros Status. Normalmente, esse Status é atribuído quando o Cliente não aprova o Orçamento.  
 **Usuário**: pessoas que interagem diretamente com o sistema, no caso, o Administrador.  
 
 ### Subdomínio: Gestão de Cadastros
