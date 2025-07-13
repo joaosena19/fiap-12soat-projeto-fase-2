@@ -7,7 +7,7 @@
 ![Domain Storytelling Estático](attachments/domain_storytelling_estatico.png)
 
 **Arquivo .egn, editável em <a href="https://egon.io" target="_blank">egon.io</a>**  
-[domain_storytelling.egn](attachments/domain_storytelling.egn)
+<a href="attachments/domain_storytelling.egn" download>domain_storytelling.egn</a>
 
 
 ---
