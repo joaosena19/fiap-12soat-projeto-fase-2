@@ -1,12 +1,12 @@
 # 2. Domain Storytelling
 
-**Versão animada:**
+**Versão animada:**  
 ![Domain Storytelling Animado](attachments/domain_storytelling_animado.svg)
 
-**Versão estática**
+**Versão estática**  
 ![Domain Storytelling Estático](attachments/domain_storytelling_estatico.png)
 
-**Arquivo .egn, editável em <a href="https://egon.io" target="_blank">egon.io</a>**
+**Arquivo .egn, editável em <a href="https://egon.io" target="_blank">egon.io</a>**  
 [domain_storytelling.egn](attachments/domain_storytelling.egn)
 
 
