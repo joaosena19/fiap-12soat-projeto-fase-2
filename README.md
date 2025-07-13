@@ -13,7 +13,7 @@ Email: joaosenadainese@gmail.com
 
 # Introdução
 
-Este projeto 
+Este projeto foi realizado como Tech Challange da primeira fase do curso de Pós-Graduação em Software Architecture, ministrado pela FIAP. O objetivo dessa fase é aplicar os conceitos do Domain-Drive Design (DDD), Segurança e Qualidade de Software.
 
 # Documentação
 
