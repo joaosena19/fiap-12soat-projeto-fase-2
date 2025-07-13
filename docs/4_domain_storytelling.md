@@ -1,5 +1,7 @@
 # 4. Domain Storytelling
 
+Este é o diagrama do Domain Storytelling, focando no fluxo principal do sistema em forma de narrativa pictográfica.
+
 **Versão animada:**  
 ![Domain Storytelling Animado](attachments/domain_storytelling_animado.svg)
 
