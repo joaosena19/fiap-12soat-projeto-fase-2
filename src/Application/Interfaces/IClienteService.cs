@@ -1,7 +1,9 @@
-﻿namespace Application.Interfaces
+﻿using Application.Cadastros.DTO;
+
+namespace Application.Interfaces
 {
     public interface IClienteService
     {
-        Task CriarCliente(string nome, string cpf);
+        Task<RetornoClienteDTO> CriarCliente(string nome, string cpf);
     }
 }

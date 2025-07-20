@@ -1,4 +1,4 @@
-﻿namespace API.DTO
+﻿namespace Application.Cadastros.DTO
 {
     /// <summary>
     /// DTO para criação de cliente

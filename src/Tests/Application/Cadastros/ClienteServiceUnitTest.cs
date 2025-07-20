@@ -1,4 +1,4 @@
-﻿using Application.Cadastros;
+﻿using Application.Cadastros.Services;
 using Application.Interfaces;
 using Domain.Cadastros.Aggregates;
 using Domain.Cadastros.ValueObjects.Cliente;

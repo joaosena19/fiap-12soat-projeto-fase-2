@@ -14,10 +14,12 @@ namespace Infrastructure.Cadastros
             _context = context;
         }
 
-        public async Task SalvarAsync(Cliente cliente)
+        public async Task<Cliente> SalvarAsync(Cliente cliente)
         {
             await _context.Clientes.AddAsync(cliente);
             await _context.SaveChangesAsync();
+
+            return cliente;
         }
 
         public async Task<Cliente?> ObterPorCpfAsync(string cpf)

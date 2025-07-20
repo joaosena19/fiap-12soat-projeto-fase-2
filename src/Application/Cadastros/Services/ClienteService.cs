@@ -1,10 +1,11 @@
-﻿using System.Net;
+﻿using Application.Cadastros.DTO;
 using Application.Interfaces;
 using Domain.Cadastros.Aggregates;
 using Domain.Cadastros.ValueObjects.Cliente;
 using Shared.Exceptions;
+using System.Net;
 
-namespace Application.Cadastros
+namespace Application.Cadastros.Services
 {
     public class ClienteService : IClienteService
     {
@@ -15,14 +16,16 @@ namespace Application.Cadastros
             _clienteRepository = clienteRepository;
         }
 
-        public async Task CriarCliente(string nome, string cpf)
+        public async Task<RetornoClienteDTO> CriarCliente(string nome, string cpf)
         {
             var clienteExistente = await _clienteRepository.ObterPorCpfAsync(cpf);
             if (clienteExistente != null)
                 throw new DomainException("Já existe um cliente cadastrado com este CPF.", HttpStatusCode.Conflict);
 
             var novoCliente = Cliente.Criar(new Nome(nome), new Cpf(cpf));
-            await _clienteRepository.SalvarAsync(novoCliente);
+            var result = await _clienteRepository.SalvarAsync(novoCliente);
+
+            return new RetornoClienteDTO() { Id = result.Id, Nome = result.Nome.Valor, Cpf = result.Cpf.Valor };
         }
     }
 }
