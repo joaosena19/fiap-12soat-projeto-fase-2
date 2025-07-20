@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
 using API.DTO;
 using Application.Interfaces;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Exceptions;
+using System.Net;
 
 namespace OficinaMecanica.Controllers
 {
@@ -26,25 +27,28 @@ namespace OficinaMecanica.Controllers
         /// <param name="dto">Dados do cliente a ser criado</param>
         /// <returns>Cliente criado com sucesso</returns>
         /// <response code="201">Cliente criado com sucesso</response>
-        /// <response code="400">Dados inv�lidos fornecidos</response>
+        /// <response code="400">Dados inválidos fornecidos</response>
+        /// <response code="409">Conflito - Cliente já existe</response>
+        /// <response code="500">Erro interno do servidor</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CriarClienteDTO dto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             try
             {
                 await _clienteService.CriarCliente(dto.Nome, dto.Cpf);
                 return Created();
             }
-            catch (Exception ex)
+            catch (DomainException ex)
             {
-                return BadRequest($"Erro ao criar cliente: {ex.Message}");
+                return StatusCode((int)ex.StatusCode, new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new { message = "Ocorreu um erro interno no servidor." });
             }
         }
     }

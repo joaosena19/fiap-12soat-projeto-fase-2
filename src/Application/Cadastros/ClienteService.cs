@@ -1,6 +1,8 @@
-﻿using Application.Interfaces;
+﻿using System.Net;
+using Application.Interfaces;
 using Domain.Cadastros.Aggregates;
 using Domain.Cadastros.ValueObjects.Cliente;
+using Shared.Exceptions;
 
 namespace Application.Cadastros
 {
@@ -17,7 +19,7 @@ namespace Application.Cadastros
         {
             var clienteExistente = await _clienteRepository.ObterPorCpfAsync(cpf);
             if (clienteExistente != null)
-                throw new InvalidOperationException("Já existe um cliente cadastrado com este CPF.");
+                throw new DomainException("Já existe um cliente cadastrado com este CPF.", HttpStatusCode.Conflict);
 
             var novoCliente = Cliente.Criar(new Nome(nome), new Cpf(cpf));
             await _clienteRepository.SalvarAsync(novoCliente);

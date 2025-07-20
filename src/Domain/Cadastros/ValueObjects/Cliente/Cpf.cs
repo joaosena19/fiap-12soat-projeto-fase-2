@@ -1,8 +1,11 @@
-﻿namespace Domain.Cadastros.ValueObjects.Cliente
+﻿using System.Net;
+using Shared.Exceptions;
+
+namespace Domain.Cadastros.ValueObjects.Cliente
 {
     public class Cpf
     {
-        private readonly string _valor;
+        private readonly string _valor = string.Empty;
 
         // Parameterless constructor for EF Core
         private Cpf() { }
@@ -10,7 +13,7 @@
         public Cpf(string cpf)
         {
             if (!ValidarCpf(cpf))
-                throw new ArgumentException("CPF inválido");
+                throw new DomainException("CPF inválido", HttpStatusCode.BadRequest);
 
             _valor = CleanCpf(cpf);
         }
