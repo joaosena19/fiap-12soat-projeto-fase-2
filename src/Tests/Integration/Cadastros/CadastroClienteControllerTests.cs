@@ -37,5 +37,33 @@ namespace Tests.Integration.Cadastros
             clientEntity.Nome.Valor.Should().Be("João");
             clientEntity.Cpf.Valor.Should().Be("12345678909");
         }
+
+        [Fact(DisplayName = "PUT deve retornar 200 OK e atualizar Cliente existente no banco de dados.")]
+        public async Task Put_Deve_Retornar200OK_E_AtualizarCliente()
+        {
+            // Arrange
+            var criarDto = new { Nome = "João", Cpf = "12345678909" };
+            var atualizarDto = new { Nome = "João Silva Atualizado" };
+
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Create client first
+            var createResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", criarDto);
+            createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "12345678909");
+            clienteCriado.Should().NotBeNull();
+
+            // Act
+            var updateResponse = await _client.PutAsJsonAsync($"/api/cadastros/clientes/{clienteCriado!.Id}", atualizarDto);
+            var clienteAtualizado = await context.Clientes.FirstOrDefaultAsync(c => c.Id == clienteCriado.Id);
+
+            // Assert
+            updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            clienteAtualizado.Should().NotBeNull();
+            clienteAtualizado!.Nome.Valor.Should().Be("João Silva Atualizado");
+            clienteAtualizado.Cpf.Valor.Should().Be("12345678909"); // CPF não deve mudar
+        }
     }
 }

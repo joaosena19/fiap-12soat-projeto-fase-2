@@ -5,5 +5,6 @@ namespace Application.Interfaces
     public interface IClienteService
     {
         Task<RetornoClienteDTO> CriarCliente(string nome, string cpf);
+        Task<RetornoClienteDTO> AtualizarCliente(Guid id, string nome);
     }
 }

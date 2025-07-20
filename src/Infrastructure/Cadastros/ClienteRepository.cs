@@ -26,5 +26,18 @@ namespace Infrastructure.Cadastros
         {
             return await _context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == cpf);
         }
+
+        public async Task<Cliente?> ObterPorIdAsync(Guid id)
+        {
+            return await _context.Clientes.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<Cliente> AtualizarAsync(Cliente cliente)
+        {
+            _context.Clientes.Update(cliente);
+            await _context.SaveChangesAsync();
+
+            return cliente;
+        }
     }
 }

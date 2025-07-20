@@ -6,5 +6,7 @@ namespace Application.Interfaces
     {
         Task<Cliente> SalvarAsync(Cliente cliente);
         Task<Cliente?> ObterPorCpfAsync(string cpf);
+        Task<Cliente?> ObterPorIdAsync(Guid id);
+        Task<Cliente> AtualizarAsync(Cliente cliente);
     }
 }

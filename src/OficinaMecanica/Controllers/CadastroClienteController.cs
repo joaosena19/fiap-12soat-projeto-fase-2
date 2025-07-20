@@ -1,7 +1,6 @@
-using Application.Interfaces;
 using Application.Cadastros.DTO;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace API.Controllers
 {
@@ -38,6 +37,27 @@ namespace API.Controllers
         {
             var result = await _clienteService.CriarCliente(dto.Nome, dto.Cpf);
             return Created(); //todo: alterar para CreatedAtAction quando o endpoint de busca for implementado
+        }
+
+        /// <summary>
+        /// Atualizar um cliente existente
+        /// </summary>
+        /// <param name="id">ID do cliente a ser atualizado</param>
+        /// <param name="dto">Dados do cliente a ser atualizado</param>
+        /// <returns>Cliente atualizado com sucesso</returns>
+        /// <response code="200">Cliente atualizado com sucesso</response>
+        /// <response code="400">Dados inválidos fornecidos</response>
+        /// <response code="404">Cliente não encontrado</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarClienteDTO dto)
+        {
+            var result = await _clienteService.AtualizarCliente(id, dto.Nome);
+            return Ok(result);
         }
     }
 }

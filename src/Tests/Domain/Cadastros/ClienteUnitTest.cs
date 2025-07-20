@@ -1,5 +1,4 @@
 ﻿using Domain.Cadastros.Aggregates;
-using Domain.Cadastros.ValueObjects.Cliente;
 using FluentAssertions;
 using Shared.Exceptions;
 
@@ -14,10 +13,10 @@ namespace Tests.Domain.Cadastros
         public void ClienteCriar_Deve_ThrowException_Quando_NomeInvalido(string nomeInvalido)
         {
             // Arrange
-            var cpfValido = new Cpf("36050793000");
+            var cpfValido = "36050793000";
 
             // Act & Assert
-            FluentActions.Invoking(() => Cliente.Criar(new Nome(nomeInvalido), cpfValido))
+            FluentActions.Invoking(() => Cliente.Criar(nomeInvalido, cpfValido))
                 .Should().Throw<DomainException>()
                 .WithMessage("*nome não pode*");
         }
@@ -29,10 +28,10 @@ namespace Tests.Domain.Cadastros
         public void ClienteCriar_Deve_ThrowException_Quando_CpfInvalido(string cpfInvalido)
         {
             // Arrange
-            var nomeValido = new Nome("João");
+            var nomeValido = "João";
 
             // Act & Assert
-            FluentActions.Invoking(() => Cliente.Criar(nomeValido, new Cpf(cpfInvalido)))
+            FluentActions.Invoking(() => Cliente.Criar(nomeValido, cpfInvalido))
                 .Should().Throw<DomainException>()
                 .WithMessage("*CPF inválido*");
         }
