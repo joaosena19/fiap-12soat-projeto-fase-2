@@ -1,7 +1,6 @@
 ﻿using Application.Cadastros.Services;
 using Application.Interfaces;
 using Domain.Cadastros.Aggregates;
-using Domain.Cadastros.ValueObjects.Cliente;
 using FluentAssertions;
 using Moq;
 using Shared.Exceptions;
@@ -20,6 +19,7 @@ namespace Tests.Application.Cadastros
         }
 
         [Fact(DisplayName = "Não deve criar cliente se CPF já existir")]
+        [Trait("Metodo", "CriarCliente")]
         public async Task CriarCliente_DeveLancarExcecao_SeCpfJaExistir()
         {
             // Arrange
@@ -41,6 +41,7 @@ namespace Tests.Application.Cadastros
         }
 
         [Fact(DisplayName = "Deve criar cliente se CPF for novo")]
+        [Trait("Metodo", "CriarCliente")]
         public async Task CriarCliente_DeveSalvarCliente_SeCpfNaoExistir()
         {
             // Arrange
@@ -65,6 +66,7 @@ namespace Tests.Application.Cadastros
         }
 
         [Fact(DisplayName = "Deve atualizar cliente se existir")]
+        [Trait("Metodo", "AtualizarCliente")]
         public async Task AtualizarCliente_DeveAtualizarCliente_SeClienteExistir()
         {
             // Arrange
@@ -93,6 +95,7 @@ namespace Tests.Application.Cadastros
         }
 
         [Fact(DisplayName = "Não deve atualizar cliente se não existir")]
+        [Trait("Metodo", "AtualizarCliente")]
         public async Task AtualizarCliente_DeveLancarExcecao_SeClienteNaoExistir()
         {
             // Arrange
@@ -113,6 +116,7 @@ namespace Tests.Application.Cadastros
         }
 
         [Fact(DisplayName = "Deve buscar todos os clientes")]
+        [Trait("Metodo", "Buscar")]
         public async Task Buscar_DeveRetornarTodosOsClientes()
         {
             // Arrange
@@ -135,6 +139,7 @@ namespace Tests.Application.Cadastros
         }
 
         [Fact(DisplayName = "Deve retornar lista vazia quando não há clientes")]
+        [Trait("Metodo", "Buscar")]
         public async Task Buscar_DeveRetornarListaVazia_QuandoNaoHaClientes()
         {
             // Arrange
@@ -151,6 +156,7 @@ namespace Tests.Application.Cadastros
         }
 
         [Fact(DisplayName = "Deve buscar cliente por ID quando existir")]
+        [Trait("Metodo", "BuscarPorId")]
         public async Task BuscarPorId_DeveRetornarCliente_QuandoClienteExistir()
         {
             // Arrange
@@ -173,6 +179,7 @@ namespace Tests.Application.Cadastros
         }
 
         [Fact(DisplayName = "Deve lançar exceção ao buscar cliente por ID quando não existir")]
+        [Trait("Metodo", "BuscarPorId")]
         public async Task BuscarPorId_DeveLancarExcecao_QuandoClienteNaoExistir()
         {
             // Arrange
@@ -191,6 +198,7 @@ namespace Tests.Application.Cadastros
         }
 
         [Fact(DisplayName = "Deve buscar cliente por CPF quando existir")]
+        [Trait("Metodo", "BuscarPorCpf")]
         public async Task BuscarPorCpf_DeveRetornarCliente_QuandoClienteExistir()
         {
             // Arrange
@@ -212,6 +220,7 @@ namespace Tests.Application.Cadastros
         }
 
         [Fact(DisplayName = "Deve lançar exceção ao buscar cliente por CPF quando não existir")]
+        [Trait("Metodo", "BuscarPorCpf")]
         public async Task BuscarPorCpf_DeveLancarExcecao_QuandoClienteNaoExistir()
         {
             // Arrange
