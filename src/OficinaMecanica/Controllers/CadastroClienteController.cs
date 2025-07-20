@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using OfficinaMecanica.DTO;
+using API.DTO;
 using Application.Interfaces;
 using System.ComponentModel.DataAnnotations;
 

@@ -13,14 +13,14 @@ namespace Application.Cadastros
             _clienteRepository = clienteRepository;
         }
 
-        public void CriarCliente(string nome, string cpf)
+        public async Task CriarCliente(string nome, string cpf)
         {
-            var clienteExistente = _clienteRepository.ObterPorCpf(cpf);
+            var clienteExistente = await _clienteRepository.ObterPorCpfAsync(cpf);
             if (clienteExistente != null)
                 throw new InvalidOperationException("Já existe um cliente cadastrado com este CPF.");
 
-            var novoCliente = Cliente.Criar(nome, new Cpf(cpf));
-            _clienteRepository.Salvar(novoCliente);
+            var novoCliente = Cliente.Criar(new Nome(nome), new Cpf(cpf));
+            await _clienteRepository.SalvarAsync(novoCliente);
         }
     }
 }

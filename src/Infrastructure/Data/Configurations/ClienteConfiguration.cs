@@ -22,10 +22,13 @@ namespace Infrastructure.Data.Configurations
                    .HasMaxLength(11);
             });
 
-            builder.Property(c => c.Nome)
-                   .HasColumnName("nome")
-                   .IsRequired()
-                   .HasMaxLength(200);
+            builder.OwnsOne(c => c.Nome, nome =>
+            {
+                nome.Property(p => p.Valor)
+                    .HasColumnName("nome")
+                    .IsRequired()
+                    .HasMaxLength(200);
+            });
         }
     }
 }

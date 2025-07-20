@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace OfficinaMecanica.DTO
+namespace API.DTO
 {
     /// <summary>
     /// DTO para criação de cliente

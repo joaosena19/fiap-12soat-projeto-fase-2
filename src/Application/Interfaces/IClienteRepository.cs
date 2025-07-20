@@ -4,7 +4,7 @@ namespace Application.Interfaces
 {
     public interface IClienteRepository
     {
-        void Salvar(Cliente cliente);
-        Cliente? ObterPorCpf(string cpf);
+        Task SalvarAsync(Cliente cliente);
+        Task<Cliente?> ObterPorCpfAsync(string cpf);
     }
 }

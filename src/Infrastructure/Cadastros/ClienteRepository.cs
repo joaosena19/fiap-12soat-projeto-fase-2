@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Cadastros.Aggregates;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Cadastros
 {
@@ -13,15 +14,15 @@ namespace Infrastructure.Cadastros
             _context = context;
         }
 
-        public void Salvar(Cliente cliente)
+        public async Task SalvarAsync(Cliente cliente)
         {
-            _context.Clientes.Add(cliente);
-            _context.SaveChanges();
+            await _context.Clientes.AddAsync(cliente);
+            await _context.SaveChangesAsync();
         }
 
-        public Cliente? ObterPorCpf(string cpf)
+        public async Task<Cliente?> ObterPorCpfAsync(string cpf)
         {
-            return _context.Clientes.FirstOrDefault(c => c.Cpf.Valor == cpf);
+            return await _context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == cpf);
         }
     }
 }

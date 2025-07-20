@@ -2,6 +2,6 @@
 {
     public interface IClienteService
     {
-        void CriarCliente(string nome, string cpf);
+        Task CriarCliente(string nome, string cpf);
     }
 }
