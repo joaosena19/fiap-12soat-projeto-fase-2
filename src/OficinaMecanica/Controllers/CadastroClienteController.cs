@@ -1,8 +1,6 @@
 using API.DTO;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Exceptions;
-using System.Net;
 
 namespace OficinaMecanica.Controllers
 {
@@ -37,19 +35,8 @@ namespace OficinaMecanica.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CriarClienteDTO dto)
         {
-            try
-            {
-                await _clienteService.CriarCliente(dto.Nome, dto.Cpf);
-                return Created();
-            }
-            catch (DomainException ex)
-            {
-                return StatusCode((int)ex.StatusCode, new { message = ex.Message });
-            }
-            catch (Exception)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, new { message = "Ocorreu um erro interno no servidor." });
-            }
+            await _clienteService.CriarCliente(dto.Nome, dto.Cpf);
+            return Created();
         }
     }
 }

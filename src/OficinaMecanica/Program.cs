@@ -1,10 +1,11 @@
+using API.Middleware;
+using Application.Cadastros.Services;
 using Application.Interfaces;
-using Infrastructure.Cadastros;
-using Microsoft.EntityFrameworkCore;
-using Infrastructure.Data;
-using System.Reflection;
-using Application.Cadastros;
 using DotNetEnv;
+using Infrastructure.Cadastros;
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 // Load environment variables from .env file
 Env.Load();
@@ -49,6 +50,10 @@ builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+// Add exception handling middleware (should be one of the first middlewares)
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
