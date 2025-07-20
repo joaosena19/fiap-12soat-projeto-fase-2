@@ -1,7 +1,6 @@
 ﻿using Application.Cadastros.DTO;
 using Application.Interfaces;
 using Domain.Cadastros.Aggregates;
-using Domain.Cadastros.ValueObjects.Cliente;
 using Shared.Exceptions;
 using System.Net;
 

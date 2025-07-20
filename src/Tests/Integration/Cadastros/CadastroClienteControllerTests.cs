@@ -24,20 +24,20 @@ namespace Tests.Integration.Cadastros
         public async Task Post_Deve_Retornar201Created_E_PersistirCliente()
         {
             // Arrange
-            var dto = new { Nome = "João", Cpf = "12345678909" };
+            var dto = new { Nome = "João", Cpf = "49622601030" };
             using var scope = _factory.Services.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/cadastros/clientes", dto);
-            var clientEntity = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "12345678909");
+            var clientEntity = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "49622601030");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
 
             clientEntity.Should().NotBeNull();
             clientEntity.Nome.Valor.Should().Be("João");
-            clientEntity.Cpf.Valor.Should().Be("12345678909");
+            clientEntity.Cpf.Valor.Should().Be("49622601030");
         }
 
         [Fact(DisplayName = "PUT deve retornar 200 OK e atualizar Cliente existente no banco de dados.")]
@@ -45,7 +45,7 @@ namespace Tests.Integration.Cadastros
         public async Task Put_Deve_Retornar200OK_E_AtualizarCliente()
         {
             // Arrange
-            var criarDto = new { Nome = "João", Cpf = "12345678909" };
+            var criarDto = new { Nome = "João", Cpf = "42103574052" };
             var atualizarDto = new { Nome = "João Silva Atualizado" };
 
             using var scope = _factory.Services.CreateScope();
@@ -55,18 +55,21 @@ namespace Tests.Integration.Cadastros
             var createResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", criarDto);
             createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "12345678909");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "42103574052");
             clienteCriado.Should().NotBeNull();
 
             // Act
             var updateResponse = await _client.PutAsJsonAsync($"/api/cadastros/clientes/{clienteCriado!.Id}", atualizarDto);
+            
+            // Limpa o tracking do EF Core
+            context.ChangeTracker.Clear();
             var clienteAtualizado = await context.Clientes.FirstOrDefaultAsync(c => c.Id == clienteCriado.Id);
 
             // Assert
             updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             clienteAtualizado.Should().NotBeNull();
             clienteAtualizado!.Nome.Valor.Should().Be("João Silva Atualizado");
-            clienteAtualizado.Cpf.Valor.Should().Be("12345678909"); // CPF não deve mudar
+            clienteAtualizado.Cpf.Valor.Should().Be("42103574052"); // CPF não deve mudar
         }
 
         [Fact(DisplayName = "GET deve retornar 200 OK e lista de clientes")]
@@ -74,8 +77,8 @@ namespace Tests.Integration.Cadastros
         public async Task Get_Deve_Retornar200OK_E_ListaDeClientes()
         {
             // Arrange
-            var cliente1 = new { Nome = "João", Cpf = "12345678901" };
-            var cliente2 = new { Nome = "Maria", Cpf = "12345678902" };
+            var cliente1 = new { Nome = "João", Cpf = "12345678909" };
+            var cliente2 = new { Nome = "Maria", Cpf = "84405205060" };
 
             // Create test clients
             await _client.PostAsJsonAsync("/api/cadastros/clientes", cliente1);
@@ -89,8 +92,8 @@ namespace Tests.Integration.Cadastros
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             clientes.Should().NotBeNull();
             clientes.Should().HaveCountGreaterThanOrEqualTo(2);
-            clientes.Should().Contain(c => c.Nome == "João" && c.Cpf == "12345678901");
-            clientes.Should().Contain(c => c.Nome == "Maria" && c.Cpf == "12345678902");
+            clientes.Should().Contain(c => c.Nome == "João" && c.Cpf == "12345678909");
+            clientes.Should().Contain(c => c.Nome == "Maria" && c.Cpf == "84405205060");
         }
 
         [Fact(DisplayName = "GET deve retornar 200 OK mesmo quando não há clientes")]
@@ -118,7 +121,7 @@ namespace Tests.Integration.Cadastros
         public async Task GetById_Deve_Retornar200OK_E_ClienteEspecifico()
         {
             // Arrange
-            var criarDto = new { Nome = "João", Cpf = "12345678909" };
+            var criarDto = new { Nome = "João", Cpf = "56227045020" };
             
             using var scope = _factory.Services.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -127,7 +130,7 @@ namespace Tests.Integration.Cadastros
             var createResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", criarDto);
             createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "12345678909");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "56227045020");
             clienteCriado.Should().NotBeNull();
 
             // Act
@@ -139,7 +142,7 @@ namespace Tests.Integration.Cadastros
             cliente.Should().NotBeNull();
             cliente.Id.Should().Be(clienteCriado.Id);
             cliente.Nome.Should().Be("João");
-            cliente.Cpf.Should().Be("12345678909");
+            cliente.Cpf.Should().Be("56227045020");
         }
 
         [Fact(DisplayName = "GET /{id} deve retornar 404 NotFound quando cliente não existe")]
@@ -161,7 +164,7 @@ namespace Tests.Integration.Cadastros
         public async Task GetByCpf_Deve_Retornar200OK_E_ClienteEspecifico()
         {
             // Arrange
-            var criarDto = new { Nome = "João por CPF", Cpf = "12345678909" };
+            var criarDto = new { Nome = "João", Cpf = "12345678909" };
             
             using var scope = _factory.Services.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -181,7 +184,7 @@ namespace Tests.Integration.Cadastros
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             cliente.Should().NotBeNull();
             cliente.Id.Should().Be(clienteCriado!.Id);
-            cliente.Nome.Should().Be("João por CPF");
+            cliente.Nome.Should().Be("João");
             cliente.Cpf.Should().Be("12345678909");
         }
 
