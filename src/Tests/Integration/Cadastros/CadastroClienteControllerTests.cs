@@ -20,6 +20,7 @@ namespace Tests.Integration.Cadastros
         }
 
         [Fact(DisplayName = "POST deve retornar 201 Created e persistir novo Cliente no banco de dados.")]
+        [Trait("Metodo", "Post")]
         public async Task Post_Deve_Retornar201Created_E_PersistirCliente()
         {
             // Arrange
@@ -40,6 +41,7 @@ namespace Tests.Integration.Cadastros
         }
 
         [Fact(DisplayName = "PUT deve retornar 200 OK e atualizar Cliente existente no banco de dados.")]
+        [Trait("Metodo", "Post")]
         public async Task Put_Deve_Retornar200OK_E_AtualizarCliente()
         {
             // Arrange
@@ -68,6 +70,7 @@ namespace Tests.Integration.Cadastros
         }
 
         [Fact(DisplayName = "GET deve retornar 200 OK e lista de clientes")]
+        [Trait("Metodo", "Get")]
         public async Task Get_Deve_Retornar200OK_E_ListaDeClientes()
         {
             // Arrange
@@ -91,6 +94,7 @@ namespace Tests.Integration.Cadastros
         }
 
         [Fact(DisplayName = "GET deve retornar 200 OK mesmo quando não há clientes")]
+        [Trait("Metodo", "Get")]
         public async Task Get_Deve_Retornar200OK_QuandoNaoHaClientes()
         {
             // Arrange - Clear database
@@ -110,6 +114,7 @@ namespace Tests.Integration.Cadastros
         }
 
         [Fact(DisplayName = "GET /{id} deve retornar 200 OK e cliente específico")]
+        [Trait("Metodo", "GetById")]
         public async Task GetById_Deve_Retornar200OK_E_ClienteEspecifico()
         {
             // Arrange
@@ -138,6 +143,7 @@ namespace Tests.Integration.Cadastros
         }
 
         [Fact(DisplayName = "GET /{id} deve retornar 404 NotFound quando cliente não existe")]
+        [Trait("Metodo", "GetById")]
         public async Task GetById_Deve_Retornar404NotFound_QuandoClienteNaoExiste()
         {
             // Arrange
@@ -151,6 +157,7 @@ namespace Tests.Integration.Cadastros
         }
 
         [Fact(DisplayName = "GET /cpf/{cpf} deve retornar 200 OK e cliente específico")]
+        [Trait("Metodo", "GetByCpf")]
         public async Task GetByCpf_Deve_Retornar200OK_E_ClienteEspecifico()
         {
             // Arrange
@@ -179,6 +186,7 @@ namespace Tests.Integration.Cadastros
         }
 
         [Fact(DisplayName = "GET /cpf/{cpf} deve retornar 404 NotFound quando cliente não existe")]
+        [Trait("Metodo", "GetByCpf")]
         public async Task GetByCpf_Deve_Retornar404NotFound_QuandoClienteNaoExiste()
         {
             // Arrange
