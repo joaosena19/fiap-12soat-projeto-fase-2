@@ -37,7 +37,7 @@ namespace API.Controllers
         public async Task<IActionResult> Post([FromBody] CriarClienteDTO dto)
         {
             var result = await _clienteService.CriarCliente(dto.Nome, dto.Cpf);
-            return StatusCode((int)HttpStatusCode.Created, result);
+            return Created(); //todo: alterar para CreatedAtAction quando o endpoint de busca for implementado
         }
     }
 }

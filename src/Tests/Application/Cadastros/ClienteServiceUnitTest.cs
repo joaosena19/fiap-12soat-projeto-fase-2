@@ -4,6 +4,7 @@ using Domain.Cadastros.Aggregates;
 using Domain.Cadastros.ValueObjects.Cliente;
 using FluentAssertions;
 using Moq;
+using Shared.Exceptions;
 
 namespace Tests.Application.Cadastros
 {
@@ -33,7 +34,7 @@ namespace Tests.Application.Cadastros
             var act = async () => await _service.CriarCliente(nome, cpf);
 
             // Assert
-            await act.Should().ThrowAsync<InvalidOperationException>()
+            await act.Should().ThrowAsync<DomainException>()
                 .WithMessage("Já existe um cliente cadastrado com este CPF.");
 
             _repoMock.Verify(r => r.SalvarAsync(It.IsAny<Cliente>()), Times.Never);
@@ -46,8 +47,13 @@ namespace Tests.Application.Cadastros
             var cpf = "12345678909";
             var nome = "João";
 
+            var clienteNovo = Cliente.Criar(new Nome(nome), new Cpf(cpf));
+
             _repoMock.Setup(r => r.ObterPorCpfAsync(cpf))
                 .ReturnsAsync((Cliente?)null);
+
+            _repoMock.Setup(r => r.SalvarAsync(It.IsAny<Cliente>()))
+                .ReturnsAsync(clienteNovo);
 
             // Act
             await _service.CriarCliente(nome, cpf);

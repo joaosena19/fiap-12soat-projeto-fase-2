@@ -1,6 +1,7 @@
 ﻿using Domain.Cadastros.Aggregates;
 using Domain.Cadastros.ValueObjects.Cliente;
 using FluentAssertions;
+using Shared.Exceptions;
 
 namespace Tests.Domain.Cadastros
 {
@@ -17,7 +18,7 @@ namespace Tests.Domain.Cadastros
 
             // Act & Assert
             FluentActions.Invoking(() => Cliente.Criar(new Nome(nomeInvalido), cpfValido))
-                .Should().Throw<ArgumentException>()
+                .Should().Throw<DomainException>()
                 .WithMessage("*nome não pode*");
         }
 
@@ -32,7 +33,7 @@ namespace Tests.Domain.Cadastros
 
             // Act & Assert
             FluentActions.Invoking(() => Cliente.Criar(nomeValido, new Cpf(cpfInvalido)))
-                .Should().Throw<ArgumentException>()
+                .Should().Throw<DomainException>()
                 .WithMessage("*CPF inválido*");
         }
     }
