@@ -6,5 +6,7 @@ namespace Application.Interfaces
     {
         Task<RetornoClienteDTO> CriarCliente(string nome, string cpf);
         Task<RetornoClienteDTO> AtualizarCliente(Guid id, string nome);
+        Task<IEnumerable<RetornoClienteDTO>> Buscar();
+        Task<RetornoClienteDTO> BuscarPorId(Guid id);
     }
 }

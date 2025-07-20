@@ -39,5 +39,10 @@ namespace Infrastructure.Cadastros
 
             return cliente;
         }
+
+        public async Task<IEnumerable<Cliente>> ObterTodosAsync()
+        {
+            return await _context.Clientes.ToListAsync();
+        }
     }
 }

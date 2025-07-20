@@ -1,4 +1,5 @@
 ﻿using Domain.Cadastros.ValueObjects.Cliente;
+using UUIDNext;
 
 namespace Domain.Cadastros.Aggregates
 {
@@ -20,7 +21,7 @@ namespace Domain.Cadastros.Aggregates
 
         public static Cliente Criar(string nome, string cpf)
         {
-            return new Cliente(Guid.NewGuid(), new Nome(nome), new Cpf(cpf));
+            return new Cliente(Uuid.NewSequential(), new Nome(nome), new Cpf(cpf));
         }
 
         public void Atualizar(string nome)

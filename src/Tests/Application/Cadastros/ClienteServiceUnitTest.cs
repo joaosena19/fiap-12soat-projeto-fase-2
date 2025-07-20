@@ -111,5 +111,83 @@ namespace Tests.Application.Cadastros
 
             _repoMock.Verify(r => r.AtualizarAsync(It.IsAny<Cliente>()), Times.Never);
         }
+
+        [Fact(DisplayName = "Deve buscar todos os clientes")]
+        public async Task Buscar_DeveRetornarTodosOsClientes()
+        {
+            // Arrange
+            var cliente1 = Cliente.Criar("João", "12345678901");
+            var cliente2 = Cliente.Criar("Maria", "12345678902");
+            var clientes = new List<Cliente> { cliente1, cliente2 };
+
+            _repoMock.Setup(r => r.ObterTodosAsync())
+                .ReturnsAsync(clientes);
+
+            // Act
+            var result = await _service.Buscar();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().HaveCount(2);
+            result.Should().Contain(c => c.Nome == "João" && c.Cpf == "12345678901");
+            result.Should().Contain(c => c.Nome == "Maria" && c.Cpf == "12345678902");
+            _repoMock.Verify(r => r.ObterTodosAsync(), Times.Once);
+        }
+
+        [Fact(DisplayName = "Deve retornar lista vazia quando não há clientes")]
+        public async Task Buscar_DeveRetornarListaVazia_QuandoNaoHaClientes()
+        {
+            // Arrange
+            _repoMock.Setup(r => r.ObterTodosAsync())
+                .ReturnsAsync(new List<Cliente>());
+
+            // Act
+            var result = await _service.Buscar();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
+            _repoMock.Verify(r => r.ObterTodosAsync(), Times.Once);
+        }
+
+        [Fact(DisplayName = "Deve buscar cliente por ID quando existir")]
+        public async Task BuscarPorId_DeveRetornarCliente_QuandoClienteExistir()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var nome = "João";
+            var cpf = "12345678901";
+            var cliente = Cliente.Criar(nome, cpf);
+
+            _repoMock.Setup(r => r.ObterPorIdAsync(id))
+                .ReturnsAsync(cliente);
+
+            // Act
+            var result = await _service.BuscarPorId(id);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Nome.Should().Be(nome);
+            result.Cpf.Should().Be(cpf);
+            _repoMock.Verify(r => r.ObterPorIdAsync(id), Times.Once);
+        }
+
+        [Fact(DisplayName = "Deve lançar exceção ao buscar cliente por ID quando não existir")]
+        public async Task BuscarPorId_DeveLancarExcecao_QuandoClienteNaoExistir()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+
+            _repoMock.Setup(r => r.ObterPorIdAsync(id))
+                .ReturnsAsync((Cliente?)null);
+
+            // Act
+            var act = async () => await _service.BuscarPorId(id);
+
+            // Assert
+            await act.Should().ThrowAsync<DomainException>()
+                .WithMessage("Cliente não encontrado.");
+            _repoMock.Verify(r => r.ObterPorIdAsync(id), Times.Once);
+        }
     }
 }

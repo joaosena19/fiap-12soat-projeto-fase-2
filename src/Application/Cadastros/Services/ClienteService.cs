@@ -39,5 +39,25 @@ namespace Application.Cadastros.Services
 
             return new RetornoClienteDTO() { Id = result.Id, Nome = result.Nome.Valor, Cpf = result.Cpf.Valor };
         }
+
+        public async Task<IEnumerable<RetornoClienteDTO>> Buscar()
+        {
+            var clientes = await _clienteRepository.ObterTodosAsync();
+            return clientes.Select(c => new RetornoClienteDTO 
+            { 
+                Id = c.Id, 
+                Nome = c.Nome.Valor, 
+                Cpf = c.Cpf.Valor 
+            });
+        }
+
+        public async Task<RetornoClienteDTO> BuscarPorId(Guid id)
+        {
+            var cliente = await _clienteRepository.ObterPorIdAsync(id);
+            if (cliente == null)
+                throw new DomainException("Cliente não encontrado.", HttpStatusCode.NotFound);
+
+            return new RetornoClienteDTO() { Id = cliente.Id, Nome = cliente.Nome.Valor, Cpf = cliente.Cpf.Valor };
+        }
     }
 }

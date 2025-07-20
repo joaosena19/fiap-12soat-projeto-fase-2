@@ -8,5 +8,6 @@ namespace Application.Interfaces
         Task<Cliente?> ObterPorCpfAsync(string cpf);
         Task<Cliente?> ObterPorIdAsync(Guid id);
         Task<Cliente> AtualizarAsync(Cliente cliente);
+        Task<IEnumerable<Cliente>> ObterTodosAsync();
     }
 }

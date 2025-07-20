@@ -36,7 +36,40 @@ namespace API.Controllers
         public async Task<IActionResult> Post([FromBody] CriarClienteDTO dto)
         {
             var result = await _clienteService.CriarCliente(dto.Nome, dto.Cpf);
-            return Created(); //todo: alterar para CreatedAtAction quando o endpoint de busca for implementado
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        }
+
+        /// <summary>
+        /// Buscar todos os clientes
+        /// </summary>
+        /// <returns>Lista de clientes</returns>
+        /// <response code="200">Lista de clientes retornada com sucesso</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<RetornoClienteDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get()
+        {
+            var result = await _clienteService.Buscar();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Buscar cliente por ID
+        /// </summary>
+        /// <param name="id">ID do cliente</param>
+        /// <returns>Cliente encontrado</returns>
+        /// <response code="200">Cliente encontrado com sucesso</response>
+        /// <response code="404">Cliente não encontrado</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var result = await _clienteService.BuscarPorId(id);
+            return Ok(result);
         }
 
         /// <summary>
