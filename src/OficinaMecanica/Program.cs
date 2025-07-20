@@ -20,12 +20,12 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo 
     { 
-        Title = "Oficina Mecânica API", 
+        Title = "Oficina MecÃ¢nica API", 
         Version = "v1",
-        Description = "API para gerenciamento de oficina mecânica",
+        Description = "API para gerenciamento de oficina mecÃ¢nica",
         Contact = new Microsoft.OpenApi.Models.OpenApiContact
         {
-            Name = "João Dainese",
+            Name = "JoÃ£o Dainese",
             Email = "joaosenadainese@gmail.com"
         }
     });
@@ -54,7 +54,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Oficina Mecânica API v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Oficina MecÃ¢nica API v1");
         c.RoutePrefix = string.Empty; // Makes Swagger UI available at app root
     });
 }
@@ -66,3 +66,21 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program
+{
+    //remove dbcontext hereto avoid issues with multiple instances
+    public static void RemoveDbContext(IServiceCollection services)
+    {
+        var descriptor = services.FirstOrDefault(d => d.ServiceType == typeof(AppDbContext));
+        if (descriptor != null)
+        {
+            services.Remove(descriptor);
+        }
+        var optionsDescriptor = services.FirstOrDefault(d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
+        if (optionsDescriptor != null)
+        {
+            services.Remove(optionsDescriptor);
+        }
+    }
+}

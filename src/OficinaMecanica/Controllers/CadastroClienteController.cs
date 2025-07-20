@@ -8,7 +8,7 @@ namespace OficinaMecanica.Controllers
     /// <summary>
     /// Controller para gerenciamento de cadastro de clientes
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/cadastros/clientes")]
     [ApiController]
     [Produces("application/json")]
     public class CadastroClienteController : ControllerBase
@@ -30,7 +30,7 @@ namespace OficinaMecanica.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Post([FromBody] CriarClienteDTO dto)
+        public async Task<IActionResult> Post([FromBody] CriarClienteDTO dto)
         {
             if (!ModelState.IsValid)
             {
@@ -39,7 +39,7 @@ namespace OficinaMecanica.Controllers
 
             try
             {
-                _clienteService.CriarCliente(dto.Nome, dto.Cpf);
+                await _clienteService.CriarCliente(dto.Nome, dto.Cpf);
                 return Created();
             }
             catch (Exception ex)
