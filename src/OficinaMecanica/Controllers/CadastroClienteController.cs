@@ -20,26 +20,6 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Criar um novo cliente
-        /// </summary>
-        /// <param name="dto">Dados do cliente a ser criado</param>
-        /// <returns>Cliente criado com sucesso</returns>
-        /// <response code="201">Cliente criado com sucesso</response>
-        /// <response code="400">Dados inválidos fornecidos</response>
-        /// <response code="409">Conflito - Cliente já existe</response>
-        /// <response code="500">Erro interno do servidor</response>
-        [HttpPost]
-        [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] CriarClienteDTO dto)
-        {
-            var result = await _clienteService.CriarCliente(dto.Nome, dto.Cpf);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
-        }
-
-        /// <summary>
         /// Buscar todos os clientes
         /// </summary>
         /// <returns>Lista de clientes</returns>
@@ -70,6 +50,44 @@ namespace API.Controllers
         {
             var result = await _clienteService.BuscarPorId(id);
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Buscar cliente por CPF
+        /// </summary>
+        /// <param name="cpf">CPF do cliente</param>
+        /// <returns>Cliente encontrado</returns>
+        /// <response code="200">Cliente encontrado com sucesso</response>
+        /// <response code="404">Cliente não encontrado</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpGet("cpf/{cpf}")]
+        [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByCpf(string cpf)
+        {
+            var result = await _clienteService.BuscarPorCpf(cpf);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Criar um novo cliente
+        /// </summary>
+        /// <param name="dto">Dados do cliente a ser criado</param>
+        /// <returns>Cliente criado com sucesso</returns>
+        /// <response code="201">Cliente criado com sucesso</response>
+        /// <response code="400">Dados inválidos fornecidos</response>
+        /// <response code="409">Conflito - Cliente já existe</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpPost]
+        [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Post([FromBody] CriarClienteDTO dto)
+        {
+            var result = await _clienteService.CriarCliente(dto.Nome, dto.Cpf);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         /// <summary>

@@ -116,8 +116,8 @@ namespace Tests.Application.Cadastros
         public async Task Buscar_DeveRetornarTodosOsClientes()
         {
             // Arrange
-            var cliente1 = Cliente.Criar("João", "12345678901");
-            var cliente2 = Cliente.Criar("Maria", "12345678902");
+            var cliente1 = Cliente.Criar("João", "12345678909");
+            var cliente2 = Cliente.Criar("Maria", "35434856015");
             var clientes = new List<Cliente> { cliente1, cliente2 };
 
             _repoMock.Setup(r => r.ObterTodosAsync())
@@ -129,8 +129,8 @@ namespace Tests.Application.Cadastros
             // Assert
             result.Should().NotBeNull();
             result.Should().HaveCount(2);
-            result.Should().Contain(c => c.Nome == "João" && c.Cpf == "12345678901");
-            result.Should().Contain(c => c.Nome == "Maria" && c.Cpf == "12345678902");
+            result.Should().Contain(c => c.Nome == "João" && c.Cpf == "12345678909");
+            result.Should().Contain(c => c.Nome == "Maria" && c.Cpf == "35434856015");
             _repoMock.Verify(r => r.ObterTodosAsync(), Times.Once);
         }
 
@@ -156,7 +156,7 @@ namespace Tests.Application.Cadastros
             // Arrange
             var id = Guid.NewGuid();
             var nome = "João";
-            var cpf = "12345678901";
+            var cpf = "12345678909";
             var cliente = Cliente.Criar(nome, cpf);
 
             _repoMock.Setup(r => r.ObterPorIdAsync(id))
@@ -188,6 +188,45 @@ namespace Tests.Application.Cadastros
             await act.Should().ThrowAsync<DomainException>()
                 .WithMessage("Cliente não encontrado.");
             _repoMock.Verify(r => r.ObterPorIdAsync(id), Times.Once);
+        }
+
+        [Fact(DisplayName = "Deve buscar cliente por CPF quando existir")]
+        public async Task BuscarPorCpf_DeveRetornarCliente_QuandoClienteExistir()
+        {
+            // Arrange
+            var cpf = "12345678909";
+            var nome = "João";
+            var cliente = Cliente.Criar(nome, cpf);
+
+            _repoMock.Setup(r => r.ObterPorCpfAsync(cpf))
+                .ReturnsAsync(cliente);
+
+            // Act
+            var result = await _service.BuscarPorCpf(cpf);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Nome.Should().Be(nome);
+            result.Cpf.Should().Be(cpf);
+            _repoMock.Verify(r => r.ObterPorCpfAsync(cpf), Times.Once);
+        }
+
+        [Fact(DisplayName = "Deve lançar exceção ao buscar cliente por CPF quando não existir")]
+        public async Task BuscarPorCpf_DeveLancarExcecao_QuandoClienteNaoExistir()
+        {
+            // Arrange
+            var cpf = "12345678901";
+
+            _repoMock.Setup(r => r.ObterPorCpfAsync(cpf))
+                .ReturnsAsync((Cliente?)null);
+
+            // Act
+            var act = async () => await _service.BuscarPorCpf(cpf);
+
+            // Assert
+            await act.Should().ThrowAsync<DomainException>()
+                .WithMessage("Cliente não encontrado.");
+            _repoMock.Verify(r => r.ObterPorCpfAsync(cpf), Times.Once);
         }
     }
 }

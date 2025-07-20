@@ -149,5 +149,46 @@ namespace Tests.Integration.Cadastros
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
+
+        [Fact(DisplayName = "GET /cpf/{cpf} deve retornar 200 OK e cliente específico")]
+        public async Task GetByCpf_Deve_Retornar200OK_E_ClienteEspecifico()
+        {
+            // Arrange
+            var criarDto = new { Nome = "João por CPF", Cpf = "12345678909" };
+            
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Create client first
+            var createResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", criarDto);
+            createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "12345678909");
+            clienteCriado.Should().NotBeNull();
+
+            // Act
+            var response = await _client.GetAsync($"/api/cadastros/clientes/cpf/12345678909");
+            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            cliente.Should().NotBeNull();
+            cliente.Id.Should().Be(clienteCriado!.Id);
+            cliente.Nome.Should().Be("João por CPF");
+            cliente.Cpf.Should().Be("12345678909");
+        }
+
+        [Fact(DisplayName = "GET /cpf/{cpf} deve retornar 404 NotFound quando cliente não existe")]
+        public async Task GetByCpf_Deve_Retornar404NotFound_QuandoClienteNaoExiste()
+        {
+            // Arrange
+            var cpfInexistente = "99999999999";
+
+            // Act
+            var response = await _client.GetAsync($"/api/cadastros/clientes/cpf/{cpfInexistente}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
     }
 }
