@@ -1,6 +1,6 @@
 ﻿using Application.Cadastros.DTO;
 
-namespace Application.Interfaces
+namespace Application.Cadastros.Interfaces
 {
     public interface IClienteService
     {

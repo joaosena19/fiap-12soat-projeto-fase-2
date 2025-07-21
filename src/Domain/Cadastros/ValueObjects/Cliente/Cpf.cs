@@ -7,7 +7,7 @@ namespace Domain.Cadastros.ValueObjects.Cliente
     {
         private readonly string _valor = string.Empty;
 
-        // Parameterless constructor for EF Core
+        // Construtor sem parâmetro para EF Core
         private Cpf() { }
 
         public Cpf(string cpf)

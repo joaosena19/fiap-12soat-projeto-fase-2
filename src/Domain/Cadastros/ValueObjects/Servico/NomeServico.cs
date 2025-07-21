@@ -1,22 +1,22 @@
 ﻿using System.Net;
 using Shared.Exceptions;
 
-namespace Domain.Cadastros.ValueObjects.Cliente
+namespace Domain.Cadastros.ValueObjects.Servico
 {
-    public class Nome
+    public class NomeServico
     {
         private readonly string _valor = string.Empty;
 
-        // Parameterless constructor for EF Core
-        private Nome() { }
+        // Construtor sem parâmetro para EF Core
+        private NomeServico() { }
 
-        public Nome(string nome)
+        public NomeServico(string nome)
         {
             if (string.IsNullOrWhiteSpace(nome))
                 throw new DomainException("Nome não pode ser vazio", HttpStatusCode.BadRequest);
 
-            if (nome.Length > 200)
-                throw new DomainException("Nome não pode ter mais de 200 caracteres", HttpStatusCode.BadRequest);
+            if (nome.Length > 500)
+                throw new DomainException("Nome não pode ter mais de 500 caracteres", HttpStatusCode.BadRequest);
 
             _valor = nome;
         }

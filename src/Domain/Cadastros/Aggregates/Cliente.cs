@@ -6,13 +6,13 @@ namespace Domain.Cadastros.Aggregates
     public class Cliente
     {
         public Guid Id { get; private set; }
-        public Nome Nome { get; private set; } = null!;
+        public NomeCliente Nome { get; private set; } = null!;
         public Cpf Cpf { get; private set; } = null!;
 
         // Parameterless constructor for EF Core
         private Cliente() { }
 
-        private Cliente(Guid id, Nome nome, Cpf cpf)
+        private Cliente(Guid id, NomeCliente nome, Cpf cpf)
         {
             Id = id;
             Nome = nome;
@@ -21,12 +21,12 @@ namespace Domain.Cadastros.Aggregates
 
         public static Cliente Criar(string nome, string cpf)
         {
-            return new Cliente(Uuid.NewSequential(), new Nome(nome), new Cpf(cpf));
+            return new Cliente(Uuid.NewSequential(), new NomeCliente(nome), new Cpf(cpf));
         }
 
         public void Atualizar(string nome)
         {
-            Nome = new Nome(nome);
+            Nome = new NomeCliente(nome);
         }
     }
 }

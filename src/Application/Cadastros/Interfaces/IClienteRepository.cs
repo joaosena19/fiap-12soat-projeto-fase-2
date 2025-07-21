@@ -1,6 +1,6 @@
 ﻿using Domain.Cadastros.Aggregates;
 
-namespace Application.Interfaces
+namespace Application.Cadastros.Interfaces
 {
     public interface IClienteRepository
     {

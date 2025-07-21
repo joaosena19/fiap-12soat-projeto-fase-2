@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿using Application.Cadastros.Interfaces;
 using Domain.Cadastros.Aggregates;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

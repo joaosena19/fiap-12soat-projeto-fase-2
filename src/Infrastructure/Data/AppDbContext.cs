@@ -9,6 +9,7 @@ namespace Infrastructure.Data
             : base(options) { }
 
         public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Servico> Servicos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,5 +1,5 @@
 using Application.Cadastros.DTO;
-using Application.Interfaces;
+using Application.Cadastros.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

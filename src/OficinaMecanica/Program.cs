@@ -1,6 +1,6 @@
 using API.Middleware;
+using Application.Cadastros.Interfaces;
 using Application.Cadastros.Services;
-using Application.Interfaces;
 using DotNetEnv;
 using Infrastructure.Cadastros;
 using Infrastructure.Data;
@@ -46,6 +46,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Register application services
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IServicoService, ServicoService>();
+builder.Services.AddScoped<IServicoRepository, ServicoRepository>();
 
 var app = builder.Build();
 

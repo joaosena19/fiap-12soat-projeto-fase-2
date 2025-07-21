@@ -1,5 +1,5 @@
 ﻿using Application.Cadastros.DTO;
-using Application.Interfaces;
+using Application.Cadastros.Interfaces;
 using Domain.Cadastros.Aggregates;
 using Shared.Exceptions;
 using System.Net;

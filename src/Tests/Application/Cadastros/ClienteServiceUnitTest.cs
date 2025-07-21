@@ -1,5 +1,5 @@
-﻿using Application.Cadastros.Services;
-using Application.Interfaces;
+﻿using Application.Cadastros.Interfaces;
+using Application.Cadastros.Services;
 using Domain.Cadastros.Aggregates;
 using FluentAssertions;
 using Moq;

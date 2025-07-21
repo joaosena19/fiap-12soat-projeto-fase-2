@@ -41,7 +41,7 @@ namespace Tests.Integration.Cadastros
         }
 
         [Fact(DisplayName = "PUT deve retornar 200 OK e atualizar Cliente existente no banco de dados.")]
-        [Trait("Metodo", "Post")]
+        [Trait("Metodo", "Put")]
         public async Task Put_Deve_Retornar200OK_E_AtualizarCliente()
         {
             // Arrange
