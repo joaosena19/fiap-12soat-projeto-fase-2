@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250721003350_AddVeiculosTable")]
+    partial class AddVeiculosTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,6 +55,10 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<int>("TipoVeiculo")
+                        .HasColumnType("integer")
+                        .HasColumnName("tipo_veiculo");
 
                     b.HasKey("Id");
 
@@ -245,25 +252,6 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("VeiculoId");
                         });
 
-                    b.OwnsOne("Domain.Cadastros.ValueObjects.Veiculo.TipoVeiculo", "TipoVeiculo", b1 =>
-                        {
-                            b1.Property<Guid>("VeiculoId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Valor")
-                                .IsRequired()
-                                .HasMaxLength(10)
-                                .HasColumnType("character varying(10)")
-                                .HasColumnName("tipo_veiculo");
-
-                            b1.HasKey("VeiculoId");
-
-                            b1.ToTable("veiculos");
-
-                            b1.WithOwner()
-                                .HasForeignKey("VeiculoId");
-                        });
-
                     b.Navigation("Ano")
                         .IsRequired();
 
@@ -277,9 +265,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Placa")
-                        .IsRequired();
-
-                    b.Navigation("TipoVeiculo")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

@@ -9,7 +9,7 @@ namespace Domain.Cadastros.Aggregates
         public NomeCliente Nome { get; private set; } = null!;
         public Cpf Cpf { get; private set; } = null!;
 
-        // Parameterless constructor for EF Core
+        // Contrutor sem parâmetro para EF Core
         private Cliente() { }
 
         private Cliente(Guid id, NomeCliente nome, Cpf cpf)
