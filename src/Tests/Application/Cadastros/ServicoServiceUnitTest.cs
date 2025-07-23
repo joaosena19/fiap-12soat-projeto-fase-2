@@ -1,11 +1,11 @@
 using Application.Cadastros.Interfaces;
 using Application.Cadastros.Services;
-using Application.Cadastros;
 using AutoMapper;
 using Domain.Cadastros.Aggregates;
 using FluentAssertions;
 using Moq;
 using Shared.Exceptions;
+using Application;
 
 namespace Tests.Application.Cadastros
 {

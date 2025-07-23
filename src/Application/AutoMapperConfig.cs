@@ -1,7 +1,8 @@
 using AutoMapper;
 using Application.Cadastros.Mappings;
+using Application.Estoque.Mappings;
 
-namespace Application.Cadastros
+namespace Application
 {
     public static class AutoMapperConfig
     {
@@ -12,6 +13,7 @@ namespace Application.Cadastros
                 cfg.AddProfile<ClienteProfile>();
                 cfg.AddProfile<VeiculoProfile>();
                 cfg.AddProfile<ServicoProfile>();
+                cfg.AddProfile<ItemEstoqueProfile>();
             });
         }
 

@@ -1,4 +1,4 @@
-using Application.Cadastros;
+using Application;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
