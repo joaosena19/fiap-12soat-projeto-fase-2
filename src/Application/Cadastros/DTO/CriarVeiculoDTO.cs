@@ -9,6 +9,12 @@ namespace Application.Cadastros.DTO
     public class CriarVeiculoDTO
     {
         /// <summary>
+        /// Id do cliente proprietário do veículo
+        /// </summary>
+        /// <example>123e4567-e89b-12d3-a456-426614174000</example>
+        public Guid ClienteId { get; set; } = Guid.Empty;
+
+        /// <summary>
         /// Placa do veículo (7 caracteres alfanuméricos)
         /// </summary>
         /// <example>ABC1234</example>

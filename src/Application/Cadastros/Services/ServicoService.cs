@@ -1,5 +1,6 @@
 ﻿using Application.Cadastros.DTO;
 using Application.Cadastros.Interfaces;
+using AutoMapper;
 using Domain.Cadastros.Aggregates;
 using Shared.Exceptions;
 using System.Net;
@@ -9,10 +10,12 @@ namespace Application.Cadastros.Services
     public class ServicoService : IServicoService
     {
         private readonly IServicoRepository _servicoRepository;
+        private readonly IMapper _mapper;
 
-        public ServicoService(IServicoRepository servicoRepository)
+        public ServicoService(IServicoRepository servicoRepository, IMapper mapper)
         {
             _servicoRepository = servicoRepository;
+            _mapper = mapper;
         }
 
         public async Task<RetornoServicoDTO> CriarServico(string nome, decimal preco)
@@ -24,7 +27,7 @@ namespace Application.Cadastros.Services
             var novoServico = Servico.Criar(nome, preco);
             var result = await _servicoRepository.SalvarAsync(novoServico);
 
-            return new RetornoServicoDTO() { Id = result.Id, Nome = result.Nome.Valor, Preco = result.Preco.Valor };
+            return _mapper.Map<RetornoServicoDTO>(result);
         }
 
         public async Task<RetornoServicoDTO> AtualizarServico(Guid id, string nome, decimal preco)
@@ -36,18 +39,13 @@ namespace Application.Cadastros.Services
             servico.Atualizar(nome, preco);
             var result = await _servicoRepository.AtualizarAsync(servico);
 
-            return new RetornoServicoDTO() { Id = result.Id, Nome = result.Nome.Valor, Preco = result.Preco.Valor };
+            return _mapper.Map<RetornoServicoDTO>(result);
         }
 
         public async Task<IEnumerable<RetornoServicoDTO>> Buscar()
         {
             var servicos = await _servicoRepository.ObterTodosAsync();
-            return servicos.Select(c => new RetornoServicoDTO 
-            { 
-                Id = c.Id, 
-                Nome = c.Nome.Valor, 
-                Preco = c.Preco.Valor 
-            });
+            return _mapper.Map<IEnumerable<RetornoServicoDTO>>(servicos);
         }
 
         public async Task<RetornoServicoDTO> BuscarPorId(Guid id)
@@ -56,7 +54,7 @@ namespace Application.Cadastros.Services
             if (servico == null)
                 throw new DomainException("Serviço não encontrado.", HttpStatusCode.NotFound);
 
-            return new RetornoServicoDTO() { Id = servico.Id, Nome = servico.Nome.Valor, Preco = servico.Preco.Valor };
+            return _mapper.Map<RetornoServicoDTO>(servico);
         }
     }
 }

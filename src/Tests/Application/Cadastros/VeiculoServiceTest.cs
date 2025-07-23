@@ -1,5 +1,7 @@
 using Application.Cadastros.Interfaces;
 using Application.Cadastros.Services;
+using Application.Cadastros;
+using AutoMapper;
 using Domain.Cadastros.Aggregates;
 using Domain.Cadastros.Enums;
 using FluentAssertions;
@@ -11,12 +13,16 @@ namespace Tests.Application.Cadastros
     public class VeiculoServiceTest
     {
         private readonly Mock<IVeiculoRepository> _veiculoRepositoryMock;
+        private readonly Mock<IClienteRepository> _clienteRepositoryMock;
+        private readonly IMapper _mapper;
         private readonly VeiculoService _veiculoService;
 
         public VeiculoServiceTest()
         {
             _veiculoRepositoryMock = new Mock<IVeiculoRepository>();
-            _veiculoService = new VeiculoService(_veiculoRepositoryMock.Object);
+            _clienteRepositoryMock = new Mock<IClienteRepository>();
+            _mapper = AutoMapperConfig.CreateMapper();
+            _veiculoService = new VeiculoService(_veiculoRepositoryMock.Object, _clienteRepositoryMock.Object, _mapper);
         }
 
         [Fact(DisplayName = "Deve criar veículo com dados válidos")]
@@ -24,6 +30,7 @@ namespace Tests.Application.Cadastros
         public async Task CriarVeiculo_ComDadosValidos_DeveRetornarVeiculoCriado()
         {
             // Arrange
+            var clienteId = Guid.NewGuid();
             var placa = "ABC1234";
             var modelo = "Civic";
             var marca = "Honda";
@@ -31,7 +38,11 @@ namespace Tests.Application.Cadastros
             var ano = 2020;
             var tipoVeiculo = TipoVeiculoEnum.Carro;
 
-            var veiculo = Veiculo.Criar(placa, modelo, marca, cor, ano, tipoVeiculo);
+            var cliente = Cliente.Criar("João Silva", "12345678909");
+            var veiculo = Veiculo.Criar(clienteId, placa, modelo, marca, cor, ano, tipoVeiculo);
+
+            _clienteRepositoryMock.Setup(r => r.ObterPorIdAsync(clienteId))
+                .ReturnsAsync(cliente);
 
             _veiculoRepositoryMock.Setup(r => r.ObterPorPlacaAsync(placa))
                 .ReturnsAsync((Veiculo?)null);
@@ -40,10 +51,11 @@ namespace Tests.Application.Cadastros
                 .ReturnsAsync(veiculo);
 
             // Act
-            var result = await _veiculoService.CriarVeiculo(placa, modelo, marca, cor, ano, tipoVeiculo);
+            var result = await _veiculoService.CriarVeiculo(clienteId, placa, modelo, marca, cor, ano, tipoVeiculo);
 
             // Assert
             result.Should().NotBeNull();
+            result.ClienteId.Should().Be(clienteId);
             result.Placa.Should().Be(placa);
             result.Modelo.Should().Be(modelo);
             result.Marca.Should().Be(marca);
@@ -51,6 +63,7 @@ namespace Tests.Application.Cadastros
             result.Ano.Should().Be(ano);
             result.TipoVeiculo.Should().Be(tipoVeiculo.ToString().ToLower());
 
+            _clienteRepositoryMock.Verify(r => r.ObterPorIdAsync(clienteId), Times.Once);
             _veiculoRepositoryMock.Verify(r => r.ObterPorPlacaAsync(placa), Times.Once);
             _veiculoRepositoryMock.Verify(r => r.SalvarAsync(It.IsAny<Veiculo>()), Times.Once);
         }
@@ -60,14 +73,15 @@ namespace Tests.Application.Cadastros
         public async Task CriarVeiculo_ComPlacaExistente_DeveLancarExcecao()
         {
             // Arrange
+            var clienteId = Guid.NewGuid();
             var placa = "ABC1234";
-            var veiculoExistente = Veiculo.Criar(placa, "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+            var veiculoExistente = Veiculo.Criar(clienteId, placa, "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
 
             _veiculoRepositoryMock.Setup(r => r.ObterPorPlacaAsync(placa))
                 .ReturnsAsync(veiculoExistente);
 
             // Act & Assert
-            await _veiculoService.Invoking(s => s.CriarVeiculo(placa, "Corolla", "Toyota", "Branco", 2021, TipoVeiculoEnum.Carro))
+            await _veiculoService.Invoking(s => s.CriarVeiculo(clienteId, placa, "Corolla", "Toyota", "Branco", 2021, TipoVeiculoEnum.Carro))
                 .Should().ThrowAsync<DomainException>()
                 .WithMessage("Já existe um veículo cadastrado com esta placa.");
 
@@ -81,7 +95,8 @@ namespace Tests.Application.Cadastros
         {
             // Arrange
             var id = Guid.NewGuid();
-            var veiculo = Veiculo.Criar("ABC1234", "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+            var clienteId = Guid.NewGuid();
+            var veiculo = Veiculo.Criar(clienteId, "ABC1234", "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
 
             var novoModelo = "Corolla";
             var novaMarca = "Toyota";
@@ -101,6 +116,7 @@ namespace Tests.Application.Cadastros
             // Assert
             result.Should().NotBeNull();
             result.Id.Should().Be(veiculo.Id);
+            result.ClienteId.Should().Be(clienteId);
 
             _veiculoRepositoryMock.Verify(r => r.ObterPorIdAsync(id), Times.Once);
             _veiculoRepositoryMock.Verify(r => r.AtualizarAsync(It.IsAny<Veiculo>()), Times.Once);
@@ -131,7 +147,8 @@ namespace Tests.Application.Cadastros
         {
             // Arrange
             var id = Guid.NewGuid();
-            var veiculo = Veiculo.Criar("ABC1234", "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+            var clienteId = Guid.NewGuid();
+            var veiculo = Veiculo.Criar(clienteId, "ABC1234", "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
 
             _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(id))
                 .ReturnsAsync(veiculo);
@@ -142,6 +159,7 @@ namespace Tests.Application.Cadastros
             // Assert
             result.Should().NotBeNull();
             result.Id.Should().Be(veiculo.Id);
+            result.ClienteId.Should().Be(clienteId);
             result.Placa.Should().Be(veiculo.Placa.Valor);
 
             _veiculoRepositoryMock.Verify(r => r.ObterPorIdAsync(id), Times.Once);
@@ -171,7 +189,8 @@ namespace Tests.Application.Cadastros
         {
             // Arrange
             var placa = "ABC1234";
-            var veiculo = Veiculo.Criar(placa, "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+            var clienteId = Guid.NewGuid();
+            var veiculo = Veiculo.Criar(clienteId, placa, "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
 
             _veiculoRepositoryMock.Setup(r => r.ObterPorPlacaAsync(placa))
                 .ReturnsAsync(veiculo);
@@ -181,6 +200,7 @@ namespace Tests.Application.Cadastros
 
             // Assert
             result.Should().NotBeNull();
+            result.ClienteId.Should().Be(clienteId);
             result.Placa.Should().Be(placa);
 
             _veiculoRepositoryMock.Verify(r => r.ObterPorPlacaAsync(placa), Times.Once);
@@ -209,10 +229,12 @@ namespace Tests.Application.Cadastros
         public async Task Buscar_DeveRetornarTodosVeiculos()
         {
             // Arrange
+            var clienteId1 = Guid.NewGuid();
+            var clienteId2 = Guid.NewGuid();
             var veiculos = new List<Veiculo>
             {
-                Veiculo.Criar("ABC1234", "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro),
-                Veiculo.Criar("XYZ9876", "CBR600", "Honda", "Azul", 2021, TipoVeiculoEnum.Moto)
+                Veiculo.Criar(clienteId1, "ABC1234", "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro),
+                Veiculo.Criar(clienteId2, "XYZ9876", "CBR600", "Honda", "Azul", 2021, TipoVeiculoEnum.Moto)
             };
 
             _veiculoRepositoryMock.Setup(r => r.ObterTodosAsync())
@@ -226,6 +248,64 @@ namespace Tests.Application.Cadastros
             result.Should().HaveCount(2);
 
             _veiculoRepositoryMock.Verify(r => r.ObterTodosAsync(), Times.Once);
+        }
+
+        [Fact(DisplayName = "Não deve criar veículo se cliente não existir")]
+        [Trait("Metodo", "CriarVeiculo")]
+        public async Task CriarVeiculo_ComClienteInexistente_DeveLancarExcecao()
+        {
+            // Arrange
+            var clienteId = Guid.NewGuid();
+            var placa = "ABC1234";
+            var modelo = "Civic";
+            var marca = "Honda";
+            var cor = "Preto";
+            var ano = 2020;
+            var tipoVeiculo = TipoVeiculoEnum.Carro;
+
+            _clienteRepositoryMock.Setup(r => r.ObterPorIdAsync(clienteId))
+                .ReturnsAsync((Cliente?)null);
+
+            // Act & Assert
+            await _veiculoService.Invoking(s => s.CriarVeiculo(clienteId, placa, modelo, marca, cor, ano, tipoVeiculo))
+                .Should().ThrowAsync<DomainException>()
+                .WithMessage("*Cliente não encontrado*");
+
+            _veiculoRepositoryMock.Verify(r => r.ObterPorPlacaAsync(It.IsAny<string>()), Times.Once);
+            _clienteRepositoryMock.Verify(r => r.ObterPorIdAsync(clienteId), Times.Once);
+            _veiculoRepositoryMock.Verify(r => r.SalvarAsync(It.IsAny<Veiculo>()), Times.Never);
+        }
+
+        [Fact(DisplayName = "Não deve criar veículo se placa já existir (verificação case insensitive)")]
+        [Trait("Metodo", "CriarVeiculo")]
+        public async Task CriarVeiculo_ComPlacaExistenteCaseInsensitive_DeveLancarExcecao()
+        {
+            // Arrange
+            var clienteId = Guid.NewGuid();
+            var placaExistente = "ABC1234"; // Placa em maiúscula no banco
+            var placaNova = "abc1234"; // Tentativa de criar com minúscula
+            var veiculoExistente = Veiculo.Criar(clienteId, placaExistente, "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+
+            var cliente = Cliente.Criar("João Silva", "12345678909");
+
+            _clienteRepositoryMock.Setup(r => r.ObterPorIdAsync(clienteId))
+                .ReturnsAsync(cliente);
+
+            // Simula que já existe um veículo com a placa em maiúsculas
+            _veiculoRepositoryMock.Setup(r => r.ObterPorPlacaAsync(placaExistente))
+                .ReturnsAsync(veiculoExistente);
+
+            // Simula que não existe veículo com a placa nova (minúscula)
+            _veiculoRepositoryMock.Setup(r => r.ObterPorPlacaAsync(placaNova))
+                .ReturnsAsync((Veiculo?)null);
+
+            // Act & Assert
+            await _veiculoService.Invoking(s => s.CriarVeiculo(clienteId, placaNova, "Corolla", "Toyota", "Branco", 2021, TipoVeiculoEnum.Carro))
+                .Should().ThrowAsync<DomainException>()
+                .WithMessage("Já existe um veículo cadastrado com esta placa.");
+
+            _veiculoRepositoryMock.Verify(r => r.ObterPorPlacaAsync(It.IsAny<string>()), Times.Once);
+            _veiculoRepositoryMock.Verify(r => r.SalvarAsync(It.IsAny<Veiculo>()), Times.Never);
         }
     }
 }

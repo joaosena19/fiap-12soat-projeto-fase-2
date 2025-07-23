@@ -1,6 +1,8 @@
 using API.Middleware;
+using Application.Cadastros;
 using Application.Cadastros.Interfaces;
 using Application.Cadastros.Services;
+using AutoMapper;
 using DotNetEnv;
 using Infrastructure.Cadastros;
 using Infrastructure.Data;
@@ -47,6 +49,11 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 // Configure Entity Framework Core with PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+// Configure AutoMapper
+var mapperConfig = AutoMapperConfig.GetConfiguration();
+builder.Services.AddSingleton(mapperConfig);
+builder.Services.AddSingleton<IMapper>(provider => provider.GetRequiredService<MapperConfiguration>().CreateMapper());
 
 // Register application services
 builder.Services.AddScoped<IClienteService, ClienteService>();

@@ -1,5 +1,7 @@
 ﻿using Application.Cadastros.Interfaces;
 using Application.Cadastros.Services;
+using Application.Cadastros;
+using AutoMapper;
 using Domain.Cadastros.Aggregates;
 using FluentAssertions;
 using Moq;
@@ -10,12 +12,14 @@ namespace Tests.Application.Cadastros
     public class ClienteServiceUnitTest
     {
         private readonly Mock<IClienteRepository> _repoMock;
+        private readonly IMapper _mapper;
         private readonly ClienteService _service;
 
         public ClienteServiceUnitTest()
         {
             _repoMock = new Mock<IClienteRepository>();
-            _service = new ClienteService(_repoMock.Object);
+            _mapper = AutoMapperConfig.CreateMapper();
+            _service = new ClienteService(_repoMock.Object, _mapper);
         }
 
         [Fact(DisplayName = "Não deve criar cliente se CPF já existir")]

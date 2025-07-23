@@ -1,5 +1,6 @@
 ﻿using Application.Cadastros.DTO;
 using Application.Cadastros.Interfaces;
+using AutoMapper;
 using Domain.Cadastros.Aggregates;
 using Shared.Exceptions;
 using System.Net;
@@ -9,10 +10,12 @@ namespace Application.Cadastros.Services
     public class ClienteService : IClienteService
     {
         private readonly IClienteRepository _clienteRepository;
+        private readonly IMapper _mapper;
 
-        public ClienteService(IClienteRepository clienteRepository)
+        public ClienteService(IClienteRepository clienteRepository, IMapper mapper)
         {
             _clienteRepository = clienteRepository;
+            _mapper = mapper;
         }
 
         public async Task<RetornoClienteDTO> CriarCliente(string nome, string cpf)
@@ -24,7 +27,7 @@ namespace Application.Cadastros.Services
             var novoCliente = Cliente.Criar(nome, cpf);
             var result = await _clienteRepository.SalvarAsync(novoCliente);
 
-            return new RetornoClienteDTO() { Id = result.Id, Nome = result.Nome.Valor, Cpf = result.Cpf.Valor };
+            return _mapper.Map<RetornoClienteDTO>(result);
         }
 
         public async Task<RetornoClienteDTO> AtualizarCliente(Guid id, string nome)
@@ -36,18 +39,13 @@ namespace Application.Cadastros.Services
             cliente.Atualizar(nome);
             var result = await _clienteRepository.AtualizarAsync(cliente);
 
-            return new RetornoClienteDTO() { Id = result.Id, Nome = result.Nome.Valor, Cpf = result.Cpf.Valor };
+            return _mapper.Map<RetornoClienteDTO>(result);
         }
 
         public async Task<IEnumerable<RetornoClienteDTO>> Buscar()
         {
             var clientes = await _clienteRepository.ObterTodosAsync();
-            return clientes.Select(c => new RetornoClienteDTO 
-            { 
-                Id = c.Id, 
-                Nome = c.Nome.Valor, 
-                Cpf = c.Cpf.Valor 
-            });
+            return _mapper.Map<IEnumerable<RetornoClienteDTO>>(clientes);
         }
 
         public async Task<RetornoClienteDTO> BuscarPorId(Guid id)
@@ -56,7 +54,7 @@ namespace Application.Cadastros.Services
             if (cliente == null)
                 throw new DomainException("Cliente não encontrado.", HttpStatusCode.NotFound);
 
-            return new RetornoClienteDTO() { Id = cliente.Id, Nome = cliente.Nome.Valor, Cpf = cliente.Cpf.Valor };
+            return _mapper.Map<RetornoClienteDTO>(cliente);
         }
 
         public async Task<RetornoClienteDTO> BuscarPorCpf(string cpf)
@@ -65,7 +63,7 @@ namespace Application.Cadastros.Services
             if (cliente == null)
                 throw new DomainException("Cliente não encontrado.", HttpStatusCode.NotFound);
 
-            return new RetornoClienteDTO() { Id = cliente.Id, Nome = cliente.Nome.Valor, Cpf = cliente.Cpf.Valor };
+            return _mapper.Map<RetornoClienteDTO>(cliente);
         }
     }
 }

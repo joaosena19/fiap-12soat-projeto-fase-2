@@ -14,6 +14,15 @@ namespace Infrastructure.Data.Configurations
             builder.Property(v => v.Id)
                    .HasColumnName("id");
 
+            builder.Property(v => v.ClienteId)
+                   .HasColumnName("cliente_id")
+                   .IsRequired();
+
+            builder.HasOne<Cliente>()
+                   .WithMany()
+                   .HasForeignKey(v => v.ClienteId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
             builder.OwnsOne(v => v.Placa, placa =>
             {
                 placa.Property(p => p.Valor)

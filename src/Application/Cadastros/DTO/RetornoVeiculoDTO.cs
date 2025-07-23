@@ -10,6 +10,12 @@ namespace Application.Cadastros.DTO
         public Guid Id { get; set; } = Guid.Empty;
 
         /// <summary>
+        /// Id do cliente proprietário do veículo
+        /// </summary>
+        /// <example>123e4567-e89b-12d3-a456-426614174000</example>
+        public Guid ClienteId { get; set; } = Guid.Empty;
+
+        /// <summary>
         /// Placa do veículo
         /// </summary>
         /// <example>ABC1234</example>

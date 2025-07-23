@@ -7,6 +7,7 @@ namespace Domain.Cadastros.Aggregates
     public class Veiculo
     {
         public Guid Id { get; private set; }
+        public Guid ClienteId { get; private set; }
         public Placa Placa { get; private set; } = null!;
         public Modelo Modelo { get; private set; } = null!;
         public Marca Marca { get; private set; } = null!;
@@ -17,9 +18,10 @@ namespace Domain.Cadastros.Aggregates
         // Contrutor sem parâmetro para EF Core
         private Veiculo() { }
 
-        private Veiculo(Guid id, Placa placa, Modelo modelo, Marca marca, Cor cor, Ano ano, TipoVeiculo tipoVeiculo)
+        private Veiculo(Guid id, Guid clienteId, Placa placa, Modelo modelo, Marca marca, Cor cor, Ano ano, TipoVeiculo tipoVeiculo)
         {
             Id = id;
+            ClienteId = clienteId;
             Placa = placa;
             Modelo = modelo;
             Marca = marca;
@@ -28,10 +30,11 @@ namespace Domain.Cadastros.Aggregates
             TipoVeiculo = tipoVeiculo;
         }
 
-        public static Veiculo Criar(string placa, string modelo, string marca, string cor, int ano, TipoVeiculoEnum tipoVeiculo)
+        public static Veiculo Criar(Guid clienteId, string placa, string modelo, string marca, string cor, int ano, TipoVeiculoEnum tipoVeiculo)
         {
             return new Veiculo(
                 Uuid.NewSequential(),
+                clienteId,
                 new Placa(placa),
                 new Modelo(modelo),
                 new Marca(marca),

@@ -1,5 +1,7 @@
 using Application.Cadastros.Interfaces;
 using Application.Cadastros.Services;
+using Application.Cadastros;
+using AutoMapper;
 using Domain.Cadastros.Aggregates;
 using FluentAssertions;
 using Moq;
@@ -10,12 +12,14 @@ namespace Tests.Application.Cadastros
     public class ServicoServiceUnitTest
     {
         private readonly Mock<IServicoRepository> _repoMock;
+        private readonly IMapper _mapper;
         private readonly ServicoService _service;
 
         public ServicoServiceUnitTest()
         {
             _repoMock = new Mock<IServicoRepository>();
-            _service = new ServicoService(_repoMock.Object);
+            _mapper = AutoMapperConfig.CreateMapper();
+            _service = new ServicoService(_repoMock.Object, _mapper);
         }
 
         [Fact(DisplayName = "Não deve criar serviço se Nome já existir")]

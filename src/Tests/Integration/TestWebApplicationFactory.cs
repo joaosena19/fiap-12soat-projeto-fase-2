@@ -1,3 +1,5 @@
+using Application.Cadastros;
+using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -26,6 +28,11 @@ namespace Tests.Integration
                 {
                     options.UseInMemoryDatabase("TestDb");
                 });
+
+                // Configure AutoMapper for integration tests
+                var mapperConfig = AutoMapperConfig.GetConfiguration();
+                services.AddSingleton(mapperConfig);
+                services.AddSingleton<IMapper>(provider => provider.GetRequiredService<MapperConfiguration>().CreateMapper());
             });
 
             base.ConfigureWebHost(builder);

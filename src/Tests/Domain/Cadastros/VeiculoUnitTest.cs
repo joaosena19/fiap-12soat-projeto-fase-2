@@ -13,6 +13,7 @@ namespace Tests.Domain.Cadastros
         public void Criar_DeveCriarVeiculoComDadosValidos()
         {
             // Arrange
+            var clienteId = Guid.NewGuid();
             var placa = "ABC1234";
             var modelo = "Civic";
             var marca = "Honda";
@@ -21,11 +22,12 @@ namespace Tests.Domain.Cadastros
             var tipoVeiculo = TipoVeiculoEnum.Carro;
 
             // Act
-            var veiculo = Veiculo.Criar(placa, modelo, marca, cor, ano, tipoVeiculo);
+            var veiculo = Veiculo.Criar(clienteId, placa, modelo, marca, cor, ano, tipoVeiculo);
 
             // Assert
             veiculo.Should().NotBeNull();
             veiculo.Id.Should().NotBeEmpty();
+            veiculo.ClienteId.Should().Be(clienteId);
             veiculo.Placa.Valor.Should().Be(placa);
             veiculo.Modelo.Valor.Should().Be(modelo);
             veiculo.Marca.Valor.Should().Be(marca);
@@ -39,7 +41,8 @@ namespace Tests.Domain.Cadastros
         public void Atualizar_DeveAtualizarVeiculoComDadosValidos()
         {
             // Arrange
-            var veiculo = Veiculo.Criar("ABC1234", "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+            var clienteId = Guid.NewGuid();
+            var veiculo = Veiculo.Criar(clienteId, "ABC1234", "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
             var novoModelo = "Corolla";
             var novaMarca = "Toyota";
             var novaCor = "Branco";
@@ -50,6 +53,7 @@ namespace Tests.Domain.Cadastros
             veiculo.Atualizar(novoModelo, novaMarca, novaCor, novoAno, novoTipo);
 
             // Assert
+            veiculo.ClienteId.Should().Be(clienteId);
             veiculo.Modelo.Valor.Should().Be(novoModelo);
             veiculo.Marca.Valor.Should().Be(novaMarca);
             veiculo.Cor.Valor.Should().Be(novaCor);
@@ -67,7 +71,7 @@ namespace Tests.Domain.Cadastros
         public void Criar_ComPlacaInvalida_DeveLancarExcecao(string placaInvalida)
         {
             // Act & Assert
-            Action act = () => Veiculo.Criar(placaInvalida, "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), placaInvalida, "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Placa*");
         }
@@ -79,7 +83,7 @@ namespace Tests.Domain.Cadastros
         public void Criar_ComModeloInvalido_DeveLancarExcecao(string modeloInvalido)
         {
             // Act & Assert
-            Action act = () => Veiculo.Criar("ABC1234", modeloInvalido, "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", modeloInvalido, "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Modelo não pode*");
         }
@@ -89,7 +93,7 @@ namespace Tests.Domain.Cadastros
         public void Criar_ComModeloNulo_DeveLancarExcecao()
         {
             // Act & Assert
-            Action act = () => Veiculo.Criar("ABC1234", null!, "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", null!, "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Modelo não pode*");
         }
@@ -101,7 +105,7 @@ namespace Tests.Domain.Cadastros
         public void Criar_ComMarcaInvalida_DeveLancarExcecao(string marcaInvalida)
         {
             // Act & Assert
-            Action act = () => Veiculo.Criar("ABC1234", "Civic", marcaInvalida, "Preto", 2020, TipoVeiculoEnum.Carro);
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", marcaInvalida, "Preto", 2020, TipoVeiculoEnum.Carro);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Marca não pode*");
         }
@@ -111,7 +115,7 @@ namespace Tests.Domain.Cadastros
         public void Criar_ComMarcaNula_DeveLancarExcecao()
         {
             // Act & Assert
-            Action act = () => Veiculo.Criar("ABC1234", "Civic", null!, "Preto", 2020, TipoVeiculoEnum.Carro);
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", null!, "Preto", 2020, TipoVeiculoEnum.Carro);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Marca não pode*");
         }
@@ -123,7 +127,7 @@ namespace Tests.Domain.Cadastros
         public void Criar_ComCorInvalida_DeveLancarExcecao(string corInvalida)
         {
             // Act & Assert
-            Action act = () => Veiculo.Criar("ABC1234", "Civic", "Honda", corInvalida, 2020, TipoVeiculoEnum.Carro);
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", "Honda", corInvalida, 2020, TipoVeiculoEnum.Carro);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Cor não pode*");
         }
@@ -133,7 +137,7 @@ namespace Tests.Domain.Cadastros
         public void Criar_ComCorNula_DeveLancarExcecao()
         {
             // Act & Assert
-            Action act = () => Veiculo.Criar("ABC1234", "Civic", "Honda", null!, 2020, TipoVeiculoEnum.Carro);
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", "Honda", null!, 2020, TipoVeiculoEnum.Carro);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Cor não pode*");
         }
@@ -144,7 +148,7 @@ namespace Tests.Domain.Cadastros
         public void Criar_ComAnoInvalido_DeveLancarExcecao(int anoInvalido)
         {
             // Act & Assert
-            Action act = () => Veiculo.Criar("ABC1234", "Civic", "Honda", "Preto", anoInvalido, TipoVeiculoEnum.Carro);
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", "Honda", "Preto", anoInvalido, TipoVeiculoEnum.Carro);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Ano deve estar entre*");
         }
@@ -157,7 +161,7 @@ namespace Tests.Domain.Cadastros
             var anoInvalido = DateTime.Now.Year + 2;
 
             // Act & Assert
-            Action act = () => Veiculo.Criar("ABC1234", "Civic", "Honda", "Preto", anoInvalido, TipoVeiculoEnum.Carro);
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", "Honda", "Preto", anoInvalido, TipoVeiculoEnum.Carro);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Ano deve estar entre*");
         }
@@ -171,7 +175,7 @@ namespace Tests.Domain.Cadastros
         public void Criar_ComTipoVeiculoInvalido_DeveLancarExcecao(TipoVeiculoEnum tipoInvalido)
         {
             // Act & Assert
-            Action act = () => Veiculo.Criar("ABC1234", "Civic", "Honda", "Preto", 2020, tipoInvalido);
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", "Honda", "Preto", 2020, tipoInvalido);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Tipo de veículo*não é válido*");
         }

@@ -25,8 +25,20 @@ namespace Tests.Integration.Cadastros
         public async Task Post_Deve_Retornar201Created_E_PersistirVeiculo()
         {
             // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Create a client first
+            var clienteDto = new { Nome = "João Silva", Cpf = "97166517085" };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "97166517085");
+            clienteCriado.Should().NotBeNull();
+
             var dto = new 
             { 
+                ClienteId = clienteCriado!.Id,
                 Placa = "ABC1234", 
                 Modelo = "Civic", 
                 Marca = "Honda", 
@@ -34,8 +46,6 @@ namespace Tests.Integration.Cadastros
                 Ano = 2020, 
                 TipoVeiculo = (int)TipoVeiculoEnum.Carro 
             };
-            using var scope = _factory.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/cadastros/veiculos", dto);
@@ -45,7 +55,8 @@ namespace Tests.Integration.Cadastros
             response.StatusCode.Should().Be(HttpStatusCode.Created);
 
             veiculoEntity.Should().NotBeNull();
-            veiculoEntity!.Modelo.Valor.Should().Be("Civic");
+            veiculoEntity!.ClienteId.Should().Be(clienteCriado.Id);
+            veiculoEntity.Modelo.Valor.Should().Be("Civic");
             veiculoEntity.Marca.Valor.Should().Be("Honda");
             veiculoEntity.Cor.Valor.Should().Be("Preto");
             veiculoEntity.Ano.Valor.Should().Be(2020);
@@ -57,8 +68,20 @@ namespace Tests.Integration.Cadastros
         public async Task Put_Deve_Retornar200OK_E_AtualizarVeiculo()
         {
             // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Create a client first
+            var clienteDto = new { Nome = "Maria Silva", Cpf = "98765432100" };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "98765432100");
+            clienteCriado.Should().NotBeNull();
+
             var criarDto = new 
             { 
+                ClienteId = clienteCriado!.Id,
                 Placa = "XYZ5678", 
                 Modelo = "Corolla", 
                 Marca = "Toyota", 
@@ -74,9 +97,6 @@ namespace Tests.Integration.Cadastros
                 Ano = 2022, 
                 TipoVeiculo = (int)TipoVeiculoEnum.Carro 
             };
-
-            using var scope = _factory.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Create vehicle first
             var createResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", criarDto);
@@ -95,7 +115,8 @@ namespace Tests.Integration.Cadastros
             // Assert
             updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             veiculoAtualizado.Should().NotBeNull();
-            veiculoAtualizado!.Modelo.Valor.Should().Be("Corolla Cross");
+            veiculoAtualizado!.ClienteId.Should().Be(clienteCriado.Id);
+            veiculoAtualizado.Modelo.Valor.Should().Be("Corolla Cross");
             veiculoAtualizado.Cor.Valor.Should().Be("Prata");
             veiculoAtualizado.Ano.Valor.Should().Be(2022);
             veiculoAtualizado.Placa.Valor.Should().Be("XYZ5678"); // Placa não deve mudar
@@ -106,8 +127,28 @@ namespace Tests.Integration.Cadastros
         public async Task Get_Deve_Retornar200OK_E_ListaDeVeiculos()
         {
             // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Create clients first
+            var cliente1Dto = new { Nome = "Cliente 1", Cpf = "04663818080" };
+            var cliente2Dto = new { Nome = "Cliente 2", Cpf = "98552408040" };
+            
+            var cliente1Response = await _client.PostAsJsonAsync("/api/cadastros/clientes", cliente1Dto);
+            var cliente2Response = await _client.PostAsJsonAsync("/api/cadastros/clientes", cliente2Dto);
+            
+            cliente1Response.StatusCode.Should().Be(HttpStatusCode.Created);
+            cliente2Response.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var cliente1 = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "04663818080");
+            var cliente2 = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "98552408040");
+            
+            cliente1.Should().NotBeNull();
+            cliente2.Should().NotBeNull();
+
             var veiculo1 = new 
             { 
+                ClienteId = cliente1!.Id,
                 Placa = "GET0001", 
                 Modelo = "Civic", 
                 Marca = "Honda", 
@@ -117,6 +158,7 @@ namespace Tests.Integration.Cadastros
             };
             var veiculo2 = new 
             { 
+                ClienteId = cliente2!.Id,
                 Placa = "GET0002", 
                 Modelo = "CBR600", 
                 Marca = "Honda", 
@@ -166,8 +208,20 @@ namespace Tests.Integration.Cadastros
         public async Task GetById_Deve_Retornar200OK_E_VeiculoEspecifico()
         {
             // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Create a client first
+            var clienteDto = new { Nome = "Cliente GetById", Cpf = "23096067074" };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "23096067074");
+            clienteCriado.Should().NotBeNull();
+
             var criarDto = new 
             { 
+                ClienteId = clienteCriado!.Id,
                 Placa = "GID0001", 
                 Modelo = "Fit", 
                 Marca = "Honda", 
@@ -175,9 +229,6 @@ namespace Tests.Integration.Cadastros
                 Ano = 2019, 
                 TipoVeiculo = (int)TipoVeiculoEnum.Carro 
             };
-            
-            using var scope = _factory.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Create vehicle first
             var createResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", criarDto);
@@ -194,6 +245,7 @@ namespace Tests.Integration.Cadastros
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             veiculo.Should().NotBeNull();
             veiculo!.Id.Should().Be(veiculoCriado.Id);
+            veiculo.ClienteId.Should().Be(clienteCriado.Id);
             veiculo.Modelo.Should().Be("Fit");
             veiculo.Placa.Should().Be("GID0001");
         }
@@ -217,18 +269,27 @@ namespace Tests.Integration.Cadastros
         public async Task GetByPlaca_Deve_Retornar200OK_E_VeiculoEspecifico()
         {
             // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Create a client first
+            var clienteDto = new { Nome = "Cliente GetByPlaca", Cpf = "01213944090" };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "01213944090");
+            clienteCriado.Should().NotBeNull();
+
             var criarDto = new
             {
+                ClienteId = clienteCriado!.Id,
                 Placa = "GPL0001",
                 Modelo = "Onix",
                 Marca = "Chevrolet",
                 Cor = "Prata",
                 Ano = 2022,
-                TipoVeiculo = TipoVeiculoEnum.Carro.ToString()
+                TipoVeiculo = (int)TipoVeiculoEnum.Carro
             };
-            
-            using var scope = _factory.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Create vehicle first
             var createResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", criarDto);
@@ -245,6 +306,7 @@ namespace Tests.Integration.Cadastros
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             veiculo.Should().NotBeNull();
             veiculo!.Id.Should().Be(veiculoCriado!.Id);
+            veiculo.ClienteId.Should().Be(clienteCriado.Id);
             veiculo.Modelo.Should().Be("Onix");
             veiculo.Placa.Should().Be("GPL0001");
         }

@@ -86,7 +86,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CriarVeiculoDTO dto)
         {
-            var result = await _veiculoService.CriarVeiculo(dto.Placa, dto.Modelo, dto.Marca, dto.Cor, dto.Ano, dto.TipoVeiculo);
+            var result = await _veiculoService.CriarVeiculo(dto.ClienteId, dto.Placa, dto.Modelo, dto.Marca, dto.Cor, dto.Ano, dto.TipoVeiculo);
             return Created($"/api/cadastros/veiculos/{result.Id}", result);
         }
 
