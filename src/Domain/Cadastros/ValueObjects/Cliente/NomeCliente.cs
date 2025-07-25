@@ -3,7 +3,7 @@ using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Cliente
 {
-    public class NomeCliente
+    public record NomeCliente
     {
         private readonly string _valor = string.Empty;
 
@@ -22,7 +22,5 @@ namespace Domain.Cadastros.ValueObjects.Cliente
         }
 
         public string Valor => _valor;
-
-
     }
 }

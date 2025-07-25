@@ -3,7 +3,7 @@ using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Veiculo
 {
-    public class Cor
+    public record Cor
     {
         private readonly string _valor = string.Empty;
 
@@ -22,23 +22,5 @@ namespace Domain.Cadastros.ValueObjects.Veiculo
         }
 
         public string Valor => _valor;
-
-        public override string ToString()
-        {
-            return _valor;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is not Cor other)
-                return false;
-
-            return _valor == other._valor;
-        }
-
-        public override int GetHashCode()
-        {
-            return _valor.GetHashCode();
-        }
     }
 }

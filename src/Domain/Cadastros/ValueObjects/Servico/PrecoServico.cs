@@ -3,7 +3,7 @@ using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Servico
 {
-    public class PrecoServico
+    public record PrecoServico
     {
         private readonly decimal _valor = 0M;
 

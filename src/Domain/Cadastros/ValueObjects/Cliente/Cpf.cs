@@ -3,7 +3,7 @@ using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Cliente
 {
-    public class Cpf
+    public record Cpf
     {
         private readonly string _valor = string.Empty;
 
@@ -63,24 +63,6 @@ namespace Domain.Cadastros.ValueObjects.Cliente
         private static string CleanCpf(string cpf)
         {
             return string.Join("", cpf.Where(char.IsDigit));
-        }
-
-        public override string ToString()
-        {
-            return _valor;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is not Cpf other)
-                return false;
-
-            return _valor == other._valor;
-        }
-
-        public override int GetHashCode()
-        {
-            return _valor.GetHashCode();
         }
     }
 }
