@@ -1,19 +1,19 @@
 using FluentAssertions;
-using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
 using Application.Cadastros.DTO;
+using Infrastructure.Database;
 
 namespace Tests.Integration.Cadastros
 {
-    public class CadastroServicoControllerTests : IClassFixture<TestWebApplicationFactory<Program>>
+    public class ServicoControllerTests : IClassFixture<TestWebApplicationFactory<Program>>
     {
         private readonly TestWebApplicationFactory<Program> _factory;
         private readonly HttpClient _client;
 
-        public CadastroServicoControllerTests(TestWebApplicationFactory<Program> factory)
+        public ServicoControllerTests(TestWebApplicationFactory<Program> factory)
         {
             _factory = factory;
             _client = _factory.CreateClient();

@@ -2,32 +2,32 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Data.Configurations
+namespace Infrastructure.Database.Configurations
 {
-    public class ServicoConfiguration : IEntityTypeConfiguration<Servico>
+    public class ClienteConfiguration : IEntityTypeConfiguration<Cliente>
     {
-        public void Configure(EntityTypeBuilder<Servico> builder)
+        public void Configure(EntityTypeBuilder<Cliente> builder)
         {
-            builder.ToTable("servicos");
+            builder.ToTable("clientes");
             builder.HasKey(c => c.Id);
 
             builder.Property(c => c.Id)
                    .HasColumnName("id");
 
-            builder.OwnsOne(c => c.Nome, cpf =>
+            builder.OwnsOne(c => c.Cpf, cpf =>
             {
                 cpf.Property(p => p.Valor)
-                   .HasColumnName("nome")
+                   .HasColumnName("cpf")
                    .IsRequired()
-                   .HasMaxLength(500);
+                   .HasMaxLength(11);
             });
 
-            builder.OwnsOne(c => c.Preco, nome =>
+            builder.OwnsOne(c => c.Nome, nome =>
             {
                 nome.Property(p => p.Valor)
-                    .HasColumnName("preco")
+                    .HasColumnName("nome")
                     .IsRequired()
-                    .HasColumnType("decimal(18,2)");
+                    .HasMaxLength(200);
             });
         }
     }

@@ -2,7 +2,7 @@ using Application.Cadastros.DTO;
 using Application.Cadastros.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace API.Controllers.Cadastro
 {
     /// <summary>
     /// Controller para gerenciamento de cadastro de veículos
@@ -10,11 +10,11 @@ namespace API.Controllers
     [Route("api/cadastros/veiculos")]
     [ApiController]
     [Produces("application/json")]
-    public class CadastroVeiculoController : ControllerBase
+    public class VeiculoController : ControllerBase
     {
         private readonly IVeiculoService _veiculoService;
 
-        public CadastroVeiculoController(IVeiculoService veiculoService)
+        public VeiculoController(IVeiculoService veiculoService)
         {
             _veiculoService = veiculoService;
         }

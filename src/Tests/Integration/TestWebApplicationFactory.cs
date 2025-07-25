@@ -1,6 +1,6 @@
 using Application;
 using AutoMapper;
-using Infrastructure.Data;
+using Infrastructure.Database;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;

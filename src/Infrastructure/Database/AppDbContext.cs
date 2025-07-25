@@ -2,7 +2,7 @@
 using Domain.Estoque.Aggregates;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Data
+namespace Infrastructure.Database
 {
     public class AppDbContext : DbContext
     {

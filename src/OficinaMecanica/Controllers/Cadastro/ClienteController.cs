@@ -2,7 +2,7 @@ using Application.Cadastros.DTO;
 using Application.Cadastros.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace API.Controllers.Cadastro
 {
     /// <summary>
     /// Controller para gerenciamento de cadastro de clientes
@@ -10,11 +10,11 @@ namespace API.Controllers
     [Route("api/cadastros/clientes")]
     [ApiController]
     [Produces("application/json")]
-    public class CadastroClienteController : ControllerBase
+    public class ClienteController : ControllerBase
     {
         private readonly IClienteService _clienteService;
 
-        public CadastroClienteController(IClienteService clienteService)
+        public ClienteController(IClienteService clienteService)
         {
             _clienteService = clienteService;
         }

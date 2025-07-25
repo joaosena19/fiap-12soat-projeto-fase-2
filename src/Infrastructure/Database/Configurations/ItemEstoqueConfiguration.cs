@@ -2,7 +2,7 @@ using Domain.Estoque.Aggregates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Data.Configurations
+namespace Infrastructure.Database.Configurations
 {
     public class ItemEstoqueConfiguration : IEntityTypeConfiguration<ItemEstoque>
     {

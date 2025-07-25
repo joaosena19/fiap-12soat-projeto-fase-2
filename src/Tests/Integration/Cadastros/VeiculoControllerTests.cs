@@ -1,7 +1,7 @@
 using Application.Cadastros.DTO;
 using Domain.Cadastros.Enums;
 using FluentAssertions;
-using Infrastructure.Data;
+using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
@@ -9,12 +9,12 @@ using System.Net.Http.Json;
 
 namespace Tests.Integration.Cadastros
 {
-    public class CadastroVeiculoControllerTests : IClassFixture<TestWebApplicationFactory<Program>>
+    public class VeiculoControllerTests : IClassFixture<TestWebApplicationFactory<Program>>
     {
         private readonly TestWebApplicationFactory<Program> _factory;
         private readonly HttpClient _client;
 
-        public CadastroVeiculoControllerTests(TestWebApplicationFactory<Program> factory)
+        public VeiculoControllerTests(TestWebApplicationFactory<Program> factory)
         {
             _factory = factory;
             _client = _factory.CreateClient();

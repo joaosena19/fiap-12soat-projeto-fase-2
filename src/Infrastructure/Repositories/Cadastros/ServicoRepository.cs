@@ -1,9 +1,9 @@
 ﻿using Application.Cadastros.Interfaces;
 using Domain.Cadastros.Aggregates;
-using Infrastructure.Data;
+using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Cadastros
+namespace Infrastructure.Repositories.Cadastros
 {
     public class ServicoRepository : IServicoRepository
     {

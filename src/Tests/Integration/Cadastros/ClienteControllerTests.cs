@@ -1,19 +1,19 @@
 using FluentAssertions;
-using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
 using Application.Cadastros.DTO;
+using Infrastructure.Database;
 
 namespace Tests.Integration.Cadastros
 {
-    public class CadastroClienteControllerTests : IClassFixture<TestWebApplicationFactory<Program>>
+    public class ClienteControllerTests : IClassFixture<TestWebApplicationFactory<Program>>
     {
         private readonly TestWebApplicationFactory<Program> _factory;
         private readonly HttpClient _client;
 
-        public CadastroClienteControllerTests(TestWebApplicationFactory<Program> factory)
+        public ClienteControllerTests(TestWebApplicationFactory<Program> factory)
         {
             _factory = factory;
             _client = _factory.CreateClient();
@@ -164,7 +164,7 @@ namespace Tests.Integration.Cadastros
         public async Task GetByCpf_Deve_Retornar200OK_E_ClienteEspecifico()
         {
             // Arrange
-            var criarDto = new { Nome = "João", Cpf = "12345678909" };
+            var criarDto = new { Nome = "João", Cpf = "34806653063" };
             
             using var scope = _factory.Services.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -173,11 +173,11 @@ namespace Tests.Integration.Cadastros
             var createResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", criarDto);
             createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "12345678909");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "34806653063");
             clienteCriado.Should().NotBeNull();
 
             // Act
-            var response = await _client.GetAsync($"/api/cadastros/clientes/cpf/12345678909");
+            var response = await _client.GetAsync($"/api/cadastros/clientes/cpf/34806653063");
             var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDTO>();
 
             // Assert
@@ -185,7 +185,7 @@ namespace Tests.Integration.Cadastros
             cliente.Should().NotBeNull();
             cliente.Id.Should().Be(clienteCriado!.Id);
             cliente.Nome.Should().Be("João");
-            cliente.Cpf.Should().Be("12345678909");
+            cliente.Cpf.Should().Be("34806653063");
         }
 
         [Fact(DisplayName = "GET /cpf/{cpf} deve retornar 404 NotFound quando cliente não existe")]

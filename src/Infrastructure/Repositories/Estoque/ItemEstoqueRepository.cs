@@ -1,9 +1,9 @@
 using Application.Estoque.Interfaces;
 using Domain.Estoque.Aggregates;
-using Infrastructure.Data;
+using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Estoque
+namespace Infrastructure.Repositories.Estoque
 {
     public class ItemEstoqueRepository : IItemEstoqueRepository
     {

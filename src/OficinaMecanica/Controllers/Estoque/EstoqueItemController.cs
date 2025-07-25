@@ -2,7 +2,7 @@ using Application.Estoque.DTO;
 using Application.Estoque.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace API.Controllers.Estoque
 {
     /// <summary>
     /// Controller para gerenciamento de itens de estoque
