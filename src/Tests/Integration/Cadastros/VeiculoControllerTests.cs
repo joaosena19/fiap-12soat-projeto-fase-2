@@ -29,17 +29,17 @@ namespace Tests.Integration.Cadastros
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Create a client first
-            var clienteDto = new { Nome = "João Silva", Cpf = "97166517085" };
+            var clienteDto = new { Nome = "João Silva", Cpf = "22315044057" };
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "97166517085");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "22315044057");
             clienteCriado.Should().NotBeNull();
 
             var dto = new 
             { 
                 ClienteId = clienteCriado!.Id,
-                Placa = "ABC1234", 
+                Placa = "ABC4567", 
                 Modelo = "Civic", 
                 Marca = "Honda", 
                 Cor = "Preto", 
@@ -49,7 +49,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.PostAsJsonAsync("/api/cadastros/veiculos", dto);
-            var veiculoEntity = await context.Veiculos.FirstOrDefaultAsync(v => v.Placa.Valor == "ABC1234");
+            var veiculoEntity = await context.Veiculos.FirstOrDefaultAsync(v => v.Placa.Valor == "ABC4567");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -323,6 +323,232 @@ namespace Tests.Integration.Cadastros
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact(DisplayName = "POST deve salvar placa sempre em uppercase independente do input")]
+        [Trait("Case insenstive", "Placa")]
+        public async Task Post_DeveSalvarPlacaSempreEmUppercase()
+        {
+            // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Criar cliente primeiro
+            var clienteDto = new { Nome = "Cliente Teste Placa", Cpf = "23882227028" };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "23882227028");
+            clienteCriado.Should().NotBeNull();
+
+            var dto = new 
+            { 
+                ClienteId = clienteCriado!.Id,
+                Placa = "abc1234", // lowercase
+                Modelo = "Civic", 
+                Marca = "Honda", 
+                Cor = "Preto", 
+                Ano = 2020, 
+                TipoVeiculo = (int)TipoVeiculoEnum.Carro 
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/cadastros/veiculos", dto);
+            var veiculoEntity = await context.Veiculos.FirstOrDefaultAsync(v => v.Placa.Valor == "ABC1234");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+            veiculoEntity.Should().NotBeNull();
+            veiculoEntity!.Placa.Valor.Should().Be("ABC1234"); // Deve ser salva em uppercase
+        }
+
+        [Fact(DisplayName = "POST deve verificar conflito de placa case insensitive")]
+        [Trait("Case insenstive", "Placa")]
+        public async Task Post_DeveVerificarConflitoDePlacaCaseInsensitive()
+        {
+            // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Criar clientes
+            var cliente1Dto = new { Nome = "Cliente 1", Cpf = "27735549067" };
+            var cliente2Dto = new { Nome = "Cliente 2", Cpf = "83587959048" };
+            
+            var cliente1Response = await _client.PostAsJsonAsync("/api/cadastros/clientes", cliente1Dto);
+            var cliente2Response = await _client.PostAsJsonAsync("/api/cadastros/clientes", cliente2Dto);
+            
+            cliente1Response.StatusCode.Should().Be(HttpStatusCode.Created);
+            cliente2Response.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var cliente1 = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "27735549067");
+            var cliente2 = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "83587959048");
+
+            // Criar veículo com placa em uppercase
+            var veiculo1Dto = new 
+            { 
+                ClienteId = cliente1!.Id,
+                Placa = "DEF5678", // uppercase
+                Modelo = "Civic", 
+                Marca = "Honda", 
+                Cor = "Preto", 
+                Ano = 2020, 
+                TipoVeiculo = (int)TipoVeiculoEnum.Carro 
+            };
+
+            var firstResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculo1Dto);
+            firstResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            // Tentar criar segundo veículo com versão lowercase da mesma placa
+            var veiculo2Dto = new 
+            { 
+                ClienteId = cliente2!.Id,
+                Placa = "def5678", // lowercase - deve gerar conflito
+                Modelo = "Corolla", 
+                Marca = "Toyota", 
+                Cor = "Branco", 
+                Ano = 2021, 
+                TipoVeiculo = (int)TipoVeiculoEnum.Carro 
+            };
+
+            // Act
+            var secondResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculo2Dto);
+
+            // Assert
+            secondResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        }
+
+        [Fact(DisplayName = "GET /placa/{placa} deve encontrar veículo independente do case da placa")]
+        [Trait("Case insenstive", "Placa")]
+        public async Task GetByPlaca_DeveEncontrarVeiculoIndependenteDoCase()
+        {
+            // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Criar um cliente primeiro
+            var clienteDto = new { Nome = "Cliente GetByPlaca Case", Cpf = "45503206053" };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "45503206053");
+            clienteCriado.Should().NotBeNull();
+
+            var criarDto = new
+            {
+                ClienteId = clienteCriado!.Id,
+                Placa = "GHI9012", // uppercase
+                Modelo = "Onix",
+                Marca = "Chevrolet",
+                Cor = "Prata",
+                Ano = 2022,
+                TipoVeiculo = (int)TipoVeiculoEnum.Carro
+            };
+
+            // Criar veículo primeiro
+            var createResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", criarDto);
+            createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            // Act - Tentar encontrar com placa em lowercase
+            var response = await _client.GetAsync($"/api/cadastros/veiculos/placa/ghi9012");
+            var veiculo = await response.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            veiculo.Should().NotBeNull();
+            veiculo!.Placa.Should().Be("GHI9012"); // Deve retornar uppercase
+        }
+
+        [Fact(DisplayName = "POST deve salvar TipoVeiculo sempre em lowercase independente do input")]
+        [Trait("Lowercase", "TipoVeiculo")]
+        public async Task Post_DeveSalvarTipoVeiculoSempreEmLowercase()
+        {
+            // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Criar cliente
+            var clienteDto = new { Nome = "Cliente Teste Tipo", Cpf = "81907357050" };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "81907357050");
+            clienteCriado.Should().NotBeNull();
+
+            var dto = new 
+            { 
+                ClienteId = clienteCriado!.Id,
+                Placa = "JKL3456", 
+                Modelo = "CBR600", 
+                Marca = "Honda", 
+                Cor = "Vermelho", 
+                Ano = 2021, 
+                TipoVeiculo = (int)TipoVeiculoEnum.Moto 
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/cadastros/veiculos", dto);
+            var veiculoEntity = await context.Veiculos.FirstOrDefaultAsync(v => v.Placa.Valor == "JKL3456");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+            veiculoEntity.Should().NotBeNull();
+            veiculoEntity!.TipoVeiculo.Valor.Should().Be("moto"); // Deve ser salvo em lowercase
+        }
+
+        [Fact(DisplayName = "PUT deve salvar TipoVeiculo sempre em lowercase independente do input")]
+        [Trait("Lowercase", "TipoVeiculo")]
+        public async Task Put_DeveSalvarTipoVeiculoSempreEmLowercase()
+        {
+            // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Criar cliente
+            var clienteDto = new { Nome = "Cliente Update Tipo", Cpf = "15332546050" };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "15332546050");
+            clienteCriado.Should().NotBeNull();
+
+            var criarDto = new 
+            { 
+                ClienteId = clienteCriado!.Id,
+                Placa = "MNO7890", 
+                Modelo = "Civic", 
+                Marca = "Honda", 
+                Cor = "Preto", 
+                Ano = 2020, 
+                TipoVeiculo = (int)TipoVeiculoEnum.Carro 
+            };
+
+            // Criar veículo primeiro
+            var createResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", criarDto);
+            createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            var veiculoCriado = await context.Veiculos.FirstOrDefaultAsync(v => v.Placa.Valor == "MNO7890");
+            veiculoCriado.Should().NotBeNull();
+
+            var atualizarDto = new 
+            { 
+                Modelo = "CBR600", 
+                Marca = "Honda", 
+                Cor = "Vermelho", 
+                Ano = 2021, 
+                TipoVeiculo = (int)TipoVeiculoEnum.Moto
+            };
+
+            // Act
+            var updateResponse = await _client.PutAsJsonAsync($"/api/cadastros/veiculos/{veiculoCriado!.Id}", atualizarDto);
+            
+            // Limpar tracking do EF
+            context.ChangeTracker.Clear();
+            var veiculoAtualizado = await context.Veiculos.FirstOrDefaultAsync(v => v.Id == veiculoCriado.Id);
+
+            // Assert
+            updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            veiculoAtualizado.Should().NotBeNull();
+            veiculoAtualizado!.TipoVeiculo.Valor.Should().Be("moto"); // Deve ser salvo em lowercase
         }
     }
 }

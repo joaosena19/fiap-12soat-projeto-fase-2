@@ -379,5 +379,72 @@ namespace Tests.Integration.Estoque
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
+
+        [Fact(DisplayName = "POST deve salvar TipoItemEstoque sempre em lowercase independente do input")]
+        [Trait("Lowercase", "TipoItemEstoque")]
+        public async Task Post_DeveSalvarTipoItemEstoqueSempreEmLowercase()
+        {
+            // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            var dto = new 
+            { 
+                Nome = "Filtro de Óleo Teste Casing",
+                Quantidade = 50,
+                TipoItemEstoque = (int)TipoItemEstoqueEnum.Peca
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/estoque/itens", dto);
+            var itemEstoqueEntity = await context.ItensEstoque.FirstOrDefaultAsync(i => i.Nome.Valor == "Filtro de Óleo Teste Casing");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+            itemEstoqueEntity.Should().NotBeNull();
+            itemEstoqueEntity!.TipoItemEstoque.Valor.Should().Be("peca");
+        }
+
+        [Fact(DisplayName = "PUT deve salvar TipoItemEstoque sempre em lowercase independente do input")]
+        [Trait("Lowercase", "TipoItemEstoque")]
+        public async Task Put_DeveSalvarTipoItemEstoqueSempreEmLowercase()
+        {
+            // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Create item first
+            var criarDto = new 
+            { 
+                Nome = "Item para Update",
+                Quantidade = 30,
+                TipoItemEstoque = (int)TipoItemEstoqueEnum.Peca
+            };
+
+            var createResponse = await _client.PostAsJsonAsync("/api/estoque/itens", criarDto);
+            createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            var itemCriado = await context.ItensEstoque.FirstOrDefaultAsync(i => i.Nome.Valor == "Item para Update");
+            itemCriado.Should().NotBeNull();
+
+            var atualizarDto = new 
+            { 
+                Nome = "Item Atualizado",
+                Quantidade = 75,
+                TipoItemEstoque = (int)TipoItemEstoqueEnum.Insumo // Update para Insumo
+            };
+
+            // Act
+            var updateResponse = await _client.PutAsJsonAsync($"/api/estoque/itens/{itemCriado!.Id}", atualizarDto);
+            
+            // Clear EF tracking
+            context.ChangeTracker.Clear();
+            var itemAtualizado = await context.ItensEstoque.FirstOrDefaultAsync(i => i.Id == itemCriado.Id);
+
+            // Assert
+            updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            itemAtualizado.Should().NotBeNull();
+            itemAtualizado!.TipoItemEstoque.Valor.Should().Be("insumo");
+        }
     }
 }
