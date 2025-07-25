@@ -25,6 +25,6 @@ namespace Application.Estoque.DTO
         /// Tipo do item de estoque
         /// </summary>
         /// <example>Peca</example>
-        public TipoItemEstoqueEnum TipoItemEstoque { get; set; }
+        public string TipoItemEstoque { get; set; } = string.Empty;
     }
 }
