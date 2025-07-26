@@ -73,17 +73,22 @@ namespace API.Controllers.OrdemServico
         /// <summary>
         /// Criar uma nova ordem de serviço
         /// </summary>
+        /// <param name="dto">Dados da ordem de serviço a ser criada</param>
         /// <returns>Ordem de serviço criada com sucesso</returns>
         /// <response code="201">Ordem de serviço criada com sucesso</response>
+        /// <response code="400">Dados inválidos fornecidos</response>
+        /// <response code="422">Veículo não encontrado</response>
         /// <response code="409">Conflito - Ordem de serviço já existe</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost]
         [ProducesResponseType(typeof(RetornoOrdemServicoDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> Post([FromBody] CriarOrdemServicoDTO dto)
         {
-            var result = await _ordemServicoService.CriarOrdemServico();
+            var result = await _ordemServicoService.CriarOrdemServico(dto);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
@@ -95,12 +100,14 @@ namespace API.Controllers.OrdemServico
         /// <returns>Ordem de serviço atualizada</returns>
         /// <response code="200">Serviços adicionados com sucesso</response>
         /// <response code="400">Dados inválidos fornecidos</response>
-        /// <response code="404">Ordem de serviço ou serviço não encontrado</response>
+        /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="422">Serviço não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/servicos")]
         [ProducesResponseType(typeof(RetornoOrdemServicoComServicosItensDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AdicionarServicos(Guid id, [FromBody] AdicionarServicosDTO dto)
         {
@@ -116,12 +123,14 @@ namespace API.Controllers.OrdemServico
         /// <returns>Ordem de serviço atualizada</returns>
         /// <response code="200">Item adicionado com sucesso</response>
         /// <response code="400">Dados inválidos fornecidos</response>
-        /// <response code="404">Ordem de serviço ou item não encontrado</response>
+        /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="422">Item de estoque não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/itens")]
         [ProducesResponseType(typeof(RetornoOrdemServicoComServicosItensDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AdicionarItem(Guid id, [FromBody] AdicionarItemDTO dto)
         {
@@ -134,18 +143,18 @@ namespace API.Controllers.OrdemServico
         /// </summary>
         /// <param name="id">ID da ordem de serviço</param>
         /// <param name="servicoIncluidoId">ID do serviço incluído a ser removido</param>
-        /// <returns>Ordem de serviço atualizada</returns>
-        /// <response code="200">Serviço removido com sucesso</response>
+        /// <returns>Nenhum conteúdo</returns>
+        /// <response code="204">Serviço removido com sucesso</response>
         /// <response code="404">Ordem de serviço ou serviço não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpDelete("{id}/servicos/{servicoIncluidoId}")]
-        [ProducesResponseType(typeof(RetornoOrdemServicoComServicosItensDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoverServico(Guid id, Guid servicoIncluidoId)
         {
-            var result = await _ordemServicoService.RemoverServico(id, servicoIncluidoId);
-            return Ok(result);
+            await _ordemServicoService.RemoverServico(id, servicoIncluidoId);
+            return NoContent();
         }
 
         /// <summary>
@@ -153,18 +162,18 @@ namespace API.Controllers.OrdemServico
         /// </summary>
         /// <param name="id">ID da ordem de serviço</param>
         /// <param name="itemIncluidoId">ID do item incluído a ser removido</param>
-        /// <returns>Ordem de serviço atualizada</returns>
-        /// <response code="200">Item removido com sucesso</response>
+        /// <returns>Nenhum conteúdo</returns>
+        /// <response code="204">Item removido com sucesso</response>
         /// <response code="404">Ordem de serviço ou item não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpDelete("{id}/itens/{itemIncluidoId}")]
-        [ProducesResponseType(typeof(RetornoOrdemServicoComServicosItensDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoverItem(Guid id, Guid itemIncluidoId)
         {
-            var result = await _ordemServicoService.RemoverItem(id, itemIncluidoId);
-            return Ok(result);
+            await _ordemServicoService.RemoverItem(id, itemIncluidoId);
+            return NoContent();
         }
 
         /// <summary>

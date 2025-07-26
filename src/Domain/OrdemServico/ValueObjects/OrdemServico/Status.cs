@@ -16,7 +16,7 @@ namespace Domain.OrdemServico.ValueObjects.OrdemServico
             if (!Enum.IsDefined(typeof(StatusOrdemServicoEnum), statusOrdemServicoEnum))
             {
                 var valores = string.Join(", ", Enum.GetNames(typeof(StatusOrdemServicoEnum)));
-                throw new DomainException($"Status da Ordem de Serviço '{statusOrdemServicoEnum}' não é válido. Valores aceitos: {valores}.", HttpStatusCode.BadRequest);
+                throw new DomainException($"Status da Ordem de Serviço '{statusOrdemServicoEnum}' não é válido. Valores aceitos: {valores}.", HttpStatusCode.UnprocessableContent);
             }
 
             _valor = statusOrdemServicoEnum.ToString().ToLower();
@@ -28,7 +28,7 @@ namespace Domain.OrdemServico.ValueObjects.OrdemServico
         {
             if (!PodeTransicionarPara(novoStatus))
             {
-                throw new DomainException($"Não é possível mudar de {Valor} para {novoStatus}.");
+                throw new DomainException($"Não é possível mudar de {Valor} para {novoStatus}.", HttpStatusCode.UnprocessableContent);
             }
 
             return new Status(novoStatus);

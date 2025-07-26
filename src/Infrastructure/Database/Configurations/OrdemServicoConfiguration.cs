@@ -14,6 +14,10 @@ namespace Infrastructure.Database.Configurations
             builder.Property(os => os.Id)
                    .HasColumnName("id");
 
+            builder.Property(os => os.VeiculoId)
+                   .HasColumnName("veiculo_id")
+                   .IsRequired();
+
             builder.OwnsOne(os => os.Codigo, codigo =>
             {
                 codigo.Property(c => c.Valor)

@@ -8,6 +8,12 @@ namespace Application.OrdemServico.DTO
         public Guid Id { get; set; } = Guid.Empty;
 
         /// <summary>
+        /// ID do veículo associado à ordem de serviço
+        /// </summary>
+        /// <example>123e4567-e89b-12d3-a456-426614174000</example>
+        public Guid VeiculoId { get; set; } = Guid.Empty;
+
+        /// <summary>
         /// Código da ordem de serviço
         /// </summary>
         /// <example>OS-20250125-ABC123</example>
