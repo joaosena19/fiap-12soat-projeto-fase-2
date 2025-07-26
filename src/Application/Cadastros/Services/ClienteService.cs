@@ -3,7 +3,7 @@ using Application.Cadastros.Interfaces;
 using AutoMapper;
 using Domain.Cadastros.Aggregates;
 using Shared.Exceptions;
-using System.Net;
+using Shared.Enums;
 
 namespace Application.Cadastros.Services
 {
@@ -22,7 +22,7 @@ namespace Application.Cadastros.Services
         {
             var clienteExistente = await _clienteRepository.ObterPorCpfAsync(cpf);
             if (clienteExistente != null)
-                throw new DomainException("Já existe um cliente cadastrado com este CPF.", HttpStatusCode.Conflict);
+                throw new DomainException("Já existe um cliente cadastrado com este CPF.", ErrorType.Conflict);
 
             var novoCliente = Cliente.Criar(nome, cpf);
             var result = await _clienteRepository.SalvarAsync(novoCliente);
@@ -34,7 +34,7 @@ namespace Application.Cadastros.Services
         {
             var cliente = await _clienteRepository.ObterPorIdAsync(id);
             if (cliente == null)
-                throw new DomainException("Cliente não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Cliente não encontrado.", ErrorType.ResourceNotFound);
 
             cliente.Atualizar(nome);
             var result = await _clienteRepository.AtualizarAsync(cliente);
@@ -52,7 +52,7 @@ namespace Application.Cadastros.Services
         {
             var cliente = await _clienteRepository.ObterPorIdAsync(id);
             if (cliente == null)
-                throw new DomainException("Cliente não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Cliente não encontrado.", ErrorType.ResourceNotFound);
 
             return _mapper.Map<RetornoClienteDTO>(cliente);
         }
@@ -61,7 +61,7 @@ namespace Application.Cadastros.Services
         {
             var cliente = await _clienteRepository.ObterPorCpfAsync(cpf);
             if (cliente == null)
-                throw new DomainException("Cliente não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Cliente não encontrado.", ErrorType.ResourceNotFound);
 
             return _mapper.Map<RetornoClienteDTO>(cliente);
         }

@@ -1,5 +1,5 @@
 ﻿using Shared.Exceptions;
-using System.Net;
+using Shared.Enums;
 
 namespace Domain.OrdemServico.ValueObjects.OrdemServico
 {
@@ -16,16 +16,16 @@ namespace Domain.OrdemServico.ValueObjects.OrdemServico
         public HistoricoTemporal(DateTime dataCriacao, DateTime? dataInicioExecucao = null, DateTime? dataFinalizacao = null, DateTime? dataEntrega = null)
         {
             if (dataCriacao == default)
-                throw new DomainException("A data de criação é obrigatória.", HttpStatusCode.BadRequest);
+                throw new DomainException("A data de criação é obrigatória.", ErrorType.InvalidInput);
 
             if (dataInicioExecucao.HasValue && dataInicioExecucao < dataCriacao)
-                throw new DomainException("A data de início de execução não pode ser anterior à data de criação.", HttpStatusCode.BadRequest);
+                throw new DomainException("A data de início de execução não pode ser anterior à data de criação.", ErrorType.DomainRuleBroken);
 
             if (dataFinalizacao.HasValue && (!dataInicioExecucao.HasValue || dataFinalizacao < dataInicioExecucao))
-                throw new DomainException("A data de finalização não pode ser anterior à data de início de execução.", HttpStatusCode.BadRequest);
+                throw new DomainException("A data de finalização não pode ser anterior à data de início de execução.", ErrorType.DomainRuleBroken);
 
             if (dataEntrega.HasValue && (!dataFinalizacao.HasValue || dataEntrega < dataFinalizacao))
-                throw new DomainException("A data de entrega não pode ser anterior à data de finalização.", HttpStatusCode.BadRequest);
+                throw new DomainException("A data de entrega não pode ser anterior à data de finalização.", ErrorType.DomainRuleBroken);
 
             _dataCriacao = dataCriacao;
             _dataInicioExecucao = dataInicioExecucao;
@@ -48,3 +48,4 @@ namespace Domain.OrdemServico.ValueObjects.OrdemServico
             => new(_dataCriacao, _dataInicioExecucao, _dataFinalizacao, data ?? DateTime.UtcNow);
     }
 }
+

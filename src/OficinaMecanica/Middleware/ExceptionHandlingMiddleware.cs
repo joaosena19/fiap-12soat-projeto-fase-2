@@ -1,6 +1,7 @@
+using API.Extensions;
+using Shared.Exceptions;
 using System.Net;
 using System.Text.Json;
-using Shared.Exceptions;
 
 namespace API.Middleware
 {
@@ -44,12 +45,13 @@ namespace API.Middleware
             {
                 case DomainException domainEx:
                     _logger.LogWarning(domainEx, "Domain exception occurred: {Message}", domainEx.Message);
+                    var httpStatusCode = domainEx.ErrorType.ToHttpStatusCode();
                     response = new
                     {
                         message = domainEx.Message,
-                        statusCode = (int)domainEx.StatusCode
+                        statusCode = (int)httpStatusCode
                     };
-                    context.Response.StatusCode = (int)domainEx.StatusCode;
+                    context.Response.StatusCode = (int)httpStatusCode;
                     break;
 
                 default:

@@ -2,8 +2,8 @@
 using Application.Cadastros.Interfaces;
 using AutoMapper;
 using Domain.Cadastros.Aggregates;
+using Shared.Enums;
 using Shared.Exceptions;
-using System.Net;
 
 namespace Application.Cadastros.Services
 {
@@ -22,7 +22,7 @@ namespace Application.Cadastros.Services
         {
             var servicoExistente = await _servicoRepository.ObterPorNomeAsync(nome);
             if (servicoExistente != null)
-                throw new DomainException("Já existe um serviço cadastrado com este nome.", HttpStatusCode.Conflict);
+                throw new DomainException("Já existe um serviço cadastrado com este nome.", ErrorType.Conflict);
 
             var novoServico = Servico.Criar(nome, preco);
             var result = await _servicoRepository.SalvarAsync(novoServico);
@@ -34,7 +34,7 @@ namespace Application.Cadastros.Services
         {
             var servico = await _servicoRepository.ObterPorIdAsync(id);
             if (servico == null)
-                throw new DomainException("Serviço não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Serviço não encontrado.", ErrorType.ResourceNotFound);
 
             servico.Atualizar(nome, preco);
             var result = await _servicoRepository.AtualizarAsync(servico);
@@ -52,7 +52,7 @@ namespace Application.Cadastros.Services
         {
             var servico = await _servicoRepository.ObterPorIdAsync(id);
             if (servico == null)
-                throw new DomainException("Serviço não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Serviço não encontrado.", ErrorType.ResourceNotFound);
 
             return _mapper.Map<RetornoServicoDTO>(servico);
         }

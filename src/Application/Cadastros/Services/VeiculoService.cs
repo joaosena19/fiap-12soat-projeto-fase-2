@@ -3,8 +3,8 @@ using Application.Cadastros.Interfaces;
 using AutoMapper;
 using Domain.Cadastros.Aggregates;
 using Domain.Cadastros.Enums;
+using Shared.Enums;
 using Shared.Exceptions;
-using System.Net;
 
 namespace Application.Cadastros.Services
 {
@@ -25,11 +25,11 @@ namespace Application.Cadastros.Services
         {
             var veiculoExistente = await _veiculoRepository.ObterPorPlacaAsync(placa.ToUpper());
             if (veiculoExistente != null)
-                throw new DomainException("Já existe um veículo cadastrado com esta placa.", HttpStatusCode.Conflict);
+                throw new DomainException("Já existe um veículo cadastrado com esta placa.", ErrorType.Conflict);
 
             var cliente = await _clienteRepository.ObterPorIdAsync(clienteId);
             if (cliente == null)
-                throw new DomainException("Cliente não encontrado para realizar associação com o veículo.", HttpStatusCode.BadRequest);
+                throw new DomainException("Cliente não encontrado para realizar associação com o veículo.", ErrorType.ReferenceNotFound);
 
             var novoVeiculo = Veiculo.Criar(clienteId, placa, modelo, marca, cor, ano, tipoVeiculo);
             var result = await _veiculoRepository.SalvarAsync(novoVeiculo);
@@ -41,7 +41,7 @@ namespace Application.Cadastros.Services
         {
             var veiculo = await _veiculoRepository.ObterPorIdAsync(id);
             if (veiculo == null)
-                throw new DomainException("Veículo não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Veículo não encontrado.", ErrorType.ResourceNotFound);
 
             veiculo.Atualizar(modelo, marca, cor, ano, tipoVeiculo);
             var result = await _veiculoRepository.AtualizarAsync(veiculo);
@@ -59,7 +59,7 @@ namespace Application.Cadastros.Services
         {
             var veiculo = await _veiculoRepository.ObterPorIdAsync(id);
             if (veiculo == null)
-                throw new DomainException("Veículo não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Veículo não encontrado.", ErrorType.ResourceNotFound);
 
             return _mapper.Map<RetornoVeiculoDTO>(veiculo);
         }
@@ -68,7 +68,7 @@ namespace Application.Cadastros.Services
         {
             var veiculo = await _veiculoRepository.ObterPorPlacaAsync(placa);
             if (veiculo == null)
-                throw new DomainException("Veículo não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Veículo não encontrado.", ErrorType.ResourceNotFound);
 
             return _mapper.Map<RetornoVeiculoDTO>(veiculo);
         }

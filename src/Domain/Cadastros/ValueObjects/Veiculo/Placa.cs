@@ -1,4 +1,4 @@
-using System.Net;
+﻿using Shared.Enums;
 using System.Text.RegularExpressions;
 using Shared.Exceptions;
 
@@ -14,15 +14,15 @@ namespace Domain.Cadastros.ValueObjects.Veiculo
         public Placa(string placa)
         {
             if (string.IsNullOrWhiteSpace(placa))
-                throw new DomainException("Placa não pode ser vazia", HttpStatusCode.BadRequest);
+                throw new DomainException("Placa não pode ser vazia", ErrorType.InvalidInput);
 
             placa = placa.Replace("-", "").ToUpper().Trim();
 
             if (placa.Length != 7)
-                throw new DomainException("Placa deve ter exatamente 7 caracteres", HttpStatusCode.BadRequest);
+                throw new DomainException("Placa deve ter exatamente 7 caracteres", ErrorType.InvalidInput);
 
             if (!Regex.IsMatch(placa, @"^[A-Z0-9]{7}$"))
-                throw new DomainException("Placa deve conter apenas letras e números", HttpStatusCode.BadRequest);
+                throw new DomainException("Placa deve conter apenas letras e números", ErrorType.InvalidInput);
 
             _valor = placa;
         }

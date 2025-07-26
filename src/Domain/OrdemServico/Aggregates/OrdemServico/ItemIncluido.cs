@@ -1,5 +1,6 @@
 using Domain.OrdemServico.Enums;
 using Domain.OrdemServico.ValueObjects.ItemIncluido;
+using Shared.Enums;
 using Shared.Exceptions;
 using UUIDNext;
 
@@ -47,7 +48,7 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public void IncrementarQuantidade(int quantidadeAdicional)
         {
             if (quantidadeAdicional <= 0)
-                throw new DomainException("A quantidade a adicionar deve ser maior que zero.");
+                throw new DomainException("A quantidade a adicionar deve ser maior que zero.", ErrorType.InvalidInput);
 
             Quantidade = new Quantidade(Quantidade.Valor + quantidadeAdicional);
         }

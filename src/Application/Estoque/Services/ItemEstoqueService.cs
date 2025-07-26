@@ -2,8 +2,8 @@ using Application.Estoque.DTO;
 using Application.Estoque.Interfaces;
 using AutoMapper;
 using Domain.Estoque.Aggregates;
+using Shared.Enums;
 using Shared.Exceptions;
-using System.Net;
 
 namespace Application.Estoque.Services
 {
@@ -22,7 +22,7 @@ namespace Application.Estoque.Services
         {
             var itemExistente = await _itemEstoqueRepository.ObterPorNomeAsync(dto.Nome);
             if (itemExistente != null)
-                throw new DomainException("Já existe um item de estoque cadastrado com este nome.", HttpStatusCode.Conflict);
+                throw new DomainException("Já existe um item de estoque cadastrado com este nome.", ErrorType.Conflict);
 
             var novoItemEstoque = ItemEstoque.Criar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco);
             var result = await _itemEstoqueRepository.SalvarAsync(novoItemEstoque);
@@ -34,7 +34,7 @@ namespace Application.Estoque.Services
         {
             var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
             if (itemEstoque == null)
-                throw new DomainException("Item de estoque não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Item de estoque não encontrado.", ErrorType.ResourceNotFound);
 
             itemEstoque.Atualizar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco);
             var result = await _itemEstoqueRepository.AtualizarAsync(itemEstoque);
@@ -46,7 +46,7 @@ namespace Application.Estoque.Services
         {
             var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
             if (itemEstoque == null)
-                throw new DomainException("Item de estoque não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Item de estoque não encontrado.", ErrorType.ResourceNotFound);
 
             itemEstoque.AtualizarQuantidade(dto.Quantidade);
             var result = await _itemEstoqueRepository.AtualizarAsync(itemEstoque);
@@ -64,7 +64,7 @@ namespace Application.Estoque.Services
         {
             var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
             if (itemEstoque == null)
-                throw new DomainException("Item de estoque não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Item de estoque não encontrado.", ErrorType.ResourceNotFound);
 
             return _mapper.Map<RetornoItemEstoqueDTO>(itemEstoque);
         }
@@ -73,7 +73,7 @@ namespace Application.Estoque.Services
         {
             var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
             if (itemEstoque == null)
-                throw new DomainException("Item de estoque não encontrado.", HttpStatusCode.NotFound);
+                throw new DomainException("Item de estoque não encontrado.", ErrorType.ResourceNotFound);
 
             var disponivel = itemEstoque.VerificarDisponibilidade(quantidadeRequisitada);
 

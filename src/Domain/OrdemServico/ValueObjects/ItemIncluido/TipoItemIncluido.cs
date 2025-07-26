@@ -1,6 +1,6 @@
-using Domain.OrdemServico.Enums;
+﻿using Domain.OrdemServico.Enums;
 using Shared.Exceptions;
-using System.Net;
+using Shared.Enums;
 
 namespace Domain.OrdemServico.ValueObjects.ItemIncluido
 {
@@ -16,7 +16,7 @@ namespace Domain.OrdemServico.ValueObjects.ItemIncluido
             if (!Enum.IsDefined(typeof(TipoItemIncluidoEnum), tipoItemIncluidoEnum))
             {
                 var valores = string.Join(", ", Enum.GetNames(typeof(TipoItemIncluidoEnum)));
-                throw new DomainException($"Tipo de item incluído na Ordem de Serviço '{tipoItemIncluidoEnum}' não é válido. Valores aceitos: {valores}.", HttpStatusCode.BadRequest);
+                throw new DomainException($"Tipo de item incluí­do na Ordem de Serviço '{tipoItemIncluidoEnum}' não é válido. Valores aceitos: {valores}.", ErrorType.InvalidInput);
             }
 
             _valor = tipoItemIncluidoEnum.ToString().ToLower();

@@ -1,6 +1,6 @@
-using Domain.Estoque.Enums;
+﻿using Domain.Estoque.Enums;
 using Shared.Exceptions;
-using System.Net;
+using Shared.Enums;
 
 namespace Domain.Estoque.ValueObjects.ItemEstoque
 {
@@ -16,7 +16,7 @@ namespace Domain.Estoque.ValueObjects.ItemEstoque
             if (!Enum.IsDefined(typeof(TipoItemEstoqueEnum), tipoItemEstoqueEnum))
             {
                 var valores = string.Join(", ", Enum.GetNames(typeof(TipoItemEstoqueEnum)));
-                throw new DomainException($"Tipo de item de estoque '{tipoItemEstoqueEnum}' não é válido. Valores aceitos: {valores}.", HttpStatusCode.BadRequest);
+                throw new DomainException($"Tipo de item de estoque '{tipoItemEstoqueEnum}' não é válido. Valores aceitos: {valores}.", ErrorType.InvalidInput);
             }
 
             _valor = tipoItemEstoqueEnum.ToString().ToLower();

@@ -1,4 +1,4 @@
-using System.Net;
+﻿using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.OrdemServico.ValueObjects.Orcamento
@@ -13,7 +13,7 @@ namespace Domain.OrdemServico.ValueObjects.Orcamento
         public DataCriacao(DateTime dataCriacao)
         {
             if (dataCriacao == default)
-                throw new DomainException("Data de criação não pode ser vazia", HttpStatusCode.BadRequest);
+                throw new DomainException("Data de criação não pode ser vazia", ErrorType.InvalidInput);
 
             _valor = dataCriacao;
         }

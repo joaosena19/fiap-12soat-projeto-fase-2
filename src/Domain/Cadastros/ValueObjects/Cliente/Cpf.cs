@@ -1,4 +1,4 @@
-﻿using System.Net;
+﻿using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Cliente
@@ -13,7 +13,7 @@ namespace Domain.Cadastros.ValueObjects.Cliente
         public Cpf(string cpf)
         {
             if (!ValidarCpf(cpf))
-                throw new DomainException("CPF inválido", HttpStatusCode.BadRequest);
+                throw new DomainException("CPF inválido", ErrorType.InvalidInput);
 
             _valor = CleanCpf(cpf);
         }

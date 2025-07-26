@@ -2,9 +2,8 @@ using Application.OrdemServico.DTO;
 using Application.OrdemServico.Interfaces;
 using Application.OrdemServico.Interfaces.External;
 using AutoMapper;
-using Domain.OrdemServico.Enums;
+using Shared.Enums;
 using Shared.Exceptions;
-using System.Net;
 
 namespace Application.OrdemServico.Services
 {
@@ -40,7 +39,7 @@ namespace Application.OrdemServico.Services
         {
             var ordemServico = await _ordemServicoRepository.ObterPorIdAsync(id);
             if (ordemServico == null)
-                throw new DomainException("Ordem de serviço não encontrada.", HttpStatusCode.NotFound);
+                throw new DomainException("Ordem de serviço não encontrada.", ErrorType.ResourceNotFound);
 
             return _mapper.Map<RetornoOrdemServicoCompletaDTO>(ordemServico);
         }
@@ -49,7 +48,7 @@ namespace Application.OrdemServico.Services
         {
             var ordemServico = await _ordemServicoRepository.ObterPorCodigoAsync(codigo);
             if (ordemServico == null)
-                throw new DomainException("Ordem de serviço não encontrada.", HttpStatusCode.NotFound);
+                throw new DomainException("Ordem de serviço não encontrada.", ErrorType.ResourceNotFound);
 
             return _mapper.Map<RetornoOrdemServicoCompletaDTO>(ordemServico);
         }
@@ -58,7 +57,7 @@ namespace Application.OrdemServico.Services
         {
             var veiculoExiste = await _veiculoExternalService.VerificarExistenciaVeiculo(dto.VeiculoId);
             if (!veiculoExiste)
-                throw new DomainException("Veículo não encontrado para criar a ordem de serviço.", HttpStatusCode.UnprocessableEntity);
+                throw new DomainException("Veículo não encontrado para criar a ordem de serviço.", ErrorType.ReferenceNotFound);
 
             Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico novaOrdemServico;
             Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico? ordemServicoExistente;
@@ -82,7 +81,7 @@ namespace Application.OrdemServico.Services
             {
                 var servico = await _servicoExternalService.ObterServicoPorIdAsync(servicoId);
                 if (servico == null)
-                    throw new DomainException($"Serviço com ID {servicoId} não encontrado.", HttpStatusCode.UnprocessableEntity);
+                    throw new DomainException($"Serviço com ID {servicoId} não encontrado.", ErrorType.ReferenceNotFound);
 
                 ordemServico.AdicionarServico(servico.Id, servico.Nome, servico.Preco);
             }
@@ -97,7 +96,7 @@ namespace Application.OrdemServico.Services
 
             var itemEstoque = await _estoqueExternalService.ObterItemEstoquePorIdAsync(dto.ItemEstoqueOriginalId);
             if (itemEstoque == null)
-                throw new DomainException($"Item de estoque com ID {dto.ItemEstoqueOriginalId} não encontrado.", HttpStatusCode.UnprocessableEntity);
+                throw new DomainException($"Item de estoque com ID {dto.ItemEstoqueOriginalId} não encontrado.", ErrorType.ReferenceNotFound);
 
             ordemServico.AdicionarItem(
                 itemEstoque.Id,
@@ -179,7 +178,7 @@ namespace Application.OrdemServico.Services
         {
             var ordemServico = await _ordemServicoRepository.ObterPorIdAsync(id);
             if (ordemServico == null)
-                throw new DomainException("Ordem de serviço não encontrada.", HttpStatusCode.NotFound);
+                throw new DomainException("Ordem de serviço não encontrada.", ErrorType.ResourceNotFound);
 
             return ordemServico;
         }

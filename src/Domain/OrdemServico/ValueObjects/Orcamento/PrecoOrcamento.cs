@@ -1,4 +1,4 @@
-using System.Net;
+﻿using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.OrdemServico.ValueObjects.Orcamento
@@ -13,7 +13,7 @@ namespace Domain.OrdemServico.ValueObjects.Orcamento
         public PrecoOrcamento(decimal preco)
         {
             if (preco < 0)
-                throw new DomainException("Preço do orçamento não pode ser negativo", HttpStatusCode.BadRequest);
+                throw new DomainException("Preço do orçamento não pode ser negativo", ErrorType.InvalidInput);
 
             _valor = preco;
         }

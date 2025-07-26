@@ -1,6 +1,6 @@
-using Domain.Cadastros.Enums;
+﻿using Domain.Cadastros.Enums;
 using Shared.Exceptions;
-using System.Net;
+using Shared.Enums;
 
 namespace Domain.Cadastros.ValueObjects.Veiculo
 {
@@ -16,7 +16,7 @@ namespace Domain.Cadastros.ValueObjects.Veiculo
             if (!Enum.IsDefined(typeof(TipoVeiculoEnum), tipoVeiculoEnum))
             {
                 var valores = string.Join(", ", Enum.GetNames(typeof(TipoVeiculoEnum)));
-                throw new DomainException($"Tipo de veículo '{tipoVeiculoEnum}' não é válido. Valores aceitos: {valores}.", HttpStatusCode.BadRequest);
+                throw new DomainException($"Tipo de veículo '{tipoVeiculoEnum}' não é válido. Valores aceitos: {valores}.", ErrorType.InvalidInput);
             }
 
             _valor = tipoVeiculoEnum.ToString().ToLower();

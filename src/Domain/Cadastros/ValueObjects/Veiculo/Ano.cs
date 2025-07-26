@@ -1,4 +1,4 @@
-using System.Net;
+﻿using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Veiculo
@@ -16,7 +16,7 @@ namespace Domain.Cadastros.ValueObjects.Veiculo
             var anoMinimo = 1885; //Ano de criação do primeiro automóvel, o Benz Patent-Motorwagen
 
             if (ano < anoMinimo || ano > anoAtual + 1) // Permite um ano a mais para modelos do próximo ano
-                throw new DomainException($"Ano deve estar entre {anoMinimo} e {anoAtual + 1}", HttpStatusCode.BadRequest);
+                throw new DomainException($"Ano deve estar entre {anoMinimo} e {anoAtual + 1}", ErrorType.InvalidInput);
 
             _valor = ano;
         }

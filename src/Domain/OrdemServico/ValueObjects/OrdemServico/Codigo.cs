@@ -1,5 +1,5 @@
 ﻿using Shared.Exceptions;
-using System.Net;
+using Shared.Enums;
 using System.Text.RegularExpressions;
 
 namespace Domain.OrdemServico.ValueObjects.OrdemServico
@@ -16,7 +16,7 @@ namespace Domain.OrdemServico.ValueObjects.OrdemServico
             var _regex = new Regex(@"^OS-\d{8}-[A-Z0-9]{6}$", RegexOptions.Compiled);
 
             if (string.IsNullOrWhiteSpace(codigo) || !_regex.IsMatch(codigo))
-                throw new DomainException($"Código {codigo} inválido. Formato esperado: OS-YYYYMMDD-ABC123", HttpStatusCode.BadRequest);
+                throw new DomainException($"Código {codigo} inválido. Formato esperado: OS-YYYYMMDD-ABC123", ErrorType.InvalidInput);
 
             _valor = codigo;
         }

@@ -1,26 +1,26 @@
-using System.Net;
+using Shared.Enums;
 
 namespace Shared.Exceptions
 {
     /// <summary>
-    /// Exception customizada que carrega informações sobre o status HTTP a ser retornado
+    /// Exception customizada que carrega informações sobre o tipo de erro customizado
     /// </summary>
     public class DomainException : Exception
     {
         /// <summary>
-        /// Status code HTTP que deve ser retornado
+        /// Tipo de erro customizado
         /// </summary>
-        public HttpStatusCode StatusCode { get; }
+        public ErrorType ErrorType { get; }
 
         /// <summary>
         /// Construtor com valores padrão
         /// </summary>
-        /// <param name="message">Mensagem de erro (padrão: "Bad Request")</param>
-        /// <param name="statusCode">Código de status HTTP (padrão: 400 - BadRequest)</param>
-        public DomainException(string message = "Bad Request", HttpStatusCode statusCode = HttpStatusCode.BadRequest) 
+        /// <param name="message">Mensagem de erro (padrão: "Invalid input")</param>
+        /// <param name="errorType">Tipo de erro customizado (padrão: InvalidInput)</param>
+        public DomainException(string message = "Invalid input", ErrorType errorType = ErrorType.InvalidInput) 
             : base(message)
         {
-            StatusCode = statusCode;
+            ErrorType = errorType;
         }
 
         /// <summary>
@@ -28,11 +28,11 @@ namespace Shared.Exceptions
         /// </summary>
         /// <param name="message">Mensagem de erro</param>
         /// <param name="innerException">Exception interna</param>
-        /// <param name="statusCode">Código de status HTTP (padrão: 400 - BadRequest)</param>
-        public DomainException(string message, Exception innerException, HttpStatusCode statusCode = HttpStatusCode.BadRequest) 
+        /// <param name="errorType">Tipo de erro customizado (padrão: InvalidInput)</param>
+        public DomainException(string message, Exception innerException, ErrorType errorType = ErrorType.InvalidInput) 
             : base(message, innerException)
         {
-            StatusCode = statusCode;
+            ErrorType = errorType;
         }
     }
 }

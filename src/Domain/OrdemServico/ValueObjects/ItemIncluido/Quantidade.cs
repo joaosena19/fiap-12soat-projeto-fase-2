@@ -1,4 +1,4 @@
-using System.Net;
+﻿using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.OrdemServico.ValueObjects.ItemIncluido
@@ -13,7 +13,7 @@ namespace Domain.OrdemServico.ValueObjects.ItemIncluido
         public Quantidade(int quantidade)
         {
             if (quantidade < 0)
-                throw new DomainException("Quantidade não pode ser negativa", HttpStatusCode.BadRequest);
+                throw new DomainException("Quantidade não pode ser negativa", ErrorType.InvalidInput);
 
             _valor = quantidade;
         }

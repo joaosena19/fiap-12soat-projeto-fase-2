@@ -1,4 +1,4 @@
-﻿using System.Net;
+﻿using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Servico
@@ -13,10 +13,10 @@ namespace Domain.Cadastros.ValueObjects.Servico
         public NomeServico(string nome)
         {
             if (string.IsNullOrWhiteSpace(nome))
-                throw new DomainException("Nome não pode ser vazio", HttpStatusCode.BadRequest);
+                throw new DomainException("Nome não pode ser vazio", ErrorType.InvalidInput);
 
             if (nome.Length > 500)
-                throw new DomainException("Nome não pode ter mais de 500 caracteres", HttpStatusCode.BadRequest);
+                throw new DomainException("Nome não pode ter mais de 500 caracteres", ErrorType.InvalidInput);
 
             _valor = nome;
         }

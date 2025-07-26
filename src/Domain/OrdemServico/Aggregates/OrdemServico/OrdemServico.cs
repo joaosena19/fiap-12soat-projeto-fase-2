@@ -1,7 +1,7 @@
 ﻿using Domain.OrdemServico.Enums;
 using Domain.OrdemServico.ValueObjects.OrdemServico;
 using Shared.Exceptions;
-using System.Net;
+using Shared.Enums;
 using UUIDNext;
 
 namespace Domain.OrdemServico.Aggregates.OrdemServico
@@ -57,10 +57,10 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public void AdicionarServico(Guid servicoOriginalId, string nome, decimal preco)
         {
             if (!PermiteAlterarServicosItens())
-                throw new DomainException($"Não é possível adicionar serviços a uma Ordem de Serviço com o status '{Status.Valor}'.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException($"Não é possível adicionar serviços a uma Ordem de Serviço com o status '{Status.Valor}'.", ErrorType.DomainRuleBroken);
 
             if (_servicosIncluidos.Any(s => s.ServicoOriginalId == servicoOriginalId))
-                throw new DomainException("Este serviço já foi incluído nesta OS.", HttpStatusCode.Conflict);
+                throw new DomainException("Este serviço já foi incluído nesta OS.", ErrorType.DomainRuleBroken);
 
             var novoServico = ServicoIncluido.Criar(servicoOriginalId, nome, preco);
             _servicosIncluidos.Add(novoServico);
@@ -69,10 +69,10 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public void AdicionarItem(Guid itemEstoqueOriginalId, string nome, decimal precoUnitario, int quantidade, TipoItemIncluidoEnum tipo)
         {
             if (!PermiteAlterarServicosItens())
-                throw new DomainException($"Não é possível adicionar itens a uma Ordem de Serviço com o status '{Status.Valor}'.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException($"Não é possível adicionar itens a uma Ordem de Serviço com o status '{Status.Valor}'.", ErrorType.DomainRuleBroken);
 
             if (quantidade <= 0)
-                throw new DomainException("A quantidade deve ser maior que zero.", HttpStatusCode.BadRequest);
+                throw new DomainException("A quantidade deve ser maior que zero.", ErrorType.InvalidInput);
 
             var itemExistente = _itensIncluidos.FirstOrDefault(i => i.ItemEstoqueOriginalId == itemEstoqueOriginalId);
 
@@ -90,11 +90,11 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public void RemoverServico(Guid servicoIncluidoId)
         {
             if (!PermiteAlterarServicosItens())
-                throw new DomainException($"Não é possível remover serviços de uma Ordem de Serviço com o status '{Status.Valor}'.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException($"Não é possível remover serviços de uma Ordem de Serviço com o status '{Status.Valor}'.", ErrorType.DomainRuleBroken);
 
             var servicoParaRemover = _servicosIncluidos.FirstOrDefault(s => s.Id == servicoIncluidoId);
             if (servicoParaRemover == null)
-                throw new DomainException("Serviço não encontrado nesta ordem de serviço.", HttpStatusCode.NotFound);
+                throw new DomainException("Serviço não encontrado nesta ordem de serviço.", ErrorType.ResourceNotFound);
 
             _servicosIncluidos.Remove(servicoParaRemover);
         }
@@ -102,11 +102,11 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public void RemoverItem(Guid itemIncluidoId)
         {
             if (!PermiteAlterarServicosItens())
-                throw new DomainException($"Não é possível remover itens de uma Ordem de Serviço com o status '{Status.Valor}'.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException($"Não é possível remover itens de uma Ordem de Serviço com o status '{Status.Valor}'.", ErrorType.DomainRuleBroken);
 
             var itemParaRemover = _itensIncluidos.FirstOrDefault(i => i.Id == itemIncluidoId);
             if (itemParaRemover == null)
-                throw new DomainException("Item não encontrado nesta ordem de serviço.", HttpStatusCode.NotFound);
+                throw new DomainException("Item não encontrado nesta ordem de serviço.", ErrorType.ResourceNotFound);
 
             _itensIncluidos.Remove(itemParaRemover);
         }
@@ -114,7 +114,7 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public void Cancelar()
         {
             if (!PodeTransicionarPara(StatusOrdemServicoEnum.Cancelada))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Cancelada}.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Cancelada}.", ErrorType.DomainRuleBroken);
 
             Status = new Status(StatusOrdemServicoEnum.Cancelada);
         }
@@ -122,7 +122,7 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public void IniciarDiagnostico()
         {
             if (!PodeTransicionarPara(StatusOrdemServicoEnum.EmDiagnostico))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.EmDiagnostico}.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.EmDiagnostico}.", ErrorType.DomainRuleBroken);
 
             Status = new Status(StatusOrdemServicoEnum.EmDiagnostico);
         }
@@ -130,10 +130,10 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public void GerarOrcamento()
         {
             if (!PodeTransicionarPara(StatusOrdemServicoEnum.AguardandoAprovacao))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.AguardandoAprovacao}.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.AguardandoAprovacao}.", ErrorType.DomainRuleBroken);
 
             if (!ServicosIncluidos.Any() && !ItensIncluidos.Any())
-                throw new DomainException("Não é possível gerar orçamento sem pelo menos um serviço ou item incluído.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException("Não é possível gerar orçamento sem pelo menos um serviço ou item incluído.", ErrorType.DomainRuleBroken);
 
             Status = new Status(StatusOrdemServicoEnum.AguardandoAprovacao);
             Orcamento = Orcamento.GerarOrcamento(ServicosIncluidos, ItensIncluidos);
@@ -142,7 +142,7 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public void IniciarExecucao()
         {
             if (!PodeTransicionarPara(StatusOrdemServicoEnum.EmExecucao))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.EmExecucao}.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.EmExecucao}.", ErrorType.DomainRuleBroken);
 
             Status = new Status(StatusOrdemServicoEnum.EmExecucao);
             Historico = Historico.MarcarDataInicioExecucao();
@@ -151,7 +151,7 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public void FinalizarExecucao()
         {
             if (!PodeTransicionarPara(StatusOrdemServicoEnum.Finalizada))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Finalizada}.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Finalizada}.", ErrorType.DomainRuleBroken);
 
             Status = new Status(StatusOrdemServicoEnum.Finalizada);
             Historico = Historico.MarcarDataFinalizadaExecucao();
@@ -160,7 +160,7 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public void Entregar()
         {
             if (!PodeTransicionarPara(StatusOrdemServicoEnum.Entregue))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Entregue}.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Entregue}.", ErrorType.DomainRuleBroken);
 
             Status = new Status(StatusOrdemServicoEnum.Entregue);
             Historico = Historico.MarcarDataEntrega();

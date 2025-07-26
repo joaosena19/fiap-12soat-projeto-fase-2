@@ -1,4 +1,4 @@
-using System.Net;
+﻿using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Veiculo
@@ -13,10 +13,10 @@ namespace Domain.Cadastros.ValueObjects.Veiculo
         public Marca(string marca)
         {
             if (string.IsNullOrWhiteSpace(marca))
-                throw new DomainException("Marca não pode ser vazia", HttpStatusCode.BadRequest);
+                throw new DomainException("Marca não pode ser vazia", ErrorType.InvalidInput);
 
             if (marca.Length > 200)
-                throw new DomainException("Marca não pode ter mais de 200 caracteres", HttpStatusCode.BadRequest);
+                throw new DomainException("Marca não pode ter mais de 200 caracteres", ErrorType.InvalidInput);
 
             _valor = marca.Trim();
         }

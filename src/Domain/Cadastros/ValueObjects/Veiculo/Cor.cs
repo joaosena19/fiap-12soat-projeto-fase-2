@@ -1,4 +1,4 @@
-using System.Net;
+﻿using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Veiculo
@@ -13,10 +13,10 @@ namespace Domain.Cadastros.ValueObjects.Veiculo
         public Cor(string cor)
         {
             if (string.IsNullOrWhiteSpace(cor))
-                throw new DomainException("Cor não pode ser vazia", HttpStatusCode.BadRequest);
+                throw new DomainException("Cor não pode ser vazia", ErrorType.InvalidInput);
 
             if (cor.Length > 100)
-                throw new DomainException("Cor não pode ter mais de 100 caracteres", HttpStatusCode.BadRequest);
+                throw new DomainException("Cor não pode ter mais de 100 caracteres", ErrorType.InvalidInput);
 
             _valor = cor.Trim();
         }

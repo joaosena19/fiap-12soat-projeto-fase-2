@@ -3,7 +3,7 @@ using Application.OrdemServico.DTO.External;
 using Application.OrdemServico.Interfaces.External;
 using Domain.OrdemServico.Enums;
 using Shared.Exceptions;
-using System.Net;
+using Shared.Enums;
 
 namespace Infrastructure.AntiCorruptionLayer.OrdemServico
 {
@@ -46,7 +46,7 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
             {
                 "peca" => TipoItemIncluidoEnum.Peca,
                 "insumo" => TipoItemIncluidoEnum.Insumo,
-                _ => throw new DomainException($"Tipo de item de estoque '{tipoItemEstoque}' não é válido.", HttpStatusCode.BadRequest)
+                _ => throw new DomainException($"Tipo de item de estoque '{tipoItemEstoque}' não é válido.", ErrorType.InvalidInput)
             };
         }
     }

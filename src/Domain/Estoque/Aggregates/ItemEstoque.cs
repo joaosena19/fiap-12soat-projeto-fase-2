@@ -1,5 +1,6 @@
 using Domain.Estoque.Enums;
 using Domain.Estoque.ValueObjects.ItemEstoque;
+using Shared.Enums;
 using Shared.Exceptions;
 using UUIDNext;
 
@@ -52,7 +53,7 @@ namespace Domain.Estoque.Aggregates
         public bool VerificarDisponibilidade(int quantidadeNecessaria)
         {
             if (quantidadeNecessaria <= 0)
-                throw new DomainException("Quantidade requisitada deve ser maior que 0");
+                throw new DomainException("Quantidade requisitada deve ser maior que 0", ErrorType.InvalidInput);
 
             return Quantidade.Valor >= quantidadeNecessaria;
         }

@@ -1,6 +1,6 @@
 ﻿using Domain.OrdemServico.Enums;
 using Shared.Exceptions;
-using System.Net;
+using Shared.Enums;
 
 namespace Domain.OrdemServico.ValueObjects.OrdemServico
 {
@@ -16,7 +16,7 @@ namespace Domain.OrdemServico.ValueObjects.OrdemServico
             if (!Enum.IsDefined(typeof(StatusOrdemServicoEnum), statusOrdemServicoEnum))
             {
                 var valores = string.Join(", ", Enum.GetNames(typeof(StatusOrdemServicoEnum)));
-                throw new DomainException($"Status da Ordem de Serviço '{statusOrdemServicoEnum}' não é válido. Valores aceitos: {valores}.", HttpStatusCode.UnprocessableContent);
+                throw new DomainException($"Status da Ordem de Serviço '{statusOrdemServicoEnum}' não é válido. Valores aceitos: {valores}.", ErrorType.InvalidInput);
             }
 
             _valor = statusOrdemServicoEnum.ToString().ToLower();
