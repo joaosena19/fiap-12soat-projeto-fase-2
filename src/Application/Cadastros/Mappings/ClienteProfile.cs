@@ -10,10 +10,10 @@ namespace Application.Cadastros.Mappings
         {
             CreateMap<Cliente, RetornoClienteDTO>()
                 .ForMember(dest => dest.Nome, opt => opt.MapFrom(src => src.Nome.Valor))
-                .ForMember(dest => dest.Cpf, opt => opt.MapFrom(src => src.Cpf.Valor));
+                .ForMember(dest => dest.DocumentoIdentificador, opt => opt.MapFrom(src => src.DocumentoIdentificador.Valor));
 
             CreateMap<CriarClienteDTO, Cliente>()
-                .ConstructUsing(src => Cliente.Criar(src.Nome, src.Cpf));
+                .ConstructUsing(src => Cliente.Criar(src.Nome, src.DocumentoIdentificador));
 
             // Note: For update operations, we'll use domain methods directly
             // as they maintain business rules

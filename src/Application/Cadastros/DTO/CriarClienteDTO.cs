@@ -12,9 +12,9 @@
         public string Nome { get; set; } = string.Empty;
 
         /// <summary>
-        /// CPF do cliente (apenas números)
+        /// Documento de identificação do cliente (CPF ou CNPJ, com ou sem formatação)
         /// </summary>
         /// <example>12345678901</example>
-        public string Cpf { get; set; } = string.Empty;
+        public string DocumentoIdentificador { get; set; } = string.Empty;
     }
 }

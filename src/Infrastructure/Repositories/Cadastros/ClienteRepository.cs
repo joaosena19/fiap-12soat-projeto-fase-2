@@ -2,6 +2,7 @@
 using Domain.Cadastros.Aggregates;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace Infrastructure.Repositories.Cadastros
 {
@@ -22,9 +23,11 @@ namespace Infrastructure.Repositories.Cadastros
             return cliente;
         }
 
-        public async Task<Cliente?> ObterPorCpfAsync(string cpf)
+        public async Task<Cliente?> ObterPorDocumentoAsync(string documento)
         {
-            return await _context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == cpf);
+            var documentoLimpo = Regex.Replace(documento, @"[^\d]", "");
+
+            return await _context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == documentoLimpo);
         }
 
         public async Task<Cliente?> ObterPorIdAsync(Guid id)

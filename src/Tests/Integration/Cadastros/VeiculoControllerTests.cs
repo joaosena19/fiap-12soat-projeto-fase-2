@@ -29,11 +29,11 @@ namespace Tests.Integration.Cadastros
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Create a client first
-            var clienteDto = new { Nome = "João Silva", Cpf = "22315044057" };
+            var clienteDto = new { Nome = "João Silva", DocumentoIdentificador = "22315044057" };
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "22315044057");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "22315044057");
             clienteCriado.Should().NotBeNull();
 
             var dto = new 
@@ -72,11 +72,11 @@ namespace Tests.Integration.Cadastros
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Create a client first
-            var clienteDto = new { Nome = "Maria Silva", Cpf = "98765432100" };
+            var clienteDto = new { Nome = "Maria Silva", DocumentoIdentificador = "98765432100" };
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "98765432100");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "98765432100");
             clienteCriado.Should().NotBeNull();
 
             var criarDto = new 
@@ -131,8 +131,8 @@ namespace Tests.Integration.Cadastros
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Create clients first
-            var cliente1Dto = new { Nome = "Cliente 1", Cpf = "04663818080" };
-            var cliente2Dto = new { Nome = "Cliente 2", Cpf = "98552408040" };
+            var cliente1Dto = new { Nome = "Cliente 1", DocumentoIdentificador = "04663818080" };
+            var cliente2Dto = new { Nome = "Cliente 2", DocumentoIdentificador = "98552408040" };
             
             var cliente1Response = await _client.PostAsJsonAsync("/api/cadastros/clientes", cliente1Dto);
             var cliente2Response = await _client.PostAsJsonAsync("/api/cadastros/clientes", cliente2Dto);
@@ -140,8 +140,8 @@ namespace Tests.Integration.Cadastros
             cliente1Response.StatusCode.Should().Be(HttpStatusCode.Created);
             cliente2Response.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var cliente1 = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "04663818080");
-            var cliente2 = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "98552408040");
+            var cliente1 = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "04663818080");
+            var cliente2 = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "98552408040");
             
             cliente1.Should().NotBeNull();
             cliente2.Should().NotBeNull();
@@ -212,11 +212,11 @@ namespace Tests.Integration.Cadastros
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Create a client first
-            var clienteDto = new { Nome = "Cliente GetById", Cpf = "23096067074" };
+            var clienteDto = new { Nome = "Cliente GetById", DocumentoIdentificador = "23096067074" };
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "23096067074");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "23096067074");
             clienteCriado.Should().NotBeNull();
 
             var criarDto = new 
@@ -273,11 +273,11 @@ namespace Tests.Integration.Cadastros
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Create a client first
-            var clienteDto = new { Nome = "Cliente GetByPlaca", Cpf = "01213944090" };
+            var clienteDto = new { Nome = "Cliente GetByPlaca", DocumentoIdentificador = "01213944090" };
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "01213944090");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "01213944090");
             clienteCriado.Should().NotBeNull();
 
             var criarDto = new
@@ -334,11 +334,11 @@ namespace Tests.Integration.Cadastros
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente primeiro
-            var clienteDto = new { Nome = "Cliente Teste Placa", Cpf = "23882227028" };
+            var clienteDto = new { Nome = "Cliente Teste Placa", DocumentoIdentificador = "23882227028" };
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "23882227028");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "23882227028");
             clienteCriado.Should().NotBeNull();
 
             var dto = new 
@@ -371,8 +371,8 @@ namespace Tests.Integration.Cadastros
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar clientes
-            var cliente1Dto = new { Nome = "Cliente 1", Cpf = "27735549067" };
-            var cliente2Dto = new { Nome = "Cliente 2", Cpf = "83587959048" };
+            var cliente1Dto = new { Nome = "Cliente 1", DocumentoIdentificador = "27735549067" };
+            var cliente2Dto = new { Nome = "Cliente 2", DocumentoIdentificador = "83587959048" };
             
             var cliente1Response = await _client.PostAsJsonAsync("/api/cadastros/clientes", cliente1Dto);
             var cliente2Response = await _client.PostAsJsonAsync("/api/cadastros/clientes", cliente2Dto);
@@ -380,8 +380,8 @@ namespace Tests.Integration.Cadastros
             cliente1Response.StatusCode.Should().Be(HttpStatusCode.Created);
             cliente2Response.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var cliente1 = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "27735549067");
-            var cliente2 = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "83587959048");
+            var cliente1 = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "27735549067");
+            var cliente2 = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "83587959048");
 
             // Criar veículo com placa em uppercase
             var veiculo1Dto = new 
@@ -426,11 +426,11 @@ namespace Tests.Integration.Cadastros
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar um cliente primeiro
-            var clienteDto = new { Nome = "Cliente GetByPlaca Case", Cpf = "45503206053" };
+            var clienteDto = new { Nome = "Cliente GetByPlaca Case", DocumentoIdentificador = "45503206053" };
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "45503206053");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "45503206053");
             clienteCriado.Should().NotBeNull();
 
             var criarDto = new
@@ -467,11 +467,11 @@ namespace Tests.Integration.Cadastros
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente
-            var clienteDto = new { Nome = "Cliente Teste Tipo", Cpf = "81907357050" };
+            var clienteDto = new { Nome = "Cliente Teste Tipo", DocumentoIdentificador = "85179781027" };
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "81907357050");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "85179781027");
             clienteCriado.Should().NotBeNull();
 
             var dto = new 
@@ -504,11 +504,11 @@ namespace Tests.Integration.Cadastros
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente
-            var clienteDto = new { Nome = "Cliente Update Tipo", Cpf = "15332546050" };
+            var clienteDto = new { Nome = "Cliente Update Tipo", DocumentoIdentificador = "15332546050" };
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.Cpf.Valor == "15332546050");
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "15332546050");
             clienteCriado.Should().NotBeNull();
 
             var criarDto = new 

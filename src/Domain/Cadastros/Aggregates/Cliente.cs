@@ -7,21 +7,21 @@ namespace Domain.Cadastros.Aggregates
     {
         public Guid Id { get; private set; }
         public NomeCliente Nome { get; private set; } = null!;
-        public Cpf Cpf { get; private set; } = null!;
+        public DocumentoIdentificador DocumentoIdentificador { get; private set; } = null!;
 
         // Contrutor sem parâmetro para EF Core
         private Cliente() { }
 
-        private Cliente(Guid id, NomeCliente nome, Cpf cpf)
+        private Cliente(Guid id, NomeCliente nome, DocumentoIdentificador documentoIdentificador)
         {
             Id = id;
             Nome = nome;
-            Cpf = cpf;
+            DocumentoIdentificador = documentoIdentificador;
         }
 
-        public static Cliente Criar(string nome, string cpf)
+        public static Cliente Criar(string nome, string documento)
         {
-            return new Cliente(Uuid.NewSequential(), new NomeCliente(nome), new Cpf(cpf));
+            return new Cliente(Uuid.NewSequential(), new NomeCliente(nome), new DocumentoIdentificador(documento));
         }
 
         public void Atualizar(string nome)

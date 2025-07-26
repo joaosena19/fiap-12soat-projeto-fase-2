@@ -14,12 +14,17 @@ namespace Infrastructure.Database.Configurations
             builder.Property(c => c.Id)
                    .HasColumnName("id");
 
-            builder.OwnsOne(c => c.Cpf, cpf =>
+            builder.OwnsOne(c => c.DocumentoIdentificador, doc =>
             {
-                cpf.Property(p => p.Valor)
-                   .HasColumnName("cpf")
+                doc.Property(p => p.Valor)
+                   .HasColumnName("documento_identificador")
                    .IsRequired()
-                   .HasMaxLength(11);
+                   .HasMaxLength(14);
+
+                doc.Property(p => p.TipoDocumento)
+                   .HasColumnName("tipo_documento_identificador")
+                   .IsRequired()
+                   .HasMaxLength(4);
             });
 
             builder.OwnsOne(c => c.Nome, nome =>

@@ -54,20 +54,23 @@ namespace API.Controllers.Cadastro
         }
 
         /// <summary>
-        /// Buscar cliente por CPF
+        /// Buscar cliente por documento (CPF ou CNPJ)
         /// </summary>
-        /// <param name="cpf">CPF do cliente</param>
+        /// <param name="documento">CPF ou CNPJ, com ou sem formatação</param>
         /// <returns>Cliente encontrado</returns>
         /// <response code="200">Cliente encontrado com sucesso</response>
         /// <response code="404">Cliente não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
-        [HttpGet("cpf/{cpf}")]
+        [HttpGet("documento/{documento}")]
         [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByCpf(string cpf)
+        public async Task<IActionResult> GetByDocumento(string documento)
         {
-            var result = await _clienteService.BuscarPorCpf(cpf);
+            //Necessário pois CNPJ tem / , então se mandarem com formatação, vai encodar
+            var documentoUnencoded = Uri.UnescapeDataString(documento);
+
+            var result = await _clienteService.BuscarPorDocumento(documentoUnencoded);
             return Ok(result);
         }
 
@@ -87,7 +90,7 @@ namespace API.Controllers.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CriarClienteDTO dto)
         {
-            var result = await _clienteService.CriarCliente(dto.Nome, dto.Cpf);
+            var result = await _clienteService.CriarCliente(dto.Nome, dto.DocumentoIdentificador);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 

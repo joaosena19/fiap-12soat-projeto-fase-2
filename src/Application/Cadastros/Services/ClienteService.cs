@@ -18,13 +18,13 @@ namespace Application.Cadastros.Services
             _mapper = mapper;
         }
 
-        public async Task<RetornoClienteDTO> CriarCliente(string nome, string cpf)
+        public async Task<RetornoClienteDTO> CriarCliente(string nome, string documento)
         {
-            var clienteExistente = await _clienteRepository.ObterPorCpfAsync(cpf);
+            var clienteExistente = await _clienteRepository.ObterPorDocumentoAsync(documento);
             if (clienteExistente != null)
-                throw new DomainException("Já existe um cliente cadastrado com este CPF.", ErrorType.Conflict);
+                throw new DomainException("Já existe um cliente cadastrado com este documento.", ErrorType.Conflict);
 
-            var novoCliente = Cliente.Criar(nome, cpf);
+            var novoCliente = Cliente.Criar(nome, documento);
             var result = await _clienteRepository.SalvarAsync(novoCliente);
 
             return _mapper.Map<RetornoClienteDTO>(result);
@@ -57,9 +57,9 @@ namespace Application.Cadastros.Services
             return _mapper.Map<RetornoClienteDTO>(cliente);
         }
 
-        public async Task<RetornoClienteDTO> BuscarPorCpf(string cpf)
+        public async Task<RetornoClienteDTO> BuscarPorDocumento(string documento)
         {
-            var cliente = await _clienteRepository.ObterPorCpfAsync(cpf);
+            var cliente = await _clienteRepository.ObterPorDocumentoAsync(documento);
             if (cliente == null)
                 throw new DomainException("Cliente não encontrado.", ErrorType.ResourceNotFound);
 
