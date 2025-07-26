@@ -21,7 +21,10 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public Orcamento? Orcamento { get; private set; } = null;
 
         // Construtor sem parâmetro para EF Core
-        private OrdemServico() { }
+        private OrdemServico() 
+        {
+            Historico = new HistoricoTemporal(DateTime.UtcNow);
+        }
 
         private OrdemServico(Guid id, Codigo codigo, Status status, HistoricoTemporal historico)
         {
@@ -78,6 +81,30 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
                 var novoItem = ItemIncluido.Criar(itemEstoqueOriginalId, nome, precoUnitario, quantidade, tipo);
                 _itensIncluidos.Add(novoItem);
             }
+        }
+
+        public void RemoverServico(Guid servicoIncluidoId)
+        {
+            if (!PermiteAlterarServicosItens())
+                throw new DomainException($"Não é possível remover serviços de uma Ordem de Serviço com o status '{Status.Valor}'.");
+
+            var servicoParaRemover = _servicosIncluidos.FirstOrDefault(s => s.Id == servicoIncluidoId);
+            if (servicoParaRemover == null)
+                throw new DomainException("Serviço não encontrado nesta ordem de serviço.");
+
+            _servicosIncluidos.Remove(servicoParaRemover);
+        }
+
+        public void RemoverItem(Guid itemIncluidoId)
+        {
+            if (!PermiteAlterarServicosItens())
+                throw new DomainException($"Não é possível remover itens de uma Ordem de Serviço com o status '{Status.Valor}'.");
+
+            var itemParaRemover = _itensIncluidos.FirstOrDefault(i => i.Id == itemIncluidoId);
+            if (itemParaRemover == null)
+                throw new DomainException("Item não encontrado nesta ordem de serviço.");
+
+            _itensIncluidos.Remove(itemParaRemover);
         }
 
         public void Cancelar()

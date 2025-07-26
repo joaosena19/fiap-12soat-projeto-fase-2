@@ -1,0 +1,196 @@
+using Application.Cadastros.Interfaces;
+using Application.Estoque.Interfaces;
+using Application.OrdemServico.DTO;
+using Application.OrdemServico.Interfaces;
+using AutoMapper;
+using Domain.OrdemServico.Enums;
+using Shared.Exceptions;
+using System.Net;
+
+namespace Application.OrdemServico.Services
+{
+    public class OrdemServicoService : IOrdemServicoService
+    {
+        private readonly IOrdemServicoRepository _ordemServicoRepository;
+        private readonly IServicoRepository _servicoRepository;
+        private readonly IItemEstoqueRepository _itemEstoqueRepository;
+        private readonly IMapper _mapper;
+
+        public OrdemServicoService(
+            IOrdemServicoRepository ordemServicoRepository,
+            IServicoRepository servicoRepository,
+            IItemEstoqueRepository itemEstoqueRepository,
+            IMapper mapper)
+        {
+            _ordemServicoRepository = ordemServicoRepository;
+            _servicoRepository = servicoRepository;
+            _itemEstoqueRepository = itemEstoqueRepository;
+            _mapper = mapper;
+        }
+
+        public async Task<IEnumerable<RetornoOrdemServicoCompletaDTO>> Buscar()
+        {
+            var ordensServico = await _ordemServicoRepository.ObterTodosAsync();
+            return _mapper.Map<IEnumerable<RetornoOrdemServicoCompletaDTO>>(ordensServico);
+        }
+
+        public async Task<RetornoOrdemServicoCompletaDTO> BuscarPorId(Guid id)
+        {
+            var ordemServico = await _ordemServicoRepository.ObterPorIdAsync(id);
+            if (ordemServico == null)
+                throw new DomainException("Ordem de serviço não encontrada.", HttpStatusCode.NotFound);
+
+            return _mapper.Map<RetornoOrdemServicoCompletaDTO>(ordemServico);
+        }
+
+        public async Task<RetornoOrdemServicoCompletaDTO> BuscarPorCodigo(string codigo)
+        {
+            var ordemServico = await _ordemServicoRepository.ObterPorCodigoAsync(codigo);
+            if (ordemServico == null)
+                throw new DomainException("Ordem de serviço não encontrada.", HttpStatusCode.NotFound);
+
+            return _mapper.Map<RetornoOrdemServicoCompletaDTO>(ordemServico);
+        }
+
+        public async Task<RetornoOrdemServicoDTO> CriarOrdemServico()
+        {
+            Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico novaOrdemServico;
+            Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico? ordemServicoExistente;
+
+            // Apesar de improvável, é possível que o código da Ordem de Serviço se repita, por isso precisa tentar recriar caso existir
+            do
+            {
+                novaOrdemServico = Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico.Criar();
+                ordemServicoExistente = await _ordemServicoRepository.ObterPorCodigoAsync(novaOrdemServico.Codigo.Valor);
+            } while (ordemServicoExistente != null);
+
+            var result = await _ordemServicoRepository.SalvarAsync(novaOrdemServico);
+            return _mapper.Map<RetornoOrdemServicoDTO>(result);
+        }
+
+        public async Task<RetornoOrdemServicoComServicosItensDTO> AdicionarServicos(Guid ordemServicoId, AdicionarServicosDTO dto)
+        {
+            var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+
+            foreach (var servicoId in dto.ServicosOriginaisIds)
+            {
+                var servico = await _servicoRepository.ObterPorIdAsync(servicoId);
+                if (servico == null)
+                    throw new DomainException($"Serviço com ID {servicoId} não encontrado.", HttpStatusCode.NotFound);
+
+                ordemServico.AdicionarServico(servico.Id, servico.Nome.Valor, servico.Preco.Valor);
+            }
+
+            var result = await _ordemServicoRepository.AtualizarAsync(ordemServico);
+            return _mapper.Map<RetornoOrdemServicoComServicosItensDTO>(result);
+        }
+
+        public async Task<RetornoOrdemServicoComServicosItensDTO> AdicionarItem(Guid ordemServicoId, AdicionarItemDTO dto)
+        {
+            var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+
+            var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(dto.ItemEstoqueOriginalId);
+            if (itemEstoque == null)
+                throw new DomainException($"Item de estoque com ID {dto.ItemEstoqueOriginalId} não encontrado.", HttpStatusCode.NotFound);
+
+            // Converter o tipo de item de estoque para o tipo de item incluído
+            var tipoItemIncluido = ConverterTipoItemEstoqueParaTipoItemIncluido(itemEstoque.TipoItemEstoque.Valor);
+
+            ordemServico.AdicionarItem(
+                itemEstoque.Id,
+                itemEstoque.Nome.Valor,
+                0M, // Preço será definido conforme política de negócio da oficina
+                dto.Quantidade,
+                tipoItemIncluido);
+
+            var result = await _ordemServicoRepository.AtualizarAsync(ordemServico);
+            return _mapper.Map<RetornoOrdemServicoComServicosItensDTO>(result);
+        }
+
+        public async Task<RetornoOrdemServicoComServicosItensDTO> RemoverServico(Guid ordemServicoId, Guid servicoIncluidoId)
+        {
+            var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+            ordemServico.RemoverServico(servicoIncluidoId);
+
+            var result = await _ordemServicoRepository.AtualizarAsync(ordemServico);
+            return _mapper.Map<RetornoOrdemServicoComServicosItensDTO>(result);
+        }
+
+        public async Task<RetornoOrdemServicoComServicosItensDTO> RemoverItem(Guid ordemServicoId, Guid itemIncluidoId)
+        {
+            var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+            ordemServico.RemoverItem(itemIncluidoId);
+
+            var result = await _ordemServicoRepository.AtualizarAsync(ordemServico);
+            return _mapper.Map<RetornoOrdemServicoComServicosItensDTO>(result);
+        }
+
+        public async Task Cancelar(Guid ordemServicoId)
+        {
+            var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+            ordemServico.Cancelar();
+
+            await _ordemServicoRepository.AtualizarAsync(ordemServico);
+        }
+
+        public async Task IniciarDiagnostico(Guid ordemServicoId)
+        {
+            var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+            ordemServico.IniciarDiagnostico();
+
+            await _ordemServicoRepository.AtualizarAsync(ordemServico);
+        }
+
+        public async Task<RetornoOrcamentoDTO> GerarOrcamento(Guid ordemServicoId)
+        {
+            var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+            ordemServico.GerarOrcamento();
+
+            var result = await _ordemServicoRepository.AtualizarAsync(ordemServico);
+            return _mapper.Map<RetornoOrcamentoDTO>(result.Orcamento);
+        }
+
+        public async Task IniciarExecucao(Guid ordemServicoId)
+        {
+            var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+            ordemServico.IniciarExecucao();
+
+            await _ordemServicoRepository.AtualizarAsync(ordemServico);
+        }
+
+        public async Task FinalizarExecucao(Guid ordemServicoId)
+        {
+            var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+            ordemServico.FinalizarExecucao();
+
+            await _ordemServicoRepository.AtualizarAsync(ordemServico);
+        }
+
+        public async Task Entregar(Guid ordemServicoId)
+        {
+            var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+            ordemServico.Entregar();
+
+            await _ordemServicoRepository.AtualizarAsync(ordemServico);
+        }
+
+        private async Task<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico> ObterOrdemServicoPorId(Guid id)
+        {
+            var ordemServico = await _ordemServicoRepository.ObterPorIdAsync(id);
+            if (ordemServico == null)
+                throw new DomainException("Ordem de serviço não encontrada.", HttpStatusCode.NotFound);
+
+            return ordemServico;
+        }
+
+        private static TipoItemIncluidoEnum ConverterTipoItemEstoqueParaTipoItemIncluido(string tipoItemEstoque)
+        {
+            return tipoItemEstoque.ToLower() switch
+            {
+                "peca" => TipoItemIncluidoEnum.Peca,
+                "insumo" => TipoItemIncluidoEnum.Insumo,
+                _ => throw new DomainException($"Tipo de item de estoque '{tipoItemEstoque}' não é válido.", HttpStatusCode.BadRequest)
+            };
+        }
+    }
+}

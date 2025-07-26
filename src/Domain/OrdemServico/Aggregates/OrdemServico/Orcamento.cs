@@ -25,7 +25,7 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
             var totalItens = itens.Sum(i => i.Preco.Valor);
             var total = totalServicos + totalItens;
 
-            return new Orcamento(Uuid.NewSequential(), new DataCriacao(DateTime.Now), new PrecoOrcamento(total));
+            return new Orcamento(Uuid.NewSequential(), new DataCriacao(DateTime.UtcNow), new PrecoOrcamento(total));
         }
     }
 }

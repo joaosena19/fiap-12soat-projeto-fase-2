@@ -4,11 +4,14 @@ using Application.Cadastros.Interfaces;
 using Application.Cadastros.Services;
 using Application.Estoque.Interfaces;
 using Application.Estoque.Services;
+using Application.OrdemServico.Interfaces;
+using Application.OrdemServico.Services;
 using AutoMapper;
 using DotNetEnv;
 using Infrastructure.Database;
 using Infrastructure.Repositories.Cadastros;
 using Infrastructure.Repositories.Estoque;
+using Infrastructure.Repositories.OrdemServico;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -67,6 +70,8 @@ builder.Services.AddScoped<IVeiculoService, VeiculoService>();
 builder.Services.AddScoped<IVeiculoRepository, VeiculoRepository>();
 builder.Services.AddScoped<IItemEstoqueService, ItemEstoqueService>();
 builder.Services.AddScoped<IItemEstoqueRepository, ItemEstoqueRepository>();
+builder.Services.AddScoped<IOrdemServicoService, OrdemServicoService>();
+builder.Services.AddScoped<IOrdemServicoRepository, OrdemServicoRepository>();
 
 var app = builder.Build();
 

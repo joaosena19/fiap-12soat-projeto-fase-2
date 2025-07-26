@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250726132557_AddOrdemServico")]
+    partial class AddOrdemServico
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,7 +169,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ClienteId");
 
-                            b1.ToTable("clientes", (string)null);
+                            b1.ToTable("clientes");
 
                             b1.WithOwner()
                                 .HasForeignKey("ClienteId");
@@ -185,7 +188,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ClienteId");
 
-                            b1.ToTable("clientes", (string)null);
+                            b1.ToTable("clientes");
 
                             b1.WithOwner()
                                 .HasForeignKey("ClienteId");
@@ -213,7 +216,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ServicoId");
 
-                            b1.ToTable("servicos", (string)null);
+                            b1.ToTable("servicos");
 
                             b1.WithOwner()
                                 .HasForeignKey("ServicoId");
@@ -230,7 +233,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ServicoId");
 
-                            b1.ToTable("servicos", (string)null);
+                            b1.ToTable("servicos");
 
                             b1.WithOwner()
                                 .HasForeignKey("ServicoId");
@@ -262,7 +265,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("VeiculoId");
 
-                            b1.ToTable("veiculos", (string)null);
+                            b1.ToTable("veiculos");
 
                             b1.WithOwner()
                                 .HasForeignKey("VeiculoId");
@@ -281,7 +284,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("VeiculoId");
 
-                            b1.ToTable("veiculos", (string)null);
+                            b1.ToTable("veiculos");
 
                             b1.WithOwner()
                                 .HasForeignKey("VeiculoId");
@@ -300,7 +303,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("VeiculoId");
 
-                            b1.ToTable("veiculos", (string)null);
+                            b1.ToTable("veiculos");
 
                             b1.WithOwner()
                                 .HasForeignKey("VeiculoId");
@@ -319,7 +322,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("VeiculoId");
 
-                            b1.ToTable("veiculos", (string)null);
+                            b1.ToTable("veiculos");
 
                             b1.WithOwner()
                                 .HasForeignKey("VeiculoId");
@@ -338,7 +341,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("VeiculoId");
 
-                            b1.ToTable("veiculos", (string)null);
+                            b1.ToTable("veiculos");
 
                             b1.WithOwner()
                                 .HasForeignKey("VeiculoId");
@@ -357,7 +360,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("VeiculoId");
 
-                            b1.ToTable("veiculos", (string)null);
+                            b1.ToTable("veiculos");
 
                             b1.WithOwner()
                                 .HasForeignKey("VeiculoId");
@@ -397,7 +400,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ItemEstoqueId");
 
-                            b1.ToTable("itens_estoque", (string)null);
+                            b1.ToTable("itens_estoque");
 
                             b1.WithOwner()
                                 .HasForeignKey("ItemEstoqueId");
@@ -414,7 +417,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ItemEstoqueId");
 
-                            b1.ToTable("itens_estoque", (string)null);
+                            b1.ToTable("itens_estoque");
 
                             b1.WithOwner()
                                 .HasForeignKey("ItemEstoqueId");
@@ -433,7 +436,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ItemEstoqueId");
 
-                            b1.ToTable("itens_estoque", (string)null);
+                            b1.ToTable("itens_estoque");
 
                             b1.WithOwner()
                                 .HasForeignKey("ItemEstoqueId");
@@ -470,7 +473,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ItemIncluidoId");
 
-                            b1.ToTable("itens_incluidos", (string)null);
+                            b1.ToTable("itens_incluidos");
 
                             b1.WithOwner()
                                 .HasForeignKey("ItemIncluidoId");
@@ -487,7 +490,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ItemIncluidoId");
 
-                            b1.ToTable("itens_incluidos", (string)null);
+                            b1.ToTable("itens_incluidos");
 
                             b1.WithOwner()
                                 .HasForeignKey("ItemIncluidoId");
@@ -504,7 +507,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ItemIncluidoId");
 
-                            b1.ToTable("itens_incluidos", (string)null);
+                            b1.ToTable("itens_incluidos");
 
                             b1.WithOwner()
                                 .HasForeignKey("ItemIncluidoId");
@@ -523,7 +526,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ItemIncluidoId");
 
-                            b1.ToTable("itens_incluidos", (string)null);
+                            b1.ToTable("itens_incluidos");
 
                             b1.WithOwner()
                                 .HasForeignKey("ItemIncluidoId");
@@ -561,7 +564,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("OrcamentoId");
 
-                            b1.ToTable("orcamentos", (string)null);
+                            b1.ToTable("orcamentos");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrcamentoId");
@@ -578,7 +581,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("OrcamentoId");
 
-                            b1.ToTable("orcamentos", (string)null);
+                            b1.ToTable("orcamentos");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrcamentoId");
@@ -606,7 +609,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("OrdemServicoId");
 
-                            b1.ToTable("ordens_servico", (string)null);
+                            b1.ToTable("ordens_servico");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrdemServicoId");
@@ -635,7 +638,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("OrdemServicoId");
 
-                            b1.ToTable("ordens_servico", (string)null);
+                            b1.ToTable("ordens_servico");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrdemServicoId");
@@ -654,7 +657,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("OrdemServicoId");
 
-                            b1.ToTable("ordens_servico", (string)null);
+                            b1.ToTable("ordens_servico");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrdemServicoId");
@@ -691,7 +694,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ServicoIncluidoId");
 
-                            b1.ToTable("servicos_incluidos", (string)null);
+                            b1.ToTable("servicos_incluidos");
 
                             b1.WithOwner()
                                 .HasForeignKey("ServicoIncluidoId");
@@ -708,7 +711,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ServicoIncluidoId");
 
-                            b1.ToTable("servicos_incluidos", (string)null);
+                            b1.ToTable("servicos_incluidos");
 
                             b1.WithOwner()
                                 .HasForeignKey("ServicoIncluidoId");
