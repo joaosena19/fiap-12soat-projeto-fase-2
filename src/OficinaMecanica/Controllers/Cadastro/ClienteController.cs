@@ -1,3 +1,4 @@
+using API.DTO;
 using Application.Cadastros.DTO;
 using Application.Cadastros.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace API.Controllers.Cadastro
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<RetornoClienteDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
             var result = await _clienteService.Buscar();
@@ -44,8 +45,8 @@ namespace API.Controllers.Cadastro
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _clienteService.BuscarPorId(id);
@@ -62,8 +63,8 @@ namespace API.Controllers.Cadastro
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet("cpf/{cpf}")]
         [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByCpf(string cpf)
         {
             var result = await _clienteService.BuscarPorCpf(cpf);
@@ -81,9 +82,9 @@ namespace API.Controllers.Cadastro
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost]
         [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CriarClienteDTO dto)
         {
             var result = await _clienteService.CriarCliente(dto.Nome, dto.Cpf);
@@ -102,9 +103,9 @@ namespace API.Controllers.Cadastro
         /// <response code="500">Erro interno do servidor</response>
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarClienteDTO dto)
         {
             var result = await _clienteService.AtualizarCliente(id, dto.Nome);
