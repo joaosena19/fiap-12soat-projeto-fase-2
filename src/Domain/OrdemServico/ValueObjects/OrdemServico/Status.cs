@@ -23,38 +23,5 @@ namespace Domain.OrdemServico.ValueObjects.OrdemServico
         }
 
         public string Valor => _valor;
-
-        public Status TransicionarPara(StatusOrdemServicoEnum novoStatus)
-        {
-            if (!PodeTransicionarPara(novoStatus))
-            {
-                throw new DomainException($"Não é possível mudar de {Valor} para {novoStatus}.", HttpStatusCode.UnprocessableContent);
-            }
-
-            return new Status(novoStatus);
-        }
-
-        private bool PodeTransicionarPara(StatusOrdemServicoEnum novoStatus)
-        {
-            var statusAtual = Enum.Parse<StatusOrdemServicoEnum>(_valor, ignoreCase: true);
-
-            return novoStatus switch
-            {
-                // Sempre pode cancelar
-                StatusOrdemServicoEnum.Cancelada => true,
-
-                StatusOrdemServicoEnum.EmDiagnostico => statusAtual == StatusOrdemServicoEnum.Recebida,
-
-                StatusOrdemServicoEnum.AguardandoAprovacao => statusAtual == StatusOrdemServicoEnum.EmDiagnostico,
-
-                StatusOrdemServicoEnum.EmExecucao => statusAtual == StatusOrdemServicoEnum.AguardandoAprovacao,
-
-                StatusOrdemServicoEnum.Finalizada => statusAtual == StatusOrdemServicoEnum.EmExecucao,
-
-                StatusOrdemServicoEnum.Entregue => statusAtual == StatusOrdemServicoEnum.Finalizada,
-
-                _ => false
-            };
-        }
     }
 }

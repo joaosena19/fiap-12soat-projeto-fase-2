@@ -113,35 +113,80 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
 
         public void Cancelar()
         {
-            Status = Status.TransicionarPara(StatusOrdemServicoEnum.Cancelada);
+            if (!PodeTransicionarPara(StatusOrdemServicoEnum.Cancelada))
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Cancelada}.", HttpStatusCode.UnprocessableContent);
+
+            Status = new Status(StatusOrdemServicoEnum.Cancelada);
         }
 
         public void IniciarDiagnostico()
         {
-            Status = Status.TransicionarPara(StatusOrdemServicoEnum.EmDiagnostico);
+            if (!PodeTransicionarPara(StatusOrdemServicoEnum.EmDiagnostico))
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.EmDiagnostico}.", HttpStatusCode.UnprocessableContent);
+
+            Status = new Status(StatusOrdemServicoEnum.EmDiagnostico);
         }
+        
         public void GerarOrcamento()
         {
-            Status = Status.TransicionarPara(StatusOrdemServicoEnum.AguardandoAprovacao);
+            if (!PodeTransicionarPara(StatusOrdemServicoEnum.AguardandoAprovacao))
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.AguardandoAprovacao}.", HttpStatusCode.UnprocessableContent);
+
+            if (!ServicosIncluidos.Any() && !ItensIncluidos.Any())
+                throw new DomainException("Não é possível gerar orçamento sem pelo menos um serviço ou item incluído.", HttpStatusCode.UnprocessableContent);
+
+            Status = new Status(StatusOrdemServicoEnum.AguardandoAprovacao);
             Orcamento = Orcamento.GerarOrcamento(ServicosIncluidos, ItensIncluidos);
         }
 
         public void IniciarExecucao()
         {
-            Status = Status.TransicionarPara(StatusOrdemServicoEnum.EmExecucao);
+            if (!PodeTransicionarPara(StatusOrdemServicoEnum.EmExecucao))
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.EmExecucao}.", HttpStatusCode.UnprocessableContent);
+
+            Status = new Status(StatusOrdemServicoEnum.EmExecucao);
             Historico = Historico.MarcarDataInicioExecucao();
         }
 
         public void FinalizarExecucao()
         {
-            Status = Status.TransicionarPara(StatusOrdemServicoEnum.Finalizada);
+            if (!PodeTransicionarPara(StatusOrdemServicoEnum.Finalizada))
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Finalizada}.", HttpStatusCode.UnprocessableContent);
+
+            Status = new Status(StatusOrdemServicoEnum.Finalizada);
             Historico = Historico.MarcarDataFinalizadaExecucao();
         }
 
         public void Entregar()
         {
-            Status = Status.TransicionarPara(StatusOrdemServicoEnum.Entregue);
+            if (!PodeTransicionarPara(StatusOrdemServicoEnum.Entregue))
+                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Entregue}.", HttpStatusCode.UnprocessableContent);
+
+            Status = new Status(StatusOrdemServicoEnum.Entregue);
             Historico = Historico.MarcarDataEntrega();
+        }
+
+        private bool PodeTransicionarPara(StatusOrdemServicoEnum novoStatus)
+        {
+            var statusAtual = Enum.Parse<StatusOrdemServicoEnum>(Status.Valor, ignoreCase: true);
+
+            return novoStatus switch
+            {
+                // Sempre pode cancelar
+                StatusOrdemServicoEnum.Cancelada => true,
+
+                StatusOrdemServicoEnum.EmDiagnostico => statusAtual == StatusOrdemServicoEnum.Recebida,
+
+                StatusOrdemServicoEnum.AguardandoAprovacao => statusAtual == StatusOrdemServicoEnum.EmDiagnostico,
+
+                StatusOrdemServicoEnum.EmExecucao => statusAtual == StatusOrdemServicoEnum.AguardandoAprovacao,
+
+                StatusOrdemServicoEnum.Finalizada => statusAtual == StatusOrdemServicoEnum.EmExecucao,
+
+                StatusOrdemServicoEnum.Entregue => statusAtual == StatusOrdemServicoEnum.Finalizada,
+
+                _ => false
+            };
         }
     }
 }
