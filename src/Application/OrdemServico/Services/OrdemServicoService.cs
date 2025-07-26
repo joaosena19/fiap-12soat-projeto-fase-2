@@ -1,7 +1,6 @@
-using Application.Cadastros.Interfaces;
-using Application.Estoque.Interfaces;
 using Application.OrdemServico.DTO;
 using Application.OrdemServico.Interfaces;
+using Application.OrdemServico.Interfaces.External;
 using AutoMapper;
 using Domain.OrdemServico.Enums;
 using Shared.Exceptions;
@@ -12,22 +11,22 @@ namespace Application.OrdemServico.Services
     public class OrdemServicoService : IOrdemServicoService
     {
         private readonly IOrdemServicoRepository _ordemServicoRepository;
-        private readonly IServicoRepository _servicoRepository;
-        private readonly IItemEstoqueRepository _itemEstoqueRepository;
-        private readonly IVeiculoRepository _veiculoRepository;
+        private readonly IServicoExternalService _servicoExternalService;
+        private readonly IEstoqueExternalService _estoqueExternalService;
+        private readonly IVeiculoExternalService _veiculoExternalService;
         private readonly IMapper _mapper;
 
         public OrdemServicoService(
             IOrdemServicoRepository ordemServicoRepository,
-            IServicoRepository servicoRepository,
-            IItemEstoqueRepository itemEstoqueRepository,
-            IVeiculoRepository veiculoRepository,
+            IServicoExternalService servicoExternalService,
+            IEstoqueExternalService estoqueExternalService,
+            IVeiculoExternalService veiculoExternalService,
             IMapper mapper)
         {
             _ordemServicoRepository = ordemServicoRepository;
-            _servicoRepository = servicoRepository;
-            _itemEstoqueRepository = itemEstoqueRepository;
-            _veiculoRepository = veiculoRepository;
+            _servicoExternalService = servicoExternalService;
+            _estoqueExternalService = estoqueExternalService;
+            _veiculoExternalService = veiculoExternalService;
             _mapper = mapper;
         }
 
@@ -57,8 +56,8 @@ namespace Application.OrdemServico.Services
 
         public async Task<RetornoOrdemServicoDTO> CriarOrdemServico(CriarOrdemServicoDTO dto)
         {
-            var veiculo = await _veiculoRepository.ObterPorIdAsync(dto.VeiculoId);
-            if (veiculo == null)
+            var veiculoExiste = await _veiculoExternalService.VerificarExistenciaVeiculo(dto.VeiculoId);
+            if (!veiculoExiste)
                 throw new DomainException("Veículo não encontrado para criar a ordem de serviço.", HttpStatusCode.UnprocessableEntity);
 
             Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico novaOrdemServico;
@@ -81,11 +80,11 @@ namespace Application.OrdemServico.Services
 
             foreach (var servicoId in dto.ServicosOriginaisIds)
             {
-                var servico = await _servicoRepository.ObterPorIdAsync(servicoId);
+                var servico = await _servicoExternalService.ObterServicoPorIdAsync(servicoId);
                 if (servico == null)
                     throw new DomainException($"Serviço com ID {servicoId} não encontrado.", HttpStatusCode.UnprocessableEntity);
 
-                ordemServico.AdicionarServico(servico.Id, servico.Nome.Valor, servico.Preco.Valor);
+                ordemServico.AdicionarServico(servico.Id, servico.Nome, servico.Preco);
             }
 
             var result = await _ordemServicoRepository.AtualizarAsync(ordemServico);
@@ -96,19 +95,16 @@ namespace Application.OrdemServico.Services
         {
             var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
 
-            var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(dto.ItemEstoqueOriginalId);
+            var itemEstoque = await _estoqueExternalService.ObterItemEstoquePorIdAsync(dto.ItemEstoqueOriginalId);
             if (itemEstoque == null)
                 throw new DomainException($"Item de estoque com ID {dto.ItemEstoqueOriginalId} não encontrado.", HttpStatusCode.UnprocessableEntity);
 
-            // Converter o tipo de item de estoque para o tipo de item incluído
-            var tipoItemIncluido = ConverterTipoItemEstoqueParaTipoItemIncluido(itemEstoque.TipoItemEstoque.Valor);
-
             ordemServico.AdicionarItem(
                 itemEstoque.Id,
-                itemEstoque.Nome.Valor,
-                itemEstoque.Preco.Valor,
+                itemEstoque.Nome,
+                itemEstoque.Preco,
                 dto.Quantidade,
-                tipoItemIncluido);
+                itemEstoque.TipoItemIncluido);
 
             var result = await _ordemServicoRepository.AtualizarAsync(ordemServico);
             return _mapper.Map<RetornoOrdemServicoComServicosItensDTO>(result);
@@ -186,16 +182,6 @@ namespace Application.OrdemServico.Services
                 throw new DomainException("Ordem de serviço não encontrada.", HttpStatusCode.NotFound);
 
             return ordemServico;
-        }
-
-        private static TipoItemIncluidoEnum ConverterTipoItemEstoqueParaTipoItemIncluido(string tipoItemEstoque)
-        {
-            return tipoItemEstoque.ToLower() switch
-            {
-                "peca" => TipoItemIncluidoEnum.Peca,
-                "insumo" => TipoItemIncluidoEnum.Insumo,
-                _ => throw new DomainException($"Tipo de item de estoque '{tipoItemEstoque}' não é válido.", HttpStatusCode.BadRequest)
-            };
         }
     }
 }

@@ -5,9 +5,11 @@ using Application.Cadastros.Services;
 using Application.Estoque.Interfaces;
 using Application.Estoque.Services;
 using Application.OrdemServico.Interfaces;
+using Application.OrdemServico.Interfaces.External;
 using Application.OrdemServico.Services;
 using AutoMapper;
 using DotNetEnv;
+using Infrastructure.AntiCorruptionLayer.OrdemServico;
 using Infrastructure.Database;
 using Infrastructure.Repositories.Cadastros;
 using Infrastructure.Repositories.Estoque;
@@ -70,6 +72,12 @@ builder.Services.AddScoped<IVeiculoService, VeiculoService>();
 builder.Services.AddScoped<IVeiculoRepository, VeiculoRepository>();
 builder.Services.AddScoped<IItemEstoqueService, ItemEstoqueService>();
 builder.Services.AddScoped<IItemEstoqueRepository, ItemEstoqueRepository>();
+
+// Register anti-corruption layer services for OrdemServico bounded context
+builder.Services.AddScoped<IServicoExternalService, ServicoExternalService>();
+builder.Services.AddScoped<IEstoqueExternalService, EstoqueExternalService>();
+builder.Services.AddScoped<IVeiculoExternalService, VeiculoExternalService>();
+
 builder.Services.AddScoped<IOrdemServicoService, OrdemServicoService>();
 builder.Services.AddScoped<IOrdemServicoRepository, OrdemServicoRepository>();
 
