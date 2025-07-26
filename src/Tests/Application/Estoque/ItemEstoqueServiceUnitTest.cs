@@ -35,10 +35,11 @@ namespace Tests.Application.Estoque
             {
                 Nome = "Filtro de Óleo",
                 Quantidade = 50,
-                TipoItemEstoque = TipoItemEstoqueEnum.Peca
+                TipoItemEstoque = TipoItemEstoqueEnum.Peca,
+                Preco = 25.50m
             };
 
-            var itemExistente = ItemEstoque.Criar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque);
+            var itemExistente = ItemEstoque.Criar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco);
 
             _repoMock.Setup(r => r.ObterPorNomeAsync(dto.Nome))
                 .ReturnsAsync(itemExistente);
@@ -62,10 +63,11 @@ namespace Tests.Application.Estoque
             {
                 Nome = "Filtro de Óleo",
                 Quantidade = 50,
-                TipoItemEstoque = TipoItemEstoqueEnum.Peca
+                TipoItemEstoque = TipoItemEstoqueEnum.Peca,
+                Preco = 25.50m
             };
 
-            var itemNovo = ItemEstoque.Criar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque);
+            var itemNovo = ItemEstoque.Criar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco);
 
             _repoMock.Setup(r => r.ObterPorNomeAsync(dto.Nome))
                 .ReturnsAsync((ItemEstoque?)null);
@@ -81,11 +83,13 @@ namespace Tests.Application.Estoque
             resultado.Nome.Should().Be(dto.Nome);
             resultado.Quantidade.Should().Be(dto.Quantidade);
             resultado.TipoItemEstoque.Should().Be(dto.TipoItemEstoque.ToString().ToLower());
+            resultado.Preco.Should().Be(dto.Preco);
 
             _repoMock.Verify(r => r.SalvarAsync(It.Is<ItemEstoque>(i =>
                 i.Nome.Valor == dto.Nome && 
                 i.Quantidade.Valor == dto.Quantidade &&
-                i.TipoItemEstoque.Valor == dto.TipoItemEstoque.ToString().ToLower()
+                i.TipoItemEstoque.Valor == dto.TipoItemEstoque.ToString().ToLower() &&
+                i.Preco.Valor == dto.Preco
             )), Times.Once);
         }
 
@@ -103,11 +107,12 @@ namespace Tests.Application.Estoque
             {
                 Nome = "Filtro de Óleo Premium",
                 Quantidade = 75,
-                TipoItemEstoque = TipoItemEstoqueEnum.Insumo
+                TipoItemEstoque = TipoItemEstoqueEnum.Insumo,
+                Preco = 35.75m
             };
 
-            var itemExistente = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca);
-            var itemAtualizado = ItemEstoque.Criar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque);
+            var itemExistente = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
+            var itemAtualizado = ItemEstoque.Criar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco);
 
             _repoMock.Setup(r => r.ObterPorIdAsync(id))
                 .ReturnsAsync(itemExistente);
@@ -123,6 +128,7 @@ namespace Tests.Application.Estoque
             resultado.Nome.Should().Be(dto.Nome);
             resultado.Quantidade.Should().Be(dto.Quantidade);
             resultado.TipoItemEstoque.Should().Be(dto.TipoItemEstoque.ToString().ToLower());
+            resultado.Preco.Should().Be(dto.Preco);
 
             _repoMock.Verify(r => r.AtualizarAsync(It.IsAny<ItemEstoque>()), Times.Once);
         }
@@ -165,8 +171,8 @@ namespace Tests.Application.Estoque
             var id = Guid.NewGuid();
             var dto = new AtualizarQuantidadeDTO { Quantidade = 100 };
 
-            var itemExistente = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca);
-            var itemAtualizado = ItemEstoque.Criar("Filtro de Óleo", dto.Quantidade, TipoItemEstoqueEnum.Peca);
+            var itemExistente = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
+            var itemAtualizado = ItemEstoque.Criar("Filtro de Óleo", dto.Quantidade, TipoItemEstoqueEnum.Peca, 25.50m);
 
             _repoMock.Setup(r => r.ObterPorIdAsync(id))
                 .ReturnsAsync(itemExistente);
@@ -216,8 +222,8 @@ namespace Tests.Application.Estoque
             // Arrange
             var itens = new List<ItemEstoque>
             {
-                ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca),
-                ItemEstoque.Criar("Óleo Motor", 30, TipoItemEstoqueEnum.Insumo)
+                ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m),
+                ItemEstoque.Criar("Óleo Motor", 30, TipoItemEstoqueEnum.Insumo, 35.75m)
             };
 
             _repoMock.Setup(r => r.ObterTodosAsync())
@@ -265,7 +271,7 @@ namespace Tests.Application.Estoque
         {
             // Arrange
             var id = Guid.NewGuid();
-            var item = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca);
+            var item = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
 
             _repoMock.Setup(r => r.ObterPorIdAsync(id))
                 .ReturnsAsync(item);
@@ -312,7 +318,7 @@ namespace Tests.Application.Estoque
             // Arrange
             var id = Guid.NewGuid();
             var quantidadeRequisitada = 30;
-            var item = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca);
+            var item = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
 
             _repoMock.Setup(r => r.ObterPorIdAsync(id))
                 .ReturnsAsync(item);
@@ -336,7 +342,7 @@ namespace Tests.Application.Estoque
             // Arrange
             var id = Guid.NewGuid();
             var quantidadeRequisitada = 51;
-            var item = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca);
+            var item = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
 
             _repoMock.Setup(r => r.ObterPorIdAsync(id))
                 .ReturnsAsync(item);

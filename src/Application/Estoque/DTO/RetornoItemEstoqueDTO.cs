@@ -26,5 +26,11 @@ namespace Application.Estoque.DTO
         /// </summary>
         /// <example>Peca</example>
         public string TipoItemEstoque { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Preço unitário do item
+        /// </summary>
+        /// <example>25.50</example>
+        public decimal Preco { get; set; }
     }
 }

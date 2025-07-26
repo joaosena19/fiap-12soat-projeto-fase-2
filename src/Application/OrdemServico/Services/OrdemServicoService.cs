@@ -106,7 +106,7 @@ namespace Application.OrdemServico.Services
             ordemServico.AdicionarItem(
                 itemEstoque.Id,
                 itemEstoque.Nome.Valor,
-                0M, // Preço será definido conforme política de negócio da oficina
+                itemEstoque.Preco.Valor,
                 dto.Quantidade,
                 tipoItemIncluido);
 

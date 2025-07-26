@@ -24,7 +24,7 @@ namespace Application.Estoque.Services
             if (itemExistente != null)
                 throw new DomainException("Já existe um item de estoque cadastrado com este nome.", HttpStatusCode.Conflict);
 
-            var novoItemEstoque = ItemEstoque.Criar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque);
+            var novoItemEstoque = ItemEstoque.Criar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco);
             var result = await _itemEstoqueRepository.SalvarAsync(novoItemEstoque);
 
             return _mapper.Map<RetornoItemEstoqueDTO>(result);
@@ -36,7 +36,7 @@ namespace Application.Estoque.Services
             if (itemEstoque == null)
                 throw new DomainException("Item de estoque não encontrado.", HttpStatusCode.NotFound);
 
-            itemEstoque.Atualizar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque);
+            itemEstoque.Atualizar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco);
             var result = await _itemEstoqueRepository.AtualizarAsync(itemEstoque);
 
             return _mapper.Map<RetornoItemEstoqueDTO>(result);

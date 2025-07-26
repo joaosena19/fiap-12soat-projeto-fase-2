@@ -24,5 +24,11 @@ namespace Application.Estoque.DTO
         /// </summary>
         /// <example>Peca</example>
         public TipoItemEstoqueEnum TipoItemEstoque { get; set; }
+
+        /// <summary>
+        /// Preço unitário do item
+        /// </summary>
+        /// <example>25.50</example>
+        public decimal Preco { get; set; }
     }
 }

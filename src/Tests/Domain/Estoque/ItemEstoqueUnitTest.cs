@@ -15,9 +15,10 @@ namespace Tests.Domain.Estoque
             var nome = "Filtro de Óleo";
             var quantidade = 50;
             var tipoItemEstoque = TipoItemEstoqueEnum.Peca;
+            var preco = 25.50m;
 
             // Act
-            var itemEstoque = ItemEstoque.Criar(nome, quantidade, tipoItemEstoque);
+            var itemEstoque = ItemEstoque.Criar(nome, quantidade, tipoItemEstoque, preco);
 
             // Assert
             itemEstoque.Should().NotBeNull();
@@ -25,6 +26,7 @@ namespace Tests.Domain.Estoque
             itemEstoque.Nome.Valor.Should().Be(nome);
             itemEstoque.Quantidade.Valor.Should().Be(quantidade);
             itemEstoque.TipoItemEstoque.Valor.Should().Be(tipoItemEstoque.ToString().ToLower());
+            itemEstoque.Preco.Valor.Should().Be(preco);
         }
 
         [Fact(DisplayName = "Deve atualizar item de estoque com dados válidos")]
@@ -35,20 +37,23 @@ namespace Tests.Domain.Estoque
             var nomeOriginal = "Filtro de Óleo";
             var quantidadeOriginal = 50;
             var tipoOriginal = TipoItemEstoqueEnum.Peca;
+            var precoOriginal = 25.50m;
             
             var novoNome = "Filtro de Óleo Premium";
             var novaQuantidade = 75;
             var novoTipo = TipoItemEstoqueEnum.Insumo;
+            var novoPreco = 35.75m;
 
-            var itemEstoque = ItemEstoque.Criar(nomeOriginal, quantidadeOriginal, tipoOriginal);
+            var itemEstoque = ItemEstoque.Criar(nomeOriginal, quantidadeOriginal, tipoOriginal, precoOriginal);
 
             // Act
-            itemEstoque.Atualizar(novoNome, novaQuantidade, novoTipo);
+            itemEstoque.Atualizar(novoNome, novaQuantidade, novoTipo, novoPreco);
 
             // Assert
             itemEstoque.Nome.Valor.Should().Be(novoNome);
             itemEstoque.Quantidade.Valor.Should().Be(novaQuantidade);
             itemEstoque.TipoItemEstoque.Valor.Should().Be(novoTipo.ToString().ToLower());
+            itemEstoque.Preco.Valor.Should().Be(novoPreco);
         }
 
         [Fact(DisplayName = "Deve atualizar apenas a quantidade do item de estoque")]
@@ -60,8 +65,9 @@ namespace Tests.Domain.Estoque
             var quantidadeOriginal = 50;
             var novaQuantidade = 100;
             var tipoItemEstoque = TipoItemEstoqueEnum.Peca;
+            var preco = 25.50m;
 
-            var itemEstoque = ItemEstoque.Criar(nome, quantidadeOriginal, tipoItemEstoque);
+            var itemEstoque = ItemEstoque.Criar(nome, quantidadeOriginal, tipoItemEstoque, preco);
 
             // Act
             itemEstoque.AtualizarQuantidade(novaQuantidade);
@@ -70,6 +76,7 @@ namespace Tests.Domain.Estoque
             itemEstoque.Nome.Valor.Should().Be(nome); // Nome não deve mudar
             itemEstoque.Quantidade.Valor.Should().Be(novaQuantidade);
             itemEstoque.TipoItemEstoque.Valor.Should().Be(tipoItemEstoque.ToString().ToLower()); // Tipo não deve mudar
+            itemEstoque.Preco.Valor.Should().Be(preco); // Preço não deve mudar
         }
 
         [Theory(DisplayName = "Deve verificar disponibilidade corretamente")]
@@ -81,7 +88,7 @@ namespace Tests.Domain.Estoque
         public void VerificarDisponibilidade_DeveRetornarStatusCorreto(int quantidadeEstoque, int quantidadeSolicitada, bool esperado)
         {
             // Arrange
-            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", quantidadeEstoque, TipoItemEstoqueEnum.Peca);
+            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", quantidadeEstoque, TipoItemEstoqueEnum.Peca, 25.50m);
 
             // Act
             var disponivel = itemEstoque.VerificarDisponibilidade(quantidadeSolicitada);
@@ -98,7 +105,7 @@ namespace Tests.Domain.Estoque
         public void VerificarDisponibilidade_DeveLancarExcecao_QuandoQuantidadeInvalida(int quantidadeInvalida)
         {
             // Arrange
-            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca);
+            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
 
             // Act & Assert
             FluentActions.Invoking(() => itemEstoque.VerificarDisponibilidade(quantidadeInvalida))
@@ -120,7 +127,7 @@ namespace Tests.Domain.Estoque
             var tipoValido = TipoItemEstoqueEnum.Peca;
 
             // Act & Assert
-            FluentActions.Invoking(() => ItemEstoque.Criar(nomeInvalido, quantidadeValida, tipoValido))
+            FluentActions.Invoking(() => ItemEstoque.Criar(nomeInvalido, quantidadeValida, tipoValido, 25.50m))
                 .Should().Throw<DomainException>()
                 .WithMessage("*Nome não pode*");
         }
@@ -135,7 +142,7 @@ namespace Tests.Domain.Estoque
             var tipoValido = TipoItemEstoqueEnum.Peca;
 
             // Act & Assert
-            FluentActions.Invoking(() => ItemEstoque.Criar(nomeNulo, quantidadeValida, tipoValido))
+            FluentActions.Invoking(() => ItemEstoque.Criar(nomeNulo, quantidadeValida, tipoValido, 25.50m))
                 .Should().Throw<DomainException>()
                 .WithMessage("*Nome não pode*");
         }
@@ -148,10 +155,10 @@ namespace Tests.Domain.Estoque
         public void Atualizar_ComNomeInvalido_DeveLancarExcecao(string nomeInvalido)
         {
             // Arrange
-            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca);
+            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
 
             // Act & Assert
-            FluentActions.Invoking(() => itemEstoque.Atualizar(nomeInvalido, 50, TipoItemEstoqueEnum.Peca))
+            FluentActions.Invoking(() => itemEstoque.Atualizar(nomeInvalido, 50, TipoItemEstoqueEnum.Peca, 25.50m))
                 .Should().Throw<DomainException>()
                 .WithMessage("*Nome não pode*");
         }
@@ -172,7 +179,7 @@ namespace Tests.Domain.Estoque
             var tipoValido = TipoItemEstoqueEnum.Peca;
 
             // Act & Assert
-            FluentActions.Invoking(() => ItemEstoque.Criar(nomeValido, quantidadeInvalida, tipoValido))
+            FluentActions.Invoking(() => ItemEstoque.Criar(nomeValido, quantidadeInvalida, tipoValido, 25.50m))
                 .Should().Throw<DomainException>()
                 .WithMessage("Quantidade não pode ser negativa");
         }
@@ -190,7 +197,7 @@ namespace Tests.Domain.Estoque
             var tipoValido = TipoItemEstoqueEnum.Peca;
 
             // Act
-            var itemEstoque = ItemEstoque.Criar(nomeValido, quantidadeValida, tipoValido);
+            var itemEstoque = ItemEstoque.Criar(nomeValido, quantidadeValida, tipoValido, 25.50m);
 
             // Assert
             itemEstoque.Quantidade.Valor.Should().Be(quantidadeValida);
@@ -203,10 +210,10 @@ namespace Tests.Domain.Estoque
         public void Atualizar_ComQuantidadeInvalida_DeveLancarExcecao(int quantidadeInvalida)
         {
             // Arrange
-            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca);
+            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
 
             // Act & Assert
-            FluentActions.Invoking(() => itemEstoque.Atualizar("Filtro de Óleo", quantidadeInvalida, TipoItemEstoqueEnum.Peca))
+            FluentActions.Invoking(() => itemEstoque.Atualizar("Filtro de Óleo", quantidadeInvalida, TipoItemEstoqueEnum.Peca, 25.50m))
                 .Should().Throw<DomainException>()
                 .WithMessage("Quantidade não pode ser negativa");
         }
@@ -218,7 +225,7 @@ namespace Tests.Domain.Estoque
         public void AtualizarQuantidade_ComQuantidadeInvalida_DeveLancarExcecao(int quantidadeInvalida)
         {
             // Arrange
-            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca);
+            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
 
             // Act & Assert
             FluentActions.Invoking(() => itemEstoque.AtualizarQuantidade(quantidadeInvalida))
@@ -243,7 +250,7 @@ namespace Tests.Domain.Estoque
             var quantidadeValida = 50;
 
             // Act & Assert
-            FluentActions.Invoking(() => ItemEstoque.Criar(nomeValido, quantidadeValida, tipoInvalido))
+            FluentActions.Invoking(() => ItemEstoque.Criar(nomeValido, quantidadeValida, tipoInvalido, 25.50m))
                 .Should().Throw<DomainException>()
                 .WithMessage("*Tipo de item de estoque*não é válido*");
         }
@@ -259,7 +266,7 @@ namespace Tests.Domain.Estoque
             var quantidadeValida = 50;
 
             // Act
-            var itemEstoque = ItemEstoque.Criar(nomeValido, quantidadeValida, tipoValido);
+            var itemEstoque = ItemEstoque.Criar(nomeValido, quantidadeValida, tipoValido, 25.50m);
 
             // Assert
             itemEstoque.TipoItemEstoque.Valor.Should().Be(tipoValido.ToString().ToLower());
@@ -273,12 +280,70 @@ namespace Tests.Domain.Estoque
         public void Atualizar_ComTipoItemEstoqueInvalido_DeveLancarExcecao(TipoItemEstoqueEnum tipoInvalido)
         {
             // Arrange
-            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca);
+            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
 
             // Act & Assert
-            FluentActions.Invoking(() => itemEstoque.Atualizar("Filtro de Óleo", 50, tipoInvalido))
+            FluentActions.Invoking(() => itemEstoque.Atualizar("Filtro de Óleo", 50, tipoInvalido, 25.50m))
                 .Should().Throw<DomainException>()
                 .WithMessage("*Tipo de item de estoque*não é válido*");
+        }
+
+        #endregion
+
+        #region Testes ValueObject PrecoItem
+
+        [Theory(DisplayName = "Não deve criar item de estoque se o preço for inválido")]
+        [InlineData(-0.01)]
+        [InlineData(-1)]
+        [InlineData(-100)]
+        [Trait("ValueObject", "PrecoItem")]
+        public void Criar_ComPrecoInvalido_DeveLancarExcecao(decimal precoInvalido)
+        {
+            // Arrange
+            var nomeValido = "Filtro de Óleo";
+            var quantidadeValida = 50;
+            var tipoValido = TipoItemEstoqueEnum.Peca;
+
+            // Act & Assert
+            FluentActions.Invoking(() => ItemEstoque.Criar(nomeValido, quantidadeValida, tipoValido, precoInvalido))
+                .Should().Throw<DomainException>()
+                .WithMessage("Preço não pode ser negativo");
+        }
+
+        [Theory(DisplayName = "Deve aceitar preços válidos")]
+        [InlineData(0)]
+        [InlineData(0.01)]
+        [InlineData(25.50)]
+        [InlineData(1000)]
+        [Trait("ValueObject", "PrecoItem")]
+        public void Criar_ComPrecoValido_DeveAceitarPreco(decimal precoValido)
+        {
+            // Arrange
+            var nomeValido = "Filtro de Óleo";
+            var quantidadeValida = 50;
+            var tipoValido = TipoItemEstoqueEnum.Peca;
+
+            // Act
+            var itemEstoque = ItemEstoque.Criar(nomeValido, quantidadeValida, tipoValido, precoValido);
+
+            // Assert
+            itemEstoque.Preco.Valor.Should().Be(precoValido);
+        }
+
+        [Theory(DisplayName = "Não deve atualizar item de estoque se o preço for inválido")]
+        [InlineData(-0.01)]
+        [InlineData(-1)]
+        [InlineData(-100)]
+        [Trait("ValueObject", "PrecoItem")]
+        public void Atualizar_ComPrecoInvalido_DeveLancarExcecao(decimal precoInvalido)
+        {
+            // Arrange
+            var itemEstoque = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
+
+            // Act & Assert
+            FluentActions.Invoking(() => itemEstoque.Atualizar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, precoInvalido))
+                .Should().Throw<DomainException>()
+                .WithMessage("Preço não pode ser negativo");
         }
 
         #endregion

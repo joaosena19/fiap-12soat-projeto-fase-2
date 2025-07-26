@@ -32,7 +32,8 @@ namespace Tests.Integration.Estoque
             { 
                 Nome = "Filtro de Óleo Test",
                 Quantidade = 50,
-                TipoItemEstoque = (int)TipoItemEstoqueEnum.Peca
+                TipoItemEstoque = (int)TipoItemEstoqueEnum.Peca,
+                Preco = 25.50m
             };
 
             // Act
@@ -46,6 +47,7 @@ namespace Tests.Integration.Estoque
             itemEstoqueEntity!.Nome.Valor.Should().Be("Filtro de Óleo Test");
             itemEstoqueEntity.Quantidade.Valor.Should().Be(50);
             itemEstoqueEntity.TipoItemEstoque.Valor.Should().Be(TipoItemEstoqueEnum.Peca.ToString().ToLower());
+            itemEstoqueEntity.Preco.Valor.Should().Be(25.50m);
         }
 
         [Fact(DisplayName = "PUT deve retornar 200 OK e atualizar Item de Estoque existente no banco de dados.")]
@@ -61,7 +63,8 @@ namespace Tests.Integration.Estoque
             { 
                 Nome = "Filtro de Ar Original",
                 Quantidade = 30,
-                TipoItemEstoque = (int)TipoItemEstoqueEnum.Peca
+                TipoItemEstoque = (int)TipoItemEstoqueEnum.Peca,
+                Preco = 25.50m
             };
 
             var createResponse = await _client.PostAsJsonAsync("/api/estoque/itens", criarDto);
@@ -74,7 +77,8 @@ namespace Tests.Integration.Estoque
             { 
                 Nome = "Filtro de Ar Premium Atualizado",
                 Quantidade = 75,
-                TipoItemEstoque = (int)TipoItemEstoqueEnum.Insumo
+                TipoItemEstoque = (int)TipoItemEstoqueEnum.Insumo,
+                Preco = 35.75m
             };
 
             // Act
@@ -90,6 +94,7 @@ namespace Tests.Integration.Estoque
             itemAtualizado!.Nome.Valor.Should().Be("Filtro de Ar Premium Atualizado");
             itemAtualizado.Quantidade.Valor.Should().Be(75);
             itemAtualizado.TipoItemEstoque.Valor.Should().Be(TipoItemEstoqueEnum.Insumo.ToString().ToLower());
+            itemAtualizado.Preco.Valor.Should().Be(35.75m);
         }
 
         [Fact(DisplayName = "PATCH deve retornar 200 OK e atualizar apenas a quantidade do Item de Estoque.")]
@@ -105,7 +110,8 @@ namespace Tests.Integration.Estoque
             { 
                 Nome = "Óleo Motor para Quantidade",
                 Quantidade = 20,
-                TipoItemEstoque = (int)TipoItemEstoqueEnum.Insumo
+                TipoItemEstoque = (int)TipoItemEstoqueEnum.Insumo,
+                Preco = 15.75m
             };
 
             var createResponse = await _client.PostAsJsonAsync("/api/estoque/itens", criarDto);
@@ -129,6 +135,7 @@ namespace Tests.Integration.Estoque
             itemAtualizado!.Nome.Valor.Should().Be("Óleo Motor para Quantidade"); // Nome não deve mudar
             itemAtualizado.Quantidade.Valor.Should().Be(100);
             itemAtualizado.TipoItemEstoque.Valor.Should().Be(TipoItemEstoqueEnum.Insumo.ToString().ToLower()); // Tipo não deve mudar
+            itemAtualizado.Preco.Valor.Should().Be(15.75m); // Preco não deve mudar
         }
 
         [Fact(DisplayName = "GET deve retornar 200 OK e lista de itens de estoque")]
@@ -140,13 +147,15 @@ namespace Tests.Integration.Estoque
             { 
                 Nome = "Pneu Novo",
                 Quantidade = 4,
-                TipoItemEstoque = (int)TipoItemEstoqueEnum.Peca
+                TipoItemEstoque = (int)TipoItemEstoqueEnum.Peca,
+                Preco = 150.00m
             };
             var item2 = new 
             { 
                 Nome = "Aditivo Radiador",
                 Quantidade = 10,
-                TipoItemEstoque = (int)TipoItemEstoqueEnum.Insumo
+                TipoItemEstoque = (int)TipoItemEstoqueEnum.Insumo,
+                Preco = 25.50m
             };
 
             // Create test items
@@ -201,7 +210,8 @@ namespace Tests.Integration.Estoque
             { 
                 Nome = "Bateria 60Ah",
                 Quantidade = 5,
-                TipoItemEstoque = (int)TipoItemEstoqueEnum.Peca
+                TipoItemEstoque = (int)TipoItemEstoqueEnum.Peca,
+                Preco = 250.00m
             };
 
             var createResponse = await _client.PostAsJsonAsync("/api/estoque/itens", criarDto);
@@ -221,6 +231,7 @@ namespace Tests.Integration.Estoque
             item.Nome.Should().Be("Bateria 60Ah");
             item.Quantidade.Should().Be(5);
             item.TipoItemEstoque.Should().Be(TipoItemEstoqueEnum.Peca.ToString().ToLower());
+            item.Preco.Should().Be(250.00m);
         }
 
         [Fact(DisplayName = "GET /{id} deve retornar 404 NotFound quando item de estoque não existe")]

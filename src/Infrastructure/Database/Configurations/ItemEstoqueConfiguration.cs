@@ -36,6 +36,14 @@ namespace Infrastructure.Database.Configurations
                     .IsRequired()
                     .HasMaxLength(50);
             });
+
+            builder.OwnsOne(i => i.Preco, preco =>
+            {
+                preco.Property(p => p.Valor)
+                     .HasColumnName("preco")
+                     .IsRequired()
+                     .HasColumnType("decimal(18,2)");
+            });
         }
     }
 }
