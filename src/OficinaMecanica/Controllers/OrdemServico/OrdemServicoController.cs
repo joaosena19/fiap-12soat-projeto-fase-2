@@ -150,7 +150,7 @@ namespace API.Controllers.OrdemServico
         /// <response code="404">Ordem de serviço ou serviço não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpDelete("{id}/servicos/{servicoIncluidoId}")]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoverServico(Guid id, Guid servicoIncluidoId)
@@ -169,7 +169,7 @@ namespace API.Controllers.OrdemServico
         /// <response code="404">Ordem de serviço ou item não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpDelete("{id}/itens/{itemIncluidoId}")]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoverItem(Guid id, Guid itemIncluidoId)
@@ -188,7 +188,7 @@ namespace API.Controllers.OrdemServico
         /// <response code="404">Ordem de serviço não encontrada</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/cancelar")]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
@@ -208,7 +208,7 @@ namespace API.Controllers.OrdemServico
         /// <response code="404">Ordem de serviço não encontrada</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/iniciar-diagnostico")]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
@@ -248,7 +248,7 @@ namespace API.Controllers.OrdemServico
         /// <response code="404">Ordem de serviço não encontrada</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/orcamento/aprovar")]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
@@ -268,7 +268,7 @@ namespace API.Controllers.OrdemServico
         /// <response code="404">Ordem de serviço não encontrada</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/orcamento/desaprovar")]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
@@ -288,7 +288,7 @@ namespace API.Controllers.OrdemServico
         /// <response code="404">Ordem de serviço não encontrada</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/finalizar-execucao")]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
@@ -308,7 +308,7 @@ namespace API.Controllers.OrdemServico
         /// <response code="404">Ordem de serviço não encontrada</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/entregar")]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
