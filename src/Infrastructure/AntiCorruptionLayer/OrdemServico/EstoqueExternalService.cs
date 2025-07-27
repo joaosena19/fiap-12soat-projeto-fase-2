@@ -36,6 +36,27 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
             };
         }
 
+        public async Task<bool> VerificarDisponibilidadeAsync(Guid itemId, int quantidadeNecessaria)
+        {
+            var item = await _itemEstoqueRepository.ObterPorIdAsync(itemId);
+            
+            if (item == null)
+                return false;
+
+            return item.VerificarDisponibilidade(quantidadeNecessaria);
+        }
+
+        public async Task AtualizarQuantidadeEstoqueAsync(Guid itemId, int novaQuantidade)
+        {
+            var item = await _itemEstoqueRepository.ObterPorIdAsync(itemId);
+            
+            if (item == null)
+                throw new DomainException($"Item de estoque com ID {itemId} não encontrado.", ErrorType.ReferenceNotFound);
+
+            item.AtualizarQuantidade(novaQuantidade);
+            await _itemEstoqueRepository.AtualizarAsync(item);
+        }
+
         /// <summary>
         /// Converte o tipo de item de estoque (do bounded context de Estoque) 
         /// para o tipo de item incluído (do bounded context de OrdemServico)

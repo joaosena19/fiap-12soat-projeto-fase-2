@@ -153,7 +153,31 @@ namespace Application.OrdemServico.Services
         public async Task IniciarExecucao(Guid ordemServicoId)
         {
             var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+
+            // Verificar disponibilidade dos itens no estoque antes de iniciar a execução
+            foreach (var itemIncluido in ordemServico.ItensIncluidos)
+            {
+                var disponivel = await _estoqueExternalService.VerificarDisponibilidadeAsync(itemIncluido.ItemEstoqueOriginalId, itemIncluido.Quantidade.Valor);
+
+                if (!disponivel)
+                {
+                    throw new DomainException($"Item '{itemIncluido.Nome.Valor}' não está disponível no estoque na quantidade necessária ({itemIncluido.Quantidade.Valor}).", ErrorType.DomainRuleBroken);
+                }
+            }
+
+            // Se todos os itens estão disponíveis - pode iniciar a execução
             ordemServico.IniciarExecucao();
+
+            // Atualizar as quantidades no estoque após iniciar a execução
+            foreach (var itemIncluido in ordemServico.ItensIncluidos)
+            {
+                var itemEstoque = await _estoqueExternalService.ObterItemEstoquePorIdAsync(itemIncluido.ItemEstoqueOriginalId);
+                if (itemEstoque != null)
+                {
+                    var novaQuantidade = itemEstoque.Quantidade - itemIncluido.Quantidade.Valor;
+                    await _estoqueExternalService.AtualizarQuantidadeEstoqueAsync(itemIncluido.ItemEstoqueOriginalId, novaQuantidade);
+                }
+            }
 
             await _ordemServicoRepository.AtualizarAsync(ordemServico);
         }

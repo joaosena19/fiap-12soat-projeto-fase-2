@@ -9,5 +9,7 @@ namespace Application.OrdemServico.Interfaces.External
     public interface IEstoqueExternalService
     {
         Task<ItemEstoqueExternalDTO?> ObterItemEstoquePorIdAsync(Guid itemId);
+        Task<bool> VerificarDisponibilidadeAsync(Guid itemId, int quantidadeNecessaria);
+        Task AtualizarQuantidadeEstoqueAsync(Guid itemId, int novaQuantidade);
     }
 }
