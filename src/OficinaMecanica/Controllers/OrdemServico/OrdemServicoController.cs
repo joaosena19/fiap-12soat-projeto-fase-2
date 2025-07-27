@@ -227,7 +227,7 @@ namespace API.Controllers.OrdemServico
         /// <response code="400">Dados inválidos fornecidos</response>
         /// <response code="404">Ordem de serviço não encontrada</response>
         /// <response code="500">Erro interno do servidor</response>
-        [HttpPost("{id}/gerar-orcamento")]
+        [HttpPost("{id}/orcamento")]
         [ProducesResponseType(typeof(RetornoOrcamentoDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
@@ -239,22 +239,42 @@ namespace API.Controllers.OrdemServico
         }
 
         /// <summary>
-        /// Iniciar execução da ordem de serviço
+        /// Aprovar orçamento da ordem de serviço
         /// </summary>
         /// <param name="id">ID da ordem de serviço</param>
         /// <returns>Nenhum conteúdo</returns>
-        /// <response code="204">Execução iniciada com sucesso</response>
+        /// <response code="204">Orçamento aprovado com sucesso</response>
         /// <response code="400">Dados inválidos fornecidos</response>
         /// <response code="404">Ordem de serviço não encontrada</response>
         /// <response code="500">Erro interno do servidor</response>
-        [HttpPost("{id}/iniciar-execucao")]
+        [HttpPost("{id}/orcamento/aprovar")]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> IniciarExecucao(Guid id)
+        public async Task<IActionResult> AprovarOrcamento(Guid id)
         {
-            await _ordemServicoService.IniciarExecucao(id);
+            await _ordemServicoService.AprovarOrcamento(id);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Desaprovar orçamento, causando o cancelamento da ordem de serviço 
+        /// </summary>
+        /// <param name="id">ID da ordem de serviço</param>
+        /// <returns>Nenhum conteúdo</returns>
+        /// <response code="204">Orçamento desaprovado com sucesso</response>
+        /// <response code="400">Dados inválidos fornecidos</response>
+        /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpPost("{id}/orcamento/desaprovar")]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DesaprovarOrcamento(Guid id)
+        {
+            await _ordemServicoService.DesaprovarOrcamento(id);
             return NoContent();
         }
 

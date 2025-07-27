@@ -15,7 +15,8 @@ namespace Application.OrdemServico.Interfaces
         Task Cancelar(Guid ordemServicoId);
         Task IniciarDiagnostico(Guid ordemServicoId);
         Task<RetornoOrcamentoDTO> GerarOrcamento(Guid ordemServicoId);
-        Task IniciarExecucao(Guid ordemServicoId);
+        Task AprovarOrcamento(Guid ordemServicoId);
+        Task DesaprovarOrcamento(Guid ordemServicoId);
         Task FinalizarExecucao(Guid ordemServicoId);
         Task Entregar(Guid ordemServicoId);
         Task<RetornoTempoMedioDTO> ObterTempoMedio(int quantidadeDias = 365);

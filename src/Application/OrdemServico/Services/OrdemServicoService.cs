@@ -153,11 +153,11 @@ namespace Application.OrdemServico.Services
             return _mapper.Map<RetornoOrcamentoDTO>(result.Orcamento);
         }
 
-        public async Task IniciarExecucao(Guid ordemServicoId)
+        public async Task AprovarOrcamento(Guid ordemServicoId)
         {
             var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
 
-            // Verificar disponibilidade dos itens no estoque antes de iniciar a execução
+            // Verificar disponibilidade dos itens no estoque antes de aprovar o orçamento e iniciar a execução
             foreach (var itemIncluido in ordemServico.ItensIncluidos)
             {
                 var disponivel = await _estoqueExternalService.VerificarDisponibilidadeAsync(itemIncluido.ItemEstoqueOriginalId, itemIncluido.Quantidade.Valor);
@@ -168,10 +168,10 @@ namespace Application.OrdemServico.Services
                 }
             }
 
-            // Se todos os itens estão disponíveis - pode iniciar a execução
-            ordemServico.IniciarExecucao();
+            // Se todos os itens estão disponíveis - pode aprovar o orçamento e iniciar a execução
+            ordemServico.AprovarOrcamento();
 
-            // Atualizar as quantidades no estoque após iniciar a execução
+            // Atualizar as quantidades no estoque após aprovar o orçamento e iniciar a execução
             foreach (var itemIncluido in ordemServico.ItensIncluidos)
             {
                 var itemEstoque = await _estoqueExternalService.ObterItemEstoquePorIdAsync(itemIncluido.ItemEstoqueOriginalId);
@@ -181,6 +181,14 @@ namespace Application.OrdemServico.Services
                     await _estoqueExternalService.AtualizarQuantidadeEstoqueAsync(itemIncluido.ItemEstoqueOriginalId, novaQuantidade);
                 }
             }
+
+            await _ordemServicoRepository.AtualizarAsync(ordemServico);
+        }
+
+        public async Task DesaprovarOrcamento(Guid ordemServicoId)
+        {
+            var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
+            ordemServico.DesaprovarOrcamento();
 
             await _ordemServicoRepository.AtualizarAsync(ordemServico);
         }

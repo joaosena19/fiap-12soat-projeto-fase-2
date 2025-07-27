@@ -113,9 +113,6 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
 
         public void Cancelar()
         {
-            if (!PodeTransicionarPara(StatusOrdemServicoEnum.Cancelada))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Cancelada}.", ErrorType.DomainRuleBroken);
-
             Status = new Status(StatusOrdemServicoEnum.Cancelada);
         }
 
@@ -132,11 +129,30 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
             if (!PodeTransicionarPara(StatusOrdemServicoEnum.AguardandoAprovacao))
                 throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.AguardandoAprovacao}.", ErrorType.DomainRuleBroken);
 
+            if (Orcamento != null)
+                throw new DomainException("Já existe um orçamento gerado para esta ordem de serviço.", ErrorType.Conflict);
+
             if (!ServicosIncluidos.Any() && !ItensIncluidos.Any())
                 throw new DomainException("Não é possível gerar orçamento sem pelo menos um serviço ou item incluído.", ErrorType.DomainRuleBroken);
 
             Status = new Status(StatusOrdemServicoEnum.AguardandoAprovacao);
             Orcamento = Orcamento.GerarOrcamento(ServicosIncluidos, ItensIncluidos);
+        }
+
+        public void AprovarOrcamento()
+        {
+            if (Orcamento == null)
+                throw new DomainException("Não existe orçamento para aprovar. É necessário gerar o orçamento primeiro.", ErrorType.DomainRuleBroken);
+
+            IniciarExecucao();
+        }
+
+        public void DesaprovarOrcamento()
+        {
+            if (Orcamento == null)
+                throw new DomainException("Não existe orçamento para desaprovar. É necessário gerar o orçamento primeiro.", ErrorType.DomainRuleBroken);
+
+            Cancelar();
         }
 
         public void IniciarExecucao()
