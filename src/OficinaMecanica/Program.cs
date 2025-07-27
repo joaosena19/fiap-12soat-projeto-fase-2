@@ -77,6 +77,7 @@ builder.Services.AddScoped<IItemEstoqueRepository, ItemEstoqueRepository>();
 builder.Services.AddScoped<IServicoExternalService, ServicoExternalService>();
 builder.Services.AddScoped<IEstoqueExternalService, EstoqueExternalService>();
 builder.Services.AddScoped<IVeiculoExternalService, VeiculoExternalService>();
+builder.Services.AddScoped<IClienteExternalService, ClienteExternalService>();
 
 builder.Services.AddScoped<IOrdemServicoService, OrdemServicoService>();
 builder.Services.AddScoped<IOrdemServicoRepository, OrdemServicoRepository>();

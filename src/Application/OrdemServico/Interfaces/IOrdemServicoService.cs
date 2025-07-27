@@ -19,5 +19,6 @@ namespace Application.OrdemServico.Interfaces
         Task FinalizarExecucao(Guid ordemServicoId);
         Task Entregar(Guid ordemServicoId);
         Task<RetornoTempoMedioDTO> ObterTempoMedio(int quantidadeDias = 365);
+        Task<RetornoOrdemServicoCompletaDTO?> BuscaPublica(BuscaPublicaOrdemServicoDTO dto);
     }
 }

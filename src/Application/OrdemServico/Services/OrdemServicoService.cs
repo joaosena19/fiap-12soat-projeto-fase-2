@@ -13,6 +13,7 @@ namespace Application.OrdemServico.Services
         private readonly IServicoExternalService _servicoExternalService;
         private readonly IEstoqueExternalService _estoqueExternalService;
         private readonly IVeiculoExternalService _veiculoExternalService;
+        private readonly IClienteExternalService _clienteExternalService;
         private readonly IMapper _mapper;
 
         public OrdemServicoService(
@@ -20,12 +21,14 @@ namespace Application.OrdemServico.Services
             IServicoExternalService servicoExternalService,
             IEstoqueExternalService estoqueExternalService,
             IVeiculoExternalService veiculoExternalService,
+            IClienteExternalService clienteExternalService,
             IMapper mapper)
         {
             _ordemServicoRepository = ordemServicoRepository;
             _servicoExternalService = servicoExternalService;
             _estoqueExternalService = estoqueExternalService;
             _veiculoExternalService = veiculoExternalService;
+            _clienteExternalService = clienteExternalService;
             _mapper = mapper;
         }
 
@@ -234,6 +237,31 @@ namespace Application.OrdemServico.Services
                 TempoMedioCompletoHoras = tempoMedioCompletoHoras,
                 TempoMedioExecucaoHoras = tempoMedioExecucaoHoras
             };
+        }
+
+        public async Task<RetornoOrdemServicoCompletaDTO?> BuscaPublica(BuscaPublicaOrdemServicoDTO dto)
+        {
+            try
+            {
+                var ordemServico = await _ordemServicoRepository.ObterPorCodigoAsync(dto.CodigoOrdemServico);
+                if (ordemServico == null)
+                    return null; // Sempre retorna null para não revelar se a OS existe
+
+                var cliente = await _clienteExternalService.ObterClientePorVeiculoIdAsync(ordemServico.VeiculoId);
+                if (cliente == null)
+                    return null; // Sempre retorna null para não revelar informações
+
+                // Verificar se o documento do cliente confere
+                if (cliente.DocumentoIdentificador != dto.DocumentoIdentificadorCliente)
+                    return null; // Sempre retorna null para não revelar informações
+
+                return _mapper.Map<RetornoOrdemServicoCompletaDTO>(ordemServico);
+            }
+            catch
+            {
+                // Para segurança, sempre retorna null em caso de erro
+                return null;
+            }
         }
 
         private async Task<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico> ObterOrdemServicoPorId(Guid id)

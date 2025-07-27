@@ -1,6 +1,7 @@
 using API.DTO;
 using Application.OrdemServico.DTO;
 using Application.OrdemServico.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.OrdemServico
@@ -312,6 +313,25 @@ namespace API.Controllers.OrdemServico
         public async Task<IActionResult> ObterTempoMedio([FromQuery] int quantidadeDias = 365)
         {
             var result = await _ordemServicoService.ObterTempoMedio(quantidadeDias);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Busca pública de ordem de serviço por código e documento do cliente
+        /// </summary>
+        /// <param name="dto">Dados para busca: código da ordem de serviço e documento do cliente</param>
+        /// <returns>Ordem de serviço encontrada</returns>
+        /// <response code="200">Busca realizada com sucesso</response>
+        [AllowAnonymous]
+        [HttpPost("busca-publica")]
+        [ProducesResponseType(typeof(RetornoOrdemServicoCompletaDTO), StatusCodes.Status200OK)]
+        public async Task<IActionResult> BuscaPublica([FromBody] BuscaPublicaOrdemServicoDTO dto)
+        {
+            var result = await _ordemServicoService.BuscaPublica(dto);
+
+            if(result is null) //Evitar retornar 204 se vier null, sempre deve retornar 200
+                return new JsonResult(null) { StatusCode = 200 };
+
             return Ok(result);
         }
     }
