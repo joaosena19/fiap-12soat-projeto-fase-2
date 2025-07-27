@@ -239,7 +239,7 @@ namespace API.Controllers.OrdemServico
         }
 
         /// <summary>
-        /// Aprovar orçamento da ordem de serviço
+        /// Aprovar orçamento da ordem de serviço, iniciando sua execução
         /// </summary>
         /// <param name="id">ID da ordem de serviço</param>
         /// <returns>Nenhum conteúdo</returns>
@@ -259,7 +259,7 @@ namespace API.Controllers.OrdemServico
         }
 
         /// <summary>
-        /// Desaprovar orçamento, causando o cancelamento da ordem de serviço 
+        /// Desaprovar orçamento ordem de serviço, causando seu cancelamento
         /// </summary>
         /// <param name="id">ID da ordem de serviço</param>
         /// <returns>Nenhum conteúdo</returns>
