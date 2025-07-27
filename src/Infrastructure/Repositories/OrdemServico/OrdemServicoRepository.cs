@@ -72,6 +72,16 @@ namespace Infrastructure.Repositories.OrdemServico
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico>> ObterEntreguesUltimosDiasAsync(int quantidadeDias)
+        {
+            var dataLimite = DateTime.UtcNow.AddDays(-quantidadeDias);
+            
+            return await _context.OrdensServico
+                .Where(os => os.Status.Valor == "entregue" && 
+                            os.Historico.DataCriacao.Date >= dataLimite.Date)
+                .ToListAsync();
+        }
+
         public async Task RemoverAsync(Guid id)
         {
             var ordemServico = await _context.OrdensServico.FindAsync(id);

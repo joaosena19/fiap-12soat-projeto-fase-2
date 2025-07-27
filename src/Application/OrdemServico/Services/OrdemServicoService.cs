@@ -198,6 +198,44 @@ namespace Application.OrdemServico.Services
             await _ordemServicoRepository.AtualizarAsync(ordemServico);
         }
 
+        public async Task<RetornoTempoMedioDTO> ObterTempoMedio(int quantidadeDias = 365)
+        {
+            if (quantidadeDias < 1 || quantidadeDias > 365)
+                throw new DomainException("A quantidade de dias deve estar entre 1 e 365.", ErrorType.InvalidInput);
+
+            var ordensEntregues = await _ordemServicoRepository.ObterEntreguesUltimosDiasAsync(quantidadeDias);
+            if (!ordensEntregues.Any())
+                throw new DomainException("Nenhuma ordem de serviço entregue encontrada no período especificado.", ErrorType.DomainRuleBroken);
+
+            // Calcular tempo médio completo (criação até entrega)
+            var duracaoCompleta = ordensEntregues
+                .Select(ordem => ordem.Historico.DataEntrega!.Value - ordem.Historico.DataCriacao)
+                .ToList();
+
+            var mediaCompletaTicks = duracaoCompleta.Average(d => d.Ticks);
+            var duracaoMediaCompleta = new TimeSpan((long)mediaCompletaTicks);
+            var tempoMedioCompletoHoras = Math.Round(duracaoMediaCompleta.TotalHours, 2);
+
+            // Calcular tempo médio de execução (início execução até finalização)
+            var duracaoExecucao = ordensEntregues
+                .Select(ordem => ordem.Historico.DataFinalizacao!.Value - ordem.Historico.DataInicioExecucao!.Value)
+                .ToList();
+
+            var mediaExecucaoTicks = duracaoExecucao.Average(d => d.Ticks);
+            var duracaoMediaExecucao = new TimeSpan((long)mediaExecucaoTicks);
+            var tempoMedioExecucaoHoras = Math.Round(duracaoMediaExecucao.TotalHours, 2);
+
+            return new RetornoTempoMedioDTO
+            {
+                QuantidadeDias = quantidadeDias,
+                DataInicio = DateTime.UtcNow.AddDays(-quantidadeDias),
+                DataFim = DateTime.UtcNow,
+                QuantidadeOrdensAnalisadas = ordensEntregues.Count(),
+                TempoMedioCompletoHoras = tempoMedioCompletoHoras,
+                TempoMedioExecucaoHoras = tempoMedioExecucaoHoras
+            };
+        }
+
         private async Task<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico> ObterOrdemServicoPorId(Guid id)
         {
             var ordemServico = await _ordemServicoRepository.ObterPorIdAsync(id);

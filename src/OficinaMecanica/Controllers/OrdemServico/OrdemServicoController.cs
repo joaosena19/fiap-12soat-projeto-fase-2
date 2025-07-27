@@ -296,5 +296,23 @@ namespace API.Controllers.OrdemServico
             await _ordemServicoService.Entregar(id);
             return NoContent();
         }
+
+        /// <summary>
+        /// Obter tempo médio de execução das ordens de serviço. Considera apenas ordes de serviço entregues, com criação de acordo com a quantidade de dias específicada.
+        /// </summary>
+        /// <param name="quantidadeDias">Quantidade de dias para análise (1-365). Padrão: 365</param>
+        /// <returns>Dados sobre o tempo médio de execução</returns>
+        /// <response code="200">Tempo médio calculado com sucesso</response>
+        /// <response code="400">Parâmetros inválidos ou nenhuma ordem encontrada</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpGet("tempo-medio")]
+        [ProducesResponseType(typeof(RetornoTempoMedioDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ObterTempoMedio([FromQuery] int quantidadeDias = 365)
+        {
+            var result = await _ordemServicoService.ObterTempoMedio(quantidadeDias);
+            return Ok(result);
+        }
     }
 }
