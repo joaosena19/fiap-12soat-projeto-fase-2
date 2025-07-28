@@ -82,13 +82,13 @@ namespace Tests.Application.Estoque
             resultado.Should().NotBeNull();
             resultado.Nome.Should().Be(dto.Nome);
             resultado.Quantidade.Should().Be(dto.Quantidade);
-            resultado.TipoItemEstoque.Should().Be(dto.TipoItemEstoque.ToString().ToLower());
+            resultado.TipoItemEstoque.Should().Be(dto.TipoItemEstoque.ToString());
             resultado.Preco.Should().Be(dto.Preco);
 
             _repoMock.Verify(r => r.SalvarAsync(It.Is<ItemEstoque>(i =>
                 i.Nome.Valor == dto.Nome && 
                 i.Quantidade.Valor == dto.Quantidade &&
-                i.TipoItemEstoque.Valor == dto.TipoItemEstoque.ToString().ToLower() &&
+                i.TipoItemEstoque.Valor == dto.TipoItemEstoque &&
                 i.Preco.Valor == dto.Preco
             )), Times.Once);
         }
@@ -127,7 +127,7 @@ namespace Tests.Application.Estoque
             resultado.Should().NotBeNull();
             resultado.Nome.Should().Be(dto.Nome);
             resultado.Quantidade.Should().Be(dto.Quantidade);
-            resultado.TipoItemEstoque.Should().Be(dto.TipoItemEstoque.ToString().ToLower());
+            resultado.TipoItemEstoque.Should().Be(dto.TipoItemEstoque.ToString());
             resultado.Preco.Should().Be(dto.Preco);
 
             _repoMock.Verify(r => r.AtualizarAsync(It.IsAny<ItemEstoque>()), Times.Once);

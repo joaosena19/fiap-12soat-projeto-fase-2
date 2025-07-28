@@ -24,7 +24,11 @@ namespace Infrastructure.Database.Configurations
                 doc.Property(p => p.TipoDocumento)
                    .HasColumnName("tipo_documento_identificador")
                    .IsRequired()
-                   .HasMaxLength(4);
+                   .HasMaxLength(4)
+                   .HasConversion(
+                       v => v.ToString().ToLower(),
+                       v => Enum.Parse<Domain.Cadastros.Enums.TipoDocumentoEnum>(v, true)
+                   );
             });
 
             builder.OwnsOne(c => c.Nome, nome =>

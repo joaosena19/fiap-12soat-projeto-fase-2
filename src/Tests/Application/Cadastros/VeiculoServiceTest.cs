@@ -61,7 +61,7 @@ namespace Tests.Application.Cadastros
             result.Marca.Should().Be(marca);
             result.Cor.Should().Be(cor);
             result.Ano.Should().Be(ano);
-            result.TipoVeiculo.Should().Be(tipoVeiculo.ToString().ToLower());
+            result.TipoVeiculo.Should().Be(tipoVeiculo.ToString());
 
             _clienteRepositoryMock.Verify(r => r.ObterPorIdAsync(clienteId), Times.Once);
             _veiculoRepositoryMock.Verify(r => r.ObterPorPlacaAsync(placa), Times.Once);

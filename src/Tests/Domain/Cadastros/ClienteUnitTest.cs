@@ -1,4 +1,5 @@
 ﻿using Domain.Cadastros.Aggregates;
+using Domain.Cadastros.Enums;
 using Domain.Cadastros.ValueObjects.Cliente;
 using FluentAssertions;
 using Shared.Exceptions;
@@ -92,7 +93,7 @@ namespace Tests.Domain.Cadastros
 
             // Assert
             cliente.Should().NotBeNull();
-            cliente.DocumentoIdentificador.TipoDocumento.Should().Be("cpf");
+            cliente.DocumentoIdentificador.TipoDocumento.Should().Be(TipoDocumentoEnum.CPF);
             cliente.DocumentoIdentificador.Valor.Should().MatchRegex(@"^\d{11}$"); // Deve conter apenas 11 dígitos
         }
 
@@ -110,7 +111,7 @@ namespace Tests.Domain.Cadastros
 
             // Assert
             cliente.Should().NotBeNull();
-            cliente.DocumentoIdentificador.TipoDocumento.Should().Be("cnpj");
+            cliente.DocumentoIdentificador.TipoDocumento.Should().Be(TipoDocumentoEnum.CNPJ);
             cliente.DocumentoIdentificador.Valor.Should().MatchRegex(@"^\d{14}$"); // Deve conter apenas 14 dígitos
         }
 
@@ -131,7 +132,7 @@ namespace Tests.Domain.Cadastros
             // Assert
             cliente.Nome.Valor.Should().Be(novoNome);
             cliente.DocumentoIdentificador.Valor.Should().Be(cpf);
-            cliente.DocumentoIdentificador.TipoDocumento.Should().Be("cpf");
+            cliente.DocumentoIdentificador.TipoDocumento.Should().Be(TipoDocumentoEnum.CPF);
         }
 
         [Fact(DisplayName = "Deve manter tipo de documento CNPJ após atualização do nome")]
@@ -151,7 +152,7 @@ namespace Tests.Domain.Cadastros
             // Assert
             cliente.Nome.Valor.Should().Be(novoNome);
             cliente.DocumentoIdentificador.Valor.Should().Be(cnpj);
-            cliente.DocumentoIdentificador.TipoDocumento.Should().Be("cnpj");
+            cliente.DocumentoIdentificador.TipoDocumento.Should().Be(TipoDocumentoEnum.CNPJ);
         }
 
         [Theory(DisplayName = "Não deve atualizar cliente se o nome for inválido")]
@@ -183,7 +184,7 @@ namespace Tests.Domain.Cadastros
             // Assert
             documento.Should().NotBeNull();
             documento.Valor.Should().NotBeEmpty();
-            documento.TipoDocumento.Should().Be("cpf");
+            documento.TipoDocumento.Should().Be(TipoDocumentoEnum.CPF);
         }
 
         [Theory(DisplayName = "Deve criar DocumentoIdentificador válido para CNPJ")]
@@ -200,7 +201,7 @@ namespace Tests.Domain.Cadastros
             // Assert
             documento.Should().NotBeNull();
             documento.Valor.Should().NotBeEmpty();
-            documento.TipoDocumento.Should().Be("cnpj");
+            documento.TipoDocumento.Should().Be(TipoDocumentoEnum.CNPJ);
         }
 
         [Theory(DisplayName = "Não deve criar DocumentoIdentificador com documento inválido")]

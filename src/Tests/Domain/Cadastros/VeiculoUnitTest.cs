@@ -33,7 +33,7 @@ namespace Tests.Domain.Cadastros
             veiculo.Marca.Valor.Should().Be(marca);
             veiculo.Cor.Valor.Should().Be(cor);
             veiculo.Ano.Valor.Should().Be(ano);
-            veiculo.TipoVeiculo.Valor.Should().Be(tipoVeiculo.ToString().ToLower());
+            veiculo.TipoVeiculo.Valor.Should().Be(tipoVeiculo);
         }
 
         [Fact(DisplayName = "Deve atualizar veículo com dados válidos")]
@@ -58,7 +58,7 @@ namespace Tests.Domain.Cadastros
             veiculo.Marca.Valor.Should().Be(novaMarca);
             veiculo.Cor.Valor.Should().Be(novaCor);
             veiculo.Ano.Valor.Should().Be(novoAno);
-            veiculo.TipoVeiculo.Valor.Should().Be(novoTipo.ToString().ToLower());
+            veiculo.TipoVeiculo.Valor.Should().Be(novoTipo);
         }
 
         [Theory(DisplayName = "Não deve criar veículo se a placa for inválida")]

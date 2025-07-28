@@ -1,10 +1,11 @@
+using Application.Cadastros.DTO;
+using Domain.Cadastros.Enums;
 using FluentAssertions;
+using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
-using Application.Cadastros.DTO;
-using Infrastructure.Database;
 
 namespace Tests.Integration.Cadastros
 {
@@ -202,52 +203,6 @@ namespace Tests.Integration.Cadastros
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
-        [Fact(DisplayName = "POST deve salvar 'cpf' no campo tipo_documento_identificador quando documento for CPF válido")]
-        [Trait("Metodo", "Post")]
-        public async Task Post_DeveSalvarTipoCpf_QuandoDocumentoForCpfValido()
-        {
-            // Arrange
-            var dto = new { Nome = "Cliente Teste CPF", DocumentoIdentificador = "85280469076" };
-            using var scope = _factory.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-            // Act
-            var response = await _client.PostAsJsonAsync("/api/cadastros/clientes", dto);
-            var clienteEntity = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "85280469076");
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Created);
-            clienteEntity.Should().NotBeNull();
-            clienteEntity.DocumentoIdentificador.TipoDocumento.Should().Be("cpf");
-            
-            // Verificar que é salvo como string lowercase
-            clienteEntity.DocumentoIdentificador.TipoDocumento.Should().BeOfType<string>();
-            clienteEntity.DocumentoIdentificador.TipoDocumento.Should().MatchRegex("^[a-z]+$"); // Apenas lowercase
-        }
-
-        [Fact(DisplayName = "POST deve salvar 'cnpj' no campo tipo_documento_identificador quando documento for CNPJ válido")]
-        [Trait("Metodo", "Post")]
-        public async Task Post_DeveSalvarTipoCnpj_QuandoDocumentoForCnpjValido()
-        {
-            // Arrange
-            var dto = new { Nome = "Empresa Teste CNPJ Ltda", DocumentoIdentificador = "47960950000121" };
-            using var scope = _factory.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-            // Act
-            var response = await _client.PostAsJsonAsync("/api/cadastros/clientes", dto);
-            var clienteEntity = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "47960950000121");
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Created);
-            clienteEntity.Should().NotBeNull();
-            clienteEntity.DocumentoIdentificador.TipoDocumento.Should().Be("cnpj");
-            
-            // Verificar que é salvo como string lowercase
-            clienteEntity.DocumentoIdentificador.TipoDocumento.Should().BeOfType<string>();
-            clienteEntity.DocumentoIdentificador.TipoDocumento.Should().MatchRegex("^[a-z]+$"); // Apenas lowercase
-        }
-
         [Fact(DisplayName = "GET /documento/{cnpj} deve retornar 200 OK quando CNPJ existe e valor passado tem formatação")]
         [Trait("Metodo", "GetByDocumento")]
         public async Task GetByDocumento_Deve_Retornar200OK_QuandoCnpjExisteEValorTemFormatacao()
@@ -394,7 +349,7 @@ namespace Tests.Integration.Cadastros
             clienteEntity.DocumentoIdentificador.Valor.Should().NotContain(".");
             clienteEntity.DocumentoIdentificador.Valor.Should().NotContain("/");
             clienteEntity.DocumentoIdentificador.Valor.Should().NotContain("-");
-            clienteEntity.DocumentoIdentificador.TipoDocumento.Should().Be("cnpj");
+            clienteEntity.DocumentoIdentificador.TipoDocumento.Should().Be(TipoDocumentoEnum.CNPJ);
         }
 
         [Fact(DisplayName = "POST deve salvar CPF sem formatação quando valor passado tem formatação")]
@@ -418,7 +373,7 @@ namespace Tests.Integration.Cadastros
             clienteEntity.DocumentoIdentificador.Valor.Should().Be("56084542000");
             clienteEntity.DocumentoIdentificador.Valor.Should().NotContain(".");
             clienteEntity.DocumentoIdentificador.Valor.Should().NotContain("-");
-            clienteEntity.DocumentoIdentificador.TipoDocumento.Should().Be("cpf");
+            clienteEntity.DocumentoIdentificador.TipoDocumento.Should().Be(TipoDocumentoEnum.CPF);
         }
     }
 }

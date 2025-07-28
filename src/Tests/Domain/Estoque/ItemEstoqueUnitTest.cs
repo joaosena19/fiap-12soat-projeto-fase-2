@@ -25,7 +25,7 @@ namespace Tests.Domain.Estoque
             itemEstoque.Id.Should().NotBeEmpty();
             itemEstoque.Nome.Valor.Should().Be(nome);
             itemEstoque.Quantidade.Valor.Should().Be(quantidade);
-            itemEstoque.TipoItemEstoque.Valor.Should().Be(tipoItemEstoque.ToString().ToLower());
+            itemEstoque.TipoItemEstoque.Valor.Should().Be(tipoItemEstoque);
             itemEstoque.Preco.Valor.Should().Be(preco);
         }
 
@@ -52,7 +52,7 @@ namespace Tests.Domain.Estoque
             // Assert
             itemEstoque.Nome.Valor.Should().Be(novoNome);
             itemEstoque.Quantidade.Valor.Should().Be(novaQuantidade);
-            itemEstoque.TipoItemEstoque.Valor.Should().Be(novoTipo.ToString().ToLower());
+            itemEstoque.TipoItemEstoque.Valor.Should().Be(novoTipo);
             itemEstoque.Preco.Valor.Should().Be(novoPreco);
         }
 
@@ -75,7 +75,7 @@ namespace Tests.Domain.Estoque
             // Assert
             itemEstoque.Nome.Valor.Should().Be(nome); // Nome não deve mudar
             itemEstoque.Quantidade.Valor.Should().Be(novaQuantidade);
-            itemEstoque.TipoItemEstoque.Valor.Should().Be(tipoItemEstoque.ToString().ToLower()); // Tipo não deve mudar
+            itemEstoque.TipoItemEstoque.Valor.Should().Be(tipoItemEstoque); // Tipo não deve mudar
             itemEstoque.Preco.Valor.Should().Be(preco); // Preço não deve mudar
         }
 
@@ -269,7 +269,7 @@ namespace Tests.Domain.Estoque
             var itemEstoque = ItemEstoque.Criar(nomeValido, quantidadeValida, tipoValido, 25.50m);
 
             // Assert
-            itemEstoque.TipoItemEstoque.Valor.Should().Be(tipoValido.ToString().ToLower());
+            itemEstoque.TipoItemEstoque.Valor.Should().Be(tipoValido);
         }
 
         [Theory(DisplayName = "Não deve atualizar item de estoque se o tipo for inválido")]

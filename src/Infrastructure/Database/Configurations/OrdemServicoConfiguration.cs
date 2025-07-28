@@ -31,7 +31,11 @@ namespace Infrastructure.Database.Configurations
                 status.Property(s => s.Valor)
                       .HasColumnName("status")
                       .IsRequired()
-                      .HasMaxLength(50);
+                      .HasMaxLength(50)
+                      .HasConversion(
+                          v => v.ToString().ToLower(),
+                          v => Enum.Parse<Domain.OrdemServico.Enums.StatusOrdemServicoEnum>(v, true)
+                      );
             });
 
             builder.OwnsOne(os => os.Historico, historico =>

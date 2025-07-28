@@ -50,7 +50,7 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
 
         public bool PermiteAlterarServicosItens()
         {
-            var statusPermitidos = new List<string>() { StatusOrdemServicoEnum.Recebida.ToString().ToLower(), StatusOrdemServicoEnum.EmDiagnostico.ToString().ToLower() };
+            var statusPermitidos = new List<StatusOrdemServicoEnum>() { StatusOrdemServicoEnum.Recebida, StatusOrdemServicoEnum.EmDiagnostico };
             return statusPermitidos.Contains(Status.Valor);            
         }
 
@@ -118,19 +118,19 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
 
         public void IniciarDiagnostico()
         {
-            if (!PodeTransicionarPara(StatusOrdemServicoEnum.EmDiagnostico))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.EmDiagnostico}.", ErrorType.DomainRuleBroken);
+            if (Status.Valor != StatusOrdemServicoEnum.Recebida)
+                throw new DomainException($"Só é possível iniciar diagnóstico para um ordem de serviço com o status '{StatusOrdemServicoEnum.Recebida}'", ErrorType.DomainRuleBroken);
 
             Status = new Status(StatusOrdemServicoEnum.EmDiagnostico);
         }
         
         public void GerarOrcamento()
         {
-            if (!PodeTransicionarPara(StatusOrdemServicoEnum.AguardandoAprovacao))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.AguardandoAprovacao}.", ErrorType.DomainRuleBroken);
-
             if (Orcamento != null)
                 throw new DomainException("Já existe um orçamento gerado para esta ordem de serviço.", ErrorType.Conflict);
+
+            if (Status.Valor != StatusOrdemServicoEnum.EmDiagnostico)
+                throw new DomainException($"Só é possível gerar orçamento para uma ordem de serviço com o status '{StatusOrdemServicoEnum.EmDiagnostico}'", ErrorType.DomainRuleBroken);
 
             if (!ServicosIncluidos.Any() && !ItensIncluidos.Any())
                 throw new DomainException("Não é possível gerar orçamento sem pelo menos um serviço ou item incluído.", ErrorType.DomainRuleBroken);
@@ -157,8 +157,8 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
 
         public void IniciarExecucao()
         {
-            if (!PodeTransicionarPara(StatusOrdemServicoEnum.EmExecucao))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.EmExecucao}.", ErrorType.DomainRuleBroken);
+            if (Status.Valor != StatusOrdemServicoEnum.AguardandoAprovacao)
+                throw new DomainException($"Só é possível iniciar execução para uma ordem de serviço com o status '{StatusOrdemServicoEnum.AguardandoAprovacao}'", ErrorType.DomainRuleBroken);
 
             Status = new Status(StatusOrdemServicoEnum.EmExecucao);
             Historico = Historico.MarcarDataInicioExecucao();
@@ -166,8 +166,8 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
 
         public void FinalizarExecucao()
         {
-            if (!PodeTransicionarPara(StatusOrdemServicoEnum.Finalizada))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Finalizada}.", ErrorType.DomainRuleBroken);
+            if (Status.Valor != StatusOrdemServicoEnum.EmExecucao)
+                throw new DomainException($"Só é possível finalizar execução para uma ordem de serviço com o status '{StatusOrdemServicoEnum.EmExecucao}'", ErrorType.DomainRuleBroken);
 
             Status = new Status(StatusOrdemServicoEnum.Finalizada);
             Historico = Historico.MarcarDataFinalizadaExecucao();
@@ -175,34 +175,11 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
 
         public void Entregar()
         {
-            if (!PodeTransicionarPara(StatusOrdemServicoEnum.Entregue))
-                throw new DomainException($"Não é possível mudar de {Status.Valor} para {StatusOrdemServicoEnum.Entregue}.", ErrorType.DomainRuleBroken);
+            if (Status.Valor != StatusOrdemServicoEnum.Finalizada)
+                throw new DomainException($"Só é possível entregar uma ordem de serviço com o status '{StatusOrdemServicoEnum.Finalizada}'", ErrorType.DomainRuleBroken);
 
             Status = new Status(StatusOrdemServicoEnum.Entregue);
             Historico = Historico.MarcarDataEntrega();
-        }
-
-        private bool PodeTransicionarPara(StatusOrdemServicoEnum novoStatus)
-        {
-            var statusAtual = Enum.Parse<StatusOrdemServicoEnum>(Status.Valor, ignoreCase: true);
-
-            return novoStatus switch
-            {
-                // Sempre pode cancelar
-                StatusOrdemServicoEnum.Cancelada => true,
-
-                StatusOrdemServicoEnum.EmDiagnostico => statusAtual == StatusOrdemServicoEnum.Recebida,
-
-                StatusOrdemServicoEnum.AguardandoAprovacao => statusAtual == StatusOrdemServicoEnum.EmDiagnostico,
-
-                StatusOrdemServicoEnum.EmExecucao => statusAtual == StatusOrdemServicoEnum.AguardandoAprovacao,
-
-                StatusOrdemServicoEnum.Finalizada => statusAtual == StatusOrdemServicoEnum.EmExecucao,
-
-                StatusOrdemServicoEnum.Entregue => statusAtual == StatusOrdemServicoEnum.Finalizada,
-
-                _ => false
-            };
         }
     }
 }

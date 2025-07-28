@@ -42,7 +42,11 @@ namespace Infrastructure.Database.Configurations
                 tipo.Property(t => t.Valor)
                     .HasColumnName("tipo_item_incluido")
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasConversion(
+                        v => v.ToString().ToLower(),
+                        v => Enum.Parse<Domain.OrdemServico.Enums.TipoItemIncluidoEnum>(v, true)
+                    );
             });
 
             builder.OwnsOne(ii => ii.Preco, preco =>

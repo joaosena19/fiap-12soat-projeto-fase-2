@@ -6,7 +6,7 @@ namespace Domain.OrdemServico.ValueObjects.ItemIncluido
 {
     public record TipoItemIncluido
     {
-        private readonly string _valor = string.Empty;
+        private readonly TipoItemIncluidoEnum _valor;
 
         // Construtor sem parâmetro para o EF Core
         private TipoItemIncluido() { }
@@ -19,9 +19,9 @@ namespace Domain.OrdemServico.ValueObjects.ItemIncluido
                 throw new DomainException($"Tipo de item incluí­do na Ordem de Serviço '{tipoItemIncluidoEnum}' não é válido. Valores aceitos: {valores}.", ErrorType.InvalidInput);
             }
 
-            _valor = tipoItemIncluidoEnum.ToString().ToLower();
+            _valor = tipoItemIncluidoEnum;
         }
 
-        public string Valor => _valor;
+        public TipoItemIncluidoEnum Valor => _valor;
     }
 }

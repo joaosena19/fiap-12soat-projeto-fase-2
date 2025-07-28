@@ -1,4 +1,5 @@
 using Application.OrdemServico.Interfaces;
+using Domain.OrdemServico.Enums;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,7 +78,7 @@ namespace Infrastructure.Repositories.OrdemServico
             var dataLimite = DateTime.UtcNow.AddDays(-quantidadeDias);
             
             return await _context.OrdensServico
-                .Where(os => os.Status.Valor == "entregue" && 
+                .Where(os => os.Status.Valor == StatusOrdemServicoEnum.Entregue && 
                             os.Historico.DataCriacao.Date >= dataLimite.Date)
                 .ToListAsync();
         }

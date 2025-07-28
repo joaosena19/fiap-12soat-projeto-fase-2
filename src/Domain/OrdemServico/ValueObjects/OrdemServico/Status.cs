@@ -6,7 +6,7 @@ namespace Domain.OrdemServico.ValueObjects.OrdemServico
 {
     public record Status
     {
-        private readonly string _valor = string.Empty;
+        private readonly StatusOrdemServicoEnum _valor;
 
         // Construtor sem parâmetro para o EF Core
         private Status() { }
@@ -19,9 +19,9 @@ namespace Domain.OrdemServico.ValueObjects.OrdemServico
                 throw new DomainException($"Status da Ordem de Serviço '{statusOrdemServicoEnum}' não é válido. Valores aceitos: {valores}.", ErrorType.InvalidInput);
             }
 
-            _valor = statusOrdemServicoEnum.ToString().ToLower();
+            _valor = statusOrdemServicoEnum;
         }
 
-        public string Valor => _valor;
+        public StatusOrdemServicoEnum Valor => _valor;
     }
 }

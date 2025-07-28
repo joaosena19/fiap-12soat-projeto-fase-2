@@ -6,7 +6,7 @@ namespace Domain.Cadastros.ValueObjects.Veiculo
 {
     public record TipoVeiculo
     {
-        private readonly string _valor = string.Empty;
+        private readonly TipoVeiculoEnum _valor;
 
         // Construtor sem parâmetro para o EF Core
         private TipoVeiculo() { }
@@ -19,9 +19,9 @@ namespace Domain.Cadastros.ValueObjects.Veiculo
                 throw new DomainException($"Tipo de veículo '{tipoVeiculoEnum}' não é válido. Valores aceitos: {valores}.", ErrorType.InvalidInput);
             }
 
-            _valor = tipoVeiculoEnum.ToString().ToLower();
+            _valor = tipoVeiculoEnum;
         }
 
-        public string Valor => _valor;
+        public TipoVeiculoEnum Valor => _valor;
     }
 }

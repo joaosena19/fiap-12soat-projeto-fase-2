@@ -7,7 +7,7 @@ namespace Domain.Cadastros.ValueObjects.Cliente
     public record DocumentoIdentificador
     {
         private readonly string _valor = string.Empty;
-        private readonly string _tipoDocumento;
+        private readonly TipoDocumentoEnum _tipoDocumento;
 
         // Construtor sem parâmetro para EF Core
         private DocumentoIdentificador() { }
@@ -19,12 +19,12 @@ namespace Domain.Cadastros.ValueObjects.Cliente
             if (ValidarCpf(documentoLimpo))
             {
                 _valor = documentoLimpo;
-                _tipoDocumento = TipoDocumentoEnum.CPF.ToString().ToLower();
+                _tipoDocumento = TipoDocumentoEnum.CPF;
             }
             else if (ValidarCnpj(documentoLimpo))
             {
                 _valor = documentoLimpo;
-                _tipoDocumento = TipoDocumentoEnum.CNPJ.ToString().ToLower();
+                _tipoDocumento = TipoDocumentoEnum.CNPJ;
             }
             else
             {
@@ -33,7 +33,7 @@ namespace Domain.Cadastros.ValueObjects.Cliente
         }
 
         public string Valor => _valor;
-        public string TipoDocumento => _tipoDocumento;
+        public TipoDocumentoEnum TipoDocumento => _tipoDocumento;
 
         private static bool ValidarCpf(string cpf)
         {

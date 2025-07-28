@@ -34,7 +34,11 @@ namespace Infrastructure.Database.Configurations
                 tipo.Property(p => p.Valor)
                     .HasColumnName("tipo_item_estoque")
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .HasConversion(
+                        v => v.ToString().ToLower(),
+                        v => Enum.Parse<Domain.Estoque.Enums.TipoItemEstoqueEnum>(v, true)
+                    );
             });
 
             builder.OwnsOne(i => i.Preco, preco =>

@@ -1,9 +1,10 @@
 using Application.Estoque.Interfaces;
 using Application.OrdemServico.DTO.External;
 using Application.OrdemServico.Interfaces.External;
+using Domain.Estoque.Enums;
 using Domain.OrdemServico.Enums;
-using Shared.Exceptions;
 using Shared.Enums;
+using Shared.Exceptions;
 
 namespace Infrastructure.AntiCorruptionLayer.OrdemServico
 {
@@ -61,12 +62,12 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
         /// Converte o tipo de item de estoque (do bounded context de Estoque) 
         /// para o tipo de item incluído (do bounded context de OrdemServico)
         /// </summary>
-        private TipoItemIncluidoEnum ConverterTipoItemEstoqueParaTipoItemIncluido(string tipoItemEstoque)
+        private TipoItemIncluidoEnum ConverterTipoItemEstoqueParaTipoItemIncluido(TipoItemEstoqueEnum tipoItemEstoque)
         {
-            return tipoItemEstoque.ToLower() switch
+            return tipoItemEstoque switch
             {
-                "peca" => TipoItemIncluidoEnum.Peca,
-                "insumo" => TipoItemIncluidoEnum.Insumo,
+                TipoItemEstoqueEnum.Peca => TipoItemIncluidoEnum.Peca,
+                TipoItemEstoqueEnum.Insumo => TipoItemIncluidoEnum.Insumo,
                 _ => throw new DomainException($"Tipo de item de estoque '{tipoItemEstoque}' não é válido.", ErrorType.InvalidInput)
             };
         }

@@ -46,7 +46,7 @@ namespace Tests.Integration.Estoque
             itemEstoqueEntity.Should().NotBeNull();
             itemEstoqueEntity!.Nome.Valor.Should().Be("Filtro de Óleo Test");
             itemEstoqueEntity.Quantidade.Valor.Should().Be(50);
-            itemEstoqueEntity.TipoItemEstoque.Valor.Should().Be(TipoItemEstoqueEnum.Peca.ToString().ToLower());
+            itemEstoqueEntity.TipoItemEstoque.Valor.Should().Be(TipoItemEstoqueEnum.Peca);
             itemEstoqueEntity.Preco.Valor.Should().Be(25.50m);
         }
 
@@ -93,7 +93,7 @@ namespace Tests.Integration.Estoque
             itemAtualizado.Should().NotBeNull();
             itemAtualizado!.Nome.Valor.Should().Be("Filtro de Ar Premium Atualizado");
             itemAtualizado.Quantidade.Valor.Should().Be(75);
-            itemAtualizado.TipoItemEstoque.Valor.Should().Be(TipoItemEstoqueEnum.Insumo.ToString().ToLower());
+            itemAtualizado.TipoItemEstoque.Valor.Should().Be(TipoItemEstoqueEnum.Insumo);
             itemAtualizado.Preco.Valor.Should().Be(35.75m);
         }
 
@@ -134,7 +134,7 @@ namespace Tests.Integration.Estoque
             itemAtualizado.Should().NotBeNull();
             itemAtualizado!.Nome.Valor.Should().Be("Óleo Motor para Quantidade"); // Nome não deve mudar
             itemAtualizado.Quantidade.Valor.Should().Be(100);
-            itemAtualizado.TipoItemEstoque.Valor.Should().Be(TipoItemEstoqueEnum.Insumo.ToString().ToLower()); // Tipo não deve mudar
+            itemAtualizado.TipoItemEstoque.Valor.Should().Be(TipoItemEstoqueEnum.Insumo); // Tipo não deve mudar
             itemAtualizado.Preco.Valor.Should().Be(15.75m); // Preco não deve mudar
         }
 
@@ -230,7 +230,7 @@ namespace Tests.Integration.Estoque
             item!.Id.Should().Be(itemCriado.Id);
             item.Nome.Should().Be("Bateria 60Ah");
             item.Quantidade.Should().Be(5);
-            item.TipoItemEstoque.Should().Be(TipoItemEstoqueEnum.Peca.ToString().ToLower());
+            item.TipoItemEstoque.Should().Be(TipoItemEstoqueEnum.Peca.ToString());
             item.Preco.Should().Be(250.00m);
         }
 
@@ -413,7 +413,7 @@ namespace Tests.Integration.Estoque
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
             itemEstoqueEntity.Should().NotBeNull();
-            itemEstoqueEntity!.TipoItemEstoque.Valor.Should().Be("peca");
+            itemEstoqueEntity!.TipoItemEstoque.Valor.Should().Be(TipoItemEstoqueEnum.Peca);
         }
 
         [Fact(DisplayName = "PUT deve salvar TipoItemEstoque sempre em lowercase independente do input")]
@@ -455,7 +455,7 @@ namespace Tests.Integration.Estoque
             // Assert
             updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             itemAtualizado.Should().NotBeNull();
-            itemAtualizado!.TipoItemEstoque.Valor.Should().Be("insumo");
+            itemAtualizado!.TipoItemEstoque.Valor.Should().Be(TipoItemEstoqueEnum.Insumo);
         }
     }
 }

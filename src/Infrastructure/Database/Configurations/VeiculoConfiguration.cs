@@ -67,7 +67,11 @@ namespace Infrastructure.Database.Configurations
                 tipo.Property(p => p.Valor)
                     .HasColumnName("tipo_veiculo")
                     .IsRequired()
-                    .HasMaxLength(10);
+                    .HasMaxLength(10)
+                    .HasConversion(
+                        v => v.ToString().ToLower(),
+                        v => Enum.Parse<Domain.Cadastros.Enums.TipoVeiculoEnum>(v, true)
+                    );
             });
         }
     }

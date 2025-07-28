@@ -6,7 +6,7 @@ namespace Domain.Estoque.ValueObjects.ItemEstoque
 {
     public record TipoItemEstoque
     {
-        private readonly string _valor = string.Empty;
+        private readonly TipoItemEstoqueEnum _valor;
 
         // Construtor sem parâmetro para o EF Core
         private TipoItemEstoque() { }
@@ -19,9 +19,9 @@ namespace Domain.Estoque.ValueObjects.ItemEstoque
                 throw new DomainException($"Tipo de item de estoque '{tipoItemEstoqueEnum}' não é válido. Valores aceitos: {valores}.", ErrorType.InvalidInput);
             }
 
-            _valor = tipoItemEstoqueEnum.ToString().ToLower();
+            _valor = tipoItemEstoqueEnum;
         }
 
-        public string Valor => _valor;
+        public TipoItemEstoqueEnum Valor => _valor;
     }
 }
