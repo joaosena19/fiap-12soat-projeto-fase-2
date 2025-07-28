@@ -10,5 +10,6 @@ namespace Application.Cadastros.Interfaces
         Task<IEnumerable<RetornoVeiculoDTO>> Buscar();
         Task<RetornoVeiculoDTO> BuscarPorId(Guid id);
         Task<RetornoVeiculoDTO> BuscarPorPlaca(string placa);
+        Task<IEnumerable<RetornoVeiculoDTO>> BuscarPorClienteId(Guid clienteId);
     }
 }

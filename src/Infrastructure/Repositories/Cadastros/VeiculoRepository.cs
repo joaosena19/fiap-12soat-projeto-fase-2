@@ -43,5 +43,12 @@ namespace Infrastructure.Repositories.Cadastros
         {
             return await _context.Veiculos.ToListAsync();
         }
+
+        public async Task<IEnumerable<Veiculo>> ObterPorClienteIdAsync(Guid clienteId)
+        {
+            return await _context.Veiculos
+                .Where(v => v.ClienteId == clienteId)
+                .ToListAsync();
+        }
     }
 }

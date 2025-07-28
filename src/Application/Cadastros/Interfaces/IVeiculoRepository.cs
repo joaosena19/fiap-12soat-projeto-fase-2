@@ -9,5 +9,6 @@ namespace Application.Cadastros.Interfaces
         Task<Veiculo?> ObterPorIdAsync(Guid id);
         Task<Veiculo> AtualizarAsync(Veiculo veiculo);
         Task<IEnumerable<Veiculo>> ObterTodosAsync();
+        Task<IEnumerable<Veiculo>> ObterPorClienteIdAsync(Guid clienteId);
     }
 }

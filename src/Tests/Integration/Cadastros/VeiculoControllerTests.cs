@@ -457,5 +457,100 @@ namespace Tests.Integration.Cadastros
             veiculo.Should().NotBeNull();
             veiculo!.Placa.Should().Be("GHI9012"); // Deve retornar uppercase
         }
+
+        [Fact(DisplayName = "GET cliente/{clienteId} deve retornar 200 OK e lista de veículos do cliente")]
+        [Trait("Metodo", "GetByClienteId")]
+        public async Task GetByClienteId_ComClienteComVeiculos_DeveRetornar200EListaVeiculos()
+        {
+            // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Criar cliente primeiro
+            var clienteDto = new { Nome = "Carlos Pereira", DocumentoIdentificador = "50153367059" };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "50153367059");
+            clienteCriado.Should().NotBeNull();
+
+            // Criar veículos para clientes
+            var veiculo1Dto = new 
+            { 
+                ClienteId = clienteCriado.Id,
+                Placa = "VEI1111", 
+                Modelo = "Civic", 
+                Marca = "Honda", 
+                Cor = "Preto", 
+                Ano = 2020, 
+                TipoVeiculo = (int)TipoVeiculoEnum.Carro 
+            };
+
+            var veiculo2Dto = new 
+            { 
+                ClienteId = clienteCriado.Id,
+                Placa = "VEI2222", 
+                Modelo = "Corolla", 
+                Marca = "Toyota", 
+                Cor = "Branco", 
+                Ano = 2021, 
+                TipoVeiculo = (int)TipoVeiculoEnum.Carro 
+            };
+
+            await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculo1Dto);
+            await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculo2Dto);
+
+            // Act
+            var response = await _client.GetAsync($"/api/cadastros/veiculos/cliente/{clienteCriado.Id}");
+            var veiculos = await response.Content.ReadFromJsonAsync<List<RetornoVeiculoDTO>>();
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            veiculos.Should().NotBeNull();
+            veiculos!.Should().HaveCount(2);
+            veiculos.Should().OnlyContain(v => v.ClienteId == clienteCriado.Id);
+            veiculos.Should().Contain(v => v.Placa == "VEI1111");
+            veiculos.Should().Contain(v => v.Placa == "VEI2222");
+        }
+
+        [Fact(DisplayName = "GET cliente/{clienteId} deve retornar 200 OK e lista vazia quando cliente não tiver veículos")]
+        [Trait("Metodo", "GetByClienteId")]
+        public async Task GetByClienteId_ComClienteSemVeiculos_DeveRetornar200EListaVazia()
+        {
+            // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            // Criar cliente sem veículos
+            var clienteDto = new { Nome = "Ana Costa", DocumentoIdentificador = "94192303094" };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+            
+            var clienteCriado = await context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == "94192303094");
+            clienteCriado.Should().NotBeNull();
+
+            // Act
+            var response = await _client.GetAsync($"/api/cadastros/veiculos/cliente/{clienteCriado!.Id}");
+            var veiculos = await response.Content.ReadFromJsonAsync<List<RetornoVeiculoDTO>>();
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            veiculos.Should().NotBeNull();
+            veiculos!.Should().BeEmpty();
+        }
+
+        [Fact(DisplayName = "GET cliente/{clienteId} deve retornar 422 Unprocessable Content quando cliente não existir")]
+        [Trait("Metodo", "GetByClienteId")]
+        public async Task GetByClienteId_ComClienteInexistente_DeveRetornar422()
+        {
+            // Arrange
+            var clienteIdInexistente = Guid.NewGuid();
+
+            // Act
+            var response = await _client.GetAsync($"/api/cadastros/veiculos/cliente/{clienteIdInexistente}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.UnprocessableContent);
+        }
     }
 }

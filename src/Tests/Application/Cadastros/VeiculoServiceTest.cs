@@ -307,5 +307,85 @@ namespace Tests.Application.Cadastros
             _veiculoRepositoryMock.Verify(r => r.ObterPorPlacaAsync(It.IsAny<string>()), Times.Once);
             _veiculoRepositoryMock.Verify(r => r.SalvarAsync(It.IsAny<Veiculo>()), Times.Never);
         }
+
+        [Fact(DisplayName = "Deve buscar veículos por cliente ID quando cliente existir")]
+        [Trait("Metodo", "BuscarPorClienteId")]
+        public async Task BuscarPorClienteId_ComClienteExistente_DeveRetornarVeiculos()
+        {
+            // Arrange
+            var clienteId = Guid.NewGuid();
+            var cliente = Cliente.Criar("João Silva", "12345678909");
+            
+            var veiculo1 = Veiculo.Criar(clienteId, "ABC1234", "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+            var veiculo2 = Veiculo.Criar(clienteId, "XYZ5678", "Corolla", "Toyota", "Branco", 2021, TipoVeiculoEnum.Carro);
+            var veiculos = new List<Veiculo> { veiculo1, veiculo2 };
+
+            _clienteRepositoryMock.Setup(r => r.ObterPorIdAsync(clienteId))
+                .ReturnsAsync(cliente);
+
+            _veiculoRepositoryMock.Setup(r => r.ObterPorClienteIdAsync(clienteId))
+                .ReturnsAsync(veiculos);
+
+            // Act
+            var result = await _veiculoService.BuscarPorClienteId(clienteId);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().HaveCount(2);
+            
+            var resultList = result.ToList();
+            resultList[0].ClienteId.Should().Be(clienteId);
+            resultList[0].Placa.Should().Be("ABC1234");
+            resultList[1].ClienteId.Should().Be(clienteId);
+            resultList[1].Placa.Should().Be("XYZ5678");
+
+            _clienteRepositoryMock.Verify(r => r.ObterPorIdAsync(clienteId), Times.Once);
+            _veiculoRepositoryMock.Verify(r => r.ObterPorClienteIdAsync(clienteId), Times.Once);
+        }
+
+        [Fact(DisplayName = "Deve retornar lista vazia quando cliente existir mas não tiver veículos")]
+        [Trait("Metodo", "BuscarPorClienteId")]
+        public async Task BuscarPorClienteId_ComClienteExistenteSemVeiculos_DeveRetornarListaVazia()
+        {
+            // Arrange
+            var clienteId = Guid.NewGuid();
+            var cliente = Cliente.Criar("João Silva", "12345678909");
+            var veiculos = new List<Veiculo>();
+
+            _clienteRepositoryMock.Setup(r => r.ObterPorIdAsync(clienteId))
+                .ReturnsAsync(cliente);
+
+            _veiculoRepositoryMock.Setup(r => r.ObterPorClienteIdAsync(clienteId))
+                .ReturnsAsync(veiculos);
+
+            // Act
+            var result = await _veiculoService.BuscarPorClienteId(clienteId);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
+
+            _clienteRepositoryMock.Verify(r => r.ObterPorIdAsync(clienteId), Times.Once);
+            _veiculoRepositoryMock.Verify(r => r.ObterPorClienteIdAsync(clienteId), Times.Once);
+        }
+
+        [Fact(DisplayName = "Deve lançar exceção quando cliente não existir")]
+        [Trait("Metodo", "BuscarPorClienteId")]
+        public async Task BuscarPorClienteId_ComClienteInexistente_DeveLancarExcecao()
+        {
+            // Arrange
+            var clienteId = Guid.NewGuid();
+
+            _clienteRepositoryMock.Setup(r => r.ObterPorIdAsync(clienteId))
+                .ReturnsAsync((Cliente?)null);
+
+            // Act & Assert
+            await _veiculoService.Invoking(s => s.BuscarPorClienteId(clienteId))
+                .Should().ThrowAsync<DomainException>()
+                .WithMessage("Cliente não encontrado.");
+
+            _clienteRepositoryMock.Verify(r => r.ObterPorIdAsync(clienteId), Times.Once);
+            _veiculoRepositoryMock.Verify(r => r.ObterPorClienteIdAsync(It.IsAny<Guid>()), Times.Never);
+        }
     }
 }

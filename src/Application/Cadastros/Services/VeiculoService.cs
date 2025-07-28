@@ -72,5 +72,15 @@ namespace Application.Cadastros.Services
 
             return _mapper.Map<RetornoVeiculoDTO>(veiculo);
         }
+
+        public async Task<IEnumerable<RetornoVeiculoDTO>> BuscarPorClienteId(Guid clienteId)
+        {
+            var cliente = await _clienteRepository.ObterPorIdAsync(clienteId);
+            if (cliente == null)
+                throw new DomainException("Cliente não encontrado.", ErrorType.ReferenceNotFound);
+
+            var veiculos = await _veiculoRepository.ObterPorClienteIdAsync(clienteId);
+            return _mapper.Map<IEnumerable<RetornoVeiculoDTO>>(veiculos);
+        }
     }
 }

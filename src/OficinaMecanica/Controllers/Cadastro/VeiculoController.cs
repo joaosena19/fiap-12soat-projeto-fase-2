@@ -72,6 +72,24 @@ namespace API.Controllers.Cadastro
         }
 
         /// <summary>
+        /// Buscar veículos por ID do cliente
+        /// </summary>
+        /// <param name="clienteId">ID do cliente</param>
+        /// <returns>Lista de veículos do cliente</returns>
+        /// <response code="200">Veículos encontrados com sucesso</response>
+        /// <response code="422">Cliente não encontrado</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpGet("cliente/{clienteId}")]
+        [ProducesResponseType(typeof(IEnumerable<RetornoVeiculoDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByClienteId(Guid clienteId)
+        {
+            var result = await _veiculoService.BuscarPorClienteId(clienteId);
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Criar um novo veículo
         /// </summary>
         /// <param name="dto">Dados do veículo a ser criado</param>
