@@ -8,8 +8,10 @@ namespace Tests.Domain.Cadastros
 {
     public class ClienteTests
     {
+        #region Testes Método Criar e Atualizar
+
         [Fact(DisplayName = "Deve criar novo Cliente com dados válidos")]
-        [Trait("Dados Válidos", "Criar")]
+        [Trait("Método", "Criar")]
         public void ClienteCriar_Deve_CriarCliente_Quando_DadosValidos()
         {
             // Arrange
@@ -27,7 +29,7 @@ namespace Tests.Domain.Cadastros
         }
 
         [Fact(DisplayName = "Deve atualizar cliente com dados válidos")]
-        [Trait("Dados Válidos", "Atualizar")]
+        [Trait("Método", "Atualizar")]
         public void ClienteAtualizar_Deve_AtualizarCliente_Quando_DadosValidos()
         {
             // Arrange
@@ -45,6 +47,10 @@ namespace Tests.Domain.Cadastros
             cliente.DocumentoIdentificador.Valor.Should().Be(cpfOriginal); // CPF não deve ter mudado
         }
 
+        #endregion
+
+        #region Testes ValueObject Nome
+
         [Theory(DisplayName = "Não deve criar novo Cliente se o Nome for inválido")]
         [InlineData("")]
         [InlineData("nome_com_mais_de_200_caracteres__________________________________________________________________________________________________________________________________________________________________________")]
@@ -59,6 +65,25 @@ namespace Tests.Domain.Cadastros
                 .Should().Throw<DomainException>()
                 .WithMessage("*nome não pode*");
         }
+
+        [Theory(DisplayName = "Não deve atualizar cliente se o nome for inválido")]
+        [InlineData("")]
+        [InlineData("nome_com_mais_de_200_caracteres__________________________________________________________________________________________________________________________________________________________________________")]
+        [Trait("ValueObject", "Nome")]
+        public void ClienteAtualizar_Deve_ThrowException_Quando_NomeInvalido(string nomeInvalido)
+        {
+            // Arrange
+            var cliente = Cliente.Criar("João da Silva", "36050793000");
+
+            // Act & Assert
+            FluentActions.Invoking(() => cliente.Atualizar(nomeInvalido))
+                .Should().Throw<DomainException>()
+                .WithMessage("*nome não pode*");
+        }
+
+        #endregion
+
+        #region Testes ValueObject DocumentoIdentificador
 
         [Theory(DisplayName = "Não deve criar novo Cliente se o documento for inválido")]
         [InlineData("")]
@@ -155,21 +180,6 @@ namespace Tests.Domain.Cadastros
             cliente.DocumentoIdentificador.TipoDocumento.Should().Be(TipoDocumentoEnum.CNPJ);
         }
 
-        [Theory(DisplayName = "Não deve atualizar cliente se o nome for inválido")]
-        [InlineData("")]
-        [InlineData("nome_com_mais_de_200_caracteres__________________________________________________________________________________________________________________________________________________________________________")]
-        [Trait("ValueObject", "Nome")]
-        public void ClienteAtualizar_Deve_ThrowException_Quando_NomeInvalido(string nomeInvalido)
-        {
-            // Arrange
-            var cliente = Cliente.Criar("João da Silva", "36050793000");
-
-            // Act & Assert
-            FluentActions.Invoking(() => cliente.Atualizar(nomeInvalido))
-                .Should().Throw<DomainException>()
-                .WithMessage("*nome não pode*");
-        }
-
         [Theory(DisplayName = "Deve criar DocumentoIdentificador válido para CPF")]
         [InlineData("36050793000")]
         [InlineData("360.507.930-00")]
@@ -234,6 +244,8 @@ namespace Tests.Domain.Cadastros
             // Assert
             documento.Valor.Should().Be(documentoLimpo);
         }
+
+        #endregion
     }
 
 }

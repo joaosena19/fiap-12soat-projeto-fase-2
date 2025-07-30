@@ -7,8 +7,10 @@ namespace Tests.Domain.Estoque
 {
     public class ItemEstoqueUnitTest
     {
+        #region Testes Método Criar
+
         [Fact(DisplayName = "Deve criar item de estoque com dados válidos")]
-        [Trait("Dados Válidos", "Criar")]
+        [Trait("Método", "Criar")]
         public void Criar_DeveCriarItemEstoqueComDadosValidos()
         {
             // Arrange
@@ -29,8 +31,12 @@ namespace Tests.Domain.Estoque
             itemEstoque.Preco.Valor.Should().Be(preco);
         }
 
+        #endregion
+
+        #region Testes Método Atualizar
+
         [Fact(DisplayName = "Deve atualizar item de estoque com dados válidos")]
-        [Trait("Dados Válidos", "Atualizar")]
+        [Trait("Método", "Atualizar")]
         public void Atualizar_DeveAtualizarItemEstoqueComDadosValidos()
         {
             // Arrange
@@ -56,8 +62,12 @@ namespace Tests.Domain.Estoque
             itemEstoque.Preco.Valor.Should().Be(novoPreco);
         }
 
+        #endregion
+
+        #region Testes Método AtualizarQuantidade
+
         [Fact(DisplayName = "Deve atualizar apenas a quantidade do item de estoque")]
-        [Trait("Dados Válidos", "AtualizarQuantidade")]
+        [Trait("Método", "AtualizarQuantidade")]
         public void AtualizarQuantidade_DeveAtualizarApenasQuantidade()
         {
             // Arrange
@@ -79,12 +89,16 @@ namespace Tests.Domain.Estoque
             itemEstoque.Preco.Valor.Should().Be(preco); // Preço não deve mudar
         }
 
+        #endregion
+
+        #region Testes Método VerificarDisponibilidade
+
         [Theory(DisplayName = "Deve verificar disponibilidade corretamente")]
         [InlineData(50, 30, true)]   // Estoque 50, solicita 30 - disponível
         [InlineData(50, 50, true)]   // Estoque 50, solicita 50 - disponível
         [InlineData(50, 51, false)]  // Estoque 50, solicita 51 - não disponível
         [InlineData(10, 15, false)]  // Estoque 10, solicita 15 - não disponível
-        [Trait("Regra de Negócio", "VerificarDisponibilidade")]
+        [Trait("Método", "VerificarDisponibilidade")]
         public void VerificarDisponibilidade_DeveRetornarStatusCorreto(int quantidadeEstoque, int quantidadeSolicitada, bool esperado)
         {
             // Arrange
@@ -101,7 +115,7 @@ namespace Tests.Domain.Estoque
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(-10)]
-        [Trait("Regra de Negócio", "VerificarDisponibilidade")]
+        [Trait("Método", "VerificarDisponibilidade")]
         public void VerificarDisponibilidade_DeveLancarExcecao_QuandoQuantidadeInvalida(int quantidadeInvalida)
         {
             // Arrange
@@ -112,6 +126,8 @@ namespace Tests.Domain.Estoque
                 .Should().Throw<DomainException>()
                 .WithMessage("Quantidade requisitada deve ser maior que 0");
         }
+
+        #endregion
 
         #region Testes ValueObject Nome
 
