@@ -8,6 +8,8 @@ namespace Tests.Domain.Cadastros
 {
     public class VeiculoUnitTest
     {
+        #region Testes Método Criar e Atualizar
+
         [Fact(DisplayName = "Deve criar veículo com dados válidos")]
         [Trait("Dados Válidos", "Criar")]
         public void Criar_DeveCriarVeiculoComDadosValidos()
@@ -61,12 +63,35 @@ namespace Tests.Domain.Cadastros
             veiculo.TipoVeiculo.Valor.Should().Be(novoTipo);
         }
 
+        #endregion
+
+        #region Testes ValueObject Placa
+
+        [Theory(DisplayName = "Deve aceitar placas válidas")]
+        [InlineData("ABC1234")]
+        [InlineData("XYZ5678")]
+        [InlineData("ABC-1234")] // Com hífen - deve ser removido
+        [InlineData("abc1234")] // Lowercase - deve ser convertido para uppercase
+        [InlineData(" DEF9876 ")] // Com espaços - devem ser removidos
+        [Trait("ValueObject", "Placa")]
+        public void Placa_ComPlacasValidas_DeveAceitarPlaca(string placaValida)
+        {
+            // Act
+            var veiculo = Veiculo.Criar(Guid.NewGuid(), placaValida, "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+
+            // Assert
+            var placaEsperada = placaValida.Replace("-", "").ToUpper().Trim();
+            veiculo.Placa.Valor.Should().Be(placaEsperada);
+        }
+
         [Theory(DisplayName = "Não deve criar veículo se a placa for inválida")]
         [InlineData("")]
         [InlineData("   ")]
         [InlineData("ABC123")] // 6 caracteres
         [InlineData("ABC12345")] // 8 caracteres
         [InlineData("ABC-123")] // Com hífen mas não 7 caracteres após remoção
+        [InlineData("ABC@123")] // Com caracteres especiais
+        [InlineData("ABC 123")] // Com espaço no meio
         [Trait("ValueObject", "Placa")]
         public void Criar_ComPlacaInvalida_DeveLancarExcecao(string placaInvalida)
         {
@@ -74,6 +99,26 @@ namespace Tests.Domain.Cadastros
             Action act = () => Veiculo.Criar(Guid.NewGuid(), placaInvalida, "Civic", "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Placa*");
+        }
+
+        #endregion
+
+        #region Testes ValueObject Modelo
+
+        [Theory(DisplayName = "Deve aceitar modelos válidos")]
+        [InlineData("Civic")]
+        [InlineData("Corolla")]
+        [InlineData("A")] // Mínimo de 1 caractere
+        [InlineData(" Modelo com espaços ")] // Com espaços - devem ser removidos
+        [InlineData("ModeloComNomeMuitoLongoMasAindaDentroDoLimiteDe200CaracteresQueEhOLimiteMaximoParaOCampoModeloSegundoARegaDeNegocioDefinidaNaClasseValueObjectModeloQueValidaEsseCampoComUmaValidacaoMuitoEspecifica")] // 200 caracteres
+        [Trait("ValueObject", "Modelo")]
+        public void Modelo_ComModelosValidos_DeveAceitarModelo(string modeloValido)
+        {
+            // Act
+            var veiculo = Veiculo.Criar(Guid.NewGuid(), "ABC1234", modeloValido, "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+
+            // Assert
+            veiculo.Modelo.Valor.Should().Be(modeloValido.Trim());
         }
 
         [Theory(DisplayName = "Não deve criar veículo se o modelo for inválido")]
@@ -98,6 +143,39 @@ namespace Tests.Domain.Cadastros
                 .WithMessage("*Modelo não pode*");
         }
 
+        [Fact(DisplayName = "Não deve criar veículo se o modelo for muito longo")]
+        [Trait("ValueObject", "Modelo")]
+        public void Criar_ComModeloMuitoLongo_DeveLancarExcecao()
+        {
+            // Arrange
+            var modeloLongo = new string('A', 201); // 201 caracteres
+
+            // Act & Assert
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", modeloLongo, "Honda", "Preto", 2020, TipoVeiculoEnum.Carro);
+            act.Should().Throw<DomainException>()
+                .WithMessage("*Modelo não pode ter mais de 200 caracteres*");
+        }
+
+        #endregion
+
+        #region Testes ValueObject Marca
+
+        [Theory(DisplayName = "Deve aceitar marcas válidas")]
+        [InlineData("Honda")]
+        [InlineData("Toyota")]
+        [InlineData("A")] // Mínimo de 1 caractere
+        [InlineData(" Marca com espaços ")] // Com espaços - devem ser removidos
+        [InlineData("MarcaComNomeMuitoLongoMasAindaDentroDoLimiteDe200CaracteresQueEhOLimiteMaximoParaOCampoMarcaSegundoARegaDeNegocioDefinidaNaClasseValueObjectMarcaQueValidaEsseCampoComUmaValidacaoMuitoEspecifica")] // 200 caracteres
+        [Trait("ValueObject", "Marca")]
+        public void Marca_ComMarcasValidas_DeveAceitarMarca(string marcaValida)
+        {
+            // Act
+            var veiculo = Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", marcaValida, "Preto", 2020, TipoVeiculoEnum.Carro);
+
+            // Assert
+            veiculo.Marca.Valor.Should().Be(marcaValida.Trim());
+        }
+
         [Theory(DisplayName = "Não deve criar veículo se a marca for inválida")]
         [InlineData("")]
         [InlineData("   ")]
@@ -120,6 +198,40 @@ namespace Tests.Domain.Cadastros
                 .WithMessage("*Marca não pode*");
         }
 
+        [Fact(DisplayName = "Não deve criar veículo se a marca for muito longa")]
+        [Trait("ValueObject", "Marca")]
+        public void Criar_ComMarcaMuitoLonga_DeveLancarExcecao()
+        {
+            // Arrange
+            var marcaLonga = new string('A', 201); // 201 caracteres
+
+            // Act & Assert
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", marcaLonga, "Preto", 2020, TipoVeiculoEnum.Carro);
+            act.Should().Throw<DomainException>()
+                .WithMessage("*Marca não pode ter mais de 200 caracteres*");
+        }
+
+        #endregion
+
+        #region Testes ValueObject Cor
+
+        [Theory(DisplayName = "Deve aceitar cores válidas")]
+        [InlineData("Preto")]
+        [InlineData("Branco")]
+        [InlineData("Azul")]
+        [InlineData("A")] // Mínimo de 1 caractere
+        [InlineData(" Cor com espaços ")] // Com espaços - devem ser removidos
+        [InlineData("CorComNomeMuitoLongoMasAindaDentroDoLimiteDe100CaracteresQueEhOLimiteMaximoParaOCampoCor")] // 100 caracteres
+        [Trait("ValueObject", "Cor")]
+        public void Cor_ComCoresValidas_DeveAceitarCor(string corValida)
+        {
+            // Act
+            var veiculo = Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", "Honda", corValida, 2020, TipoVeiculoEnum.Carro);
+
+            // Assert
+            veiculo.Cor.Valor.Should().Be(corValida.Trim());
+        }
+
         [Theory(DisplayName = "Não deve criar veículo se a cor for inválida")]
         [InlineData("")]
         [InlineData("   ")]
@@ -140,6 +252,51 @@ namespace Tests.Domain.Cadastros
             Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", "Honda", null!, 2020, TipoVeiculoEnum.Carro);
             act.Should().Throw<DomainException>()
                 .WithMessage("*Cor não pode*");
+        }
+
+        [Fact(DisplayName = "Não deve criar veículo se a cor for muito longa")]
+        [Trait("ValueObject", "Cor")]
+        public void Criar_ComCorMuitoLonga_DeveLancarExcecao()
+        {
+            // Arrange
+            var corLonga = new string('A', 101); // 101 caracteres
+
+            // Act & Assert
+            Action act = () => Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", "Honda", corLonga, 2020, TipoVeiculoEnum.Carro);
+            act.Should().Throw<DomainException>()
+                .WithMessage("*Cor não pode ter mais de 100 caracteres*");
+        }
+
+        #endregion
+
+        #region Testes ValueObject Ano
+
+        [Theory(DisplayName = "Deve aceitar anos válidos")]
+        [InlineData(1885)] // Ano mínimo
+        [InlineData(2020)]
+        [InlineData(2024)]
+        [Trait("ValueObject", "Ano")]
+        public void Ano_ComAnosValidos_DeveAceitarAno(int anoValido)
+        {
+            // Act
+            var veiculo = Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", "Honda", "Preto", anoValido, TipoVeiculoEnum.Carro);
+
+            // Assert
+            veiculo.Ano.Valor.Should().Be(anoValido);
+        }
+
+        [Fact(DisplayName = "Deve aceitar ano futuro (próximo ano)")]
+        [Trait("ValueObject", "Ano")]
+        public void Ano_ComAnoFuturoValido_DeveAceitarAno()
+        {
+            // Arrange
+            var anoProximo = DateTime.Now.Year + 1;
+
+            // Act
+            var veiculo = Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", "Honda", "Preto", anoProximo, TipoVeiculoEnum.Carro);
+
+            // Assert
+            veiculo.Ano.Valor.Should().Be(anoProximo);
         }
 
         [Theory(DisplayName = "Não deve criar veículo se o ano for inválido")]
@@ -166,6 +323,23 @@ namespace Tests.Domain.Cadastros
                 .WithMessage("*Ano deve estar entre*");
         }
 
+        #endregion
+
+        #region Testes ValueObject TipoVeiculo
+
+        [Theory(DisplayName = "Deve aceitar todos os tipos de veículo válidos")]
+        [InlineData(TipoVeiculoEnum.Carro)]
+        [InlineData(TipoVeiculoEnum.Moto)]
+        [Trait("ValueObject", "TipoVeiculo")]
+        public void TipoVeiculo_ComTiposValidos_DeveAceitarTipo(TipoVeiculoEnum tipoValido)
+        {
+            // Act
+            var veiculo = Veiculo.Criar(Guid.NewGuid(), "ABC1234", "Civic", "Honda", "Preto", 2020, tipoValido);
+
+            // Assert
+            veiculo.TipoVeiculo.Valor.Should().Be(tipoValido);
+        }
+
         [Theory(DisplayName = "Não deve criar veículo se o tipo de veículo for inválido")]
         [InlineData((TipoVeiculoEnum)999)]
         [InlineData((TipoVeiculoEnum)0)]
@@ -179,5 +353,7 @@ namespace Tests.Domain.Cadastros
             act.Should().Throw<DomainException>()
                 .WithMessage("*Tipo de veículo*não é válido*");
         }
+
+        #endregion
     }
 }
