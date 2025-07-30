@@ -611,6 +611,30 @@ namespace Tests.Domain.OrdemServico
             ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.Cancelada);
         }
 
+        [Fact(DisplayName = "Deve permitir cancelar ordem de serviço em qualquer status")]
+        [Trait("Método", "Cancelar")]
+        public void Cancelar_ComQualquerStatus_DeveAlterarStatusParaCancelada()
+        {
+            // Arrange & Act & Assert
+            foreach (StatusOrdemServicoEnum statusAtual in Enum.GetValues<StatusOrdemServicoEnum>())
+            {
+                var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+                
+                // Definir status usando reflection se não for o status inicial
+                if (statusAtual != StatusOrdemServicoEnum.Recebida)
+                {
+                    DefinirStatusPorReflection(ordemServico, statusAtual);
+                }
+
+                // Act
+                ordemServico.Cancelar();
+
+                // Assert
+                ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.Cancelada, 
+                    $"Deveria ser possível cancelar uma OS do status '{statusAtual}' para 'Cancelada'");
+            }
+        }
+
         #endregion
 
         #region Testes Metodo IniciarDiagnostico
