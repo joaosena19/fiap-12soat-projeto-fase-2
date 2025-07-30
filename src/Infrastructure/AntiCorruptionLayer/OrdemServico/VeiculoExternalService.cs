@@ -1,5 +1,4 @@
 using Application.Cadastros.Interfaces;
-using Application.OrdemServico.DTO.External;
 using Application.OrdemServico.Interfaces.External;
 
 namespace Infrastructure.AntiCorruptionLayer.OrdemServico
