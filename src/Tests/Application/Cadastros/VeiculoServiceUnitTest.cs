@@ -10,14 +10,14 @@ using Application;
 
 namespace Tests.Application.Cadastros
 {
-    public class VeiculoServiceTest
+    public class VeiculoServiceUnitTest
     {
         private readonly Mock<IVeiculoRepository> _veiculoRepositoryMock;
         private readonly Mock<IClienteRepository> _clienteRepositoryMock;
         private readonly IMapper _mapper;
         private readonly VeiculoService _veiculoService;
 
-        public VeiculoServiceTest()
+        public VeiculoServiceUnitTest()
         {
             _veiculoRepositoryMock = new Mock<IVeiculoRepository>();
             _clienteRepositoryMock = new Mock<IClienteRepository>();
