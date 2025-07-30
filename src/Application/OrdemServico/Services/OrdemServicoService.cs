@@ -78,6 +78,9 @@ namespace Application.OrdemServico.Services
 
         public async Task<RetornoOrdemServicoComServicosItensDTO> AdicionarServicos(Guid ordemServicoId, AdicionarServicosDTO dto)
         {
+            if (dto.ServicosOriginaisIds is null || dto.ServicosOriginaisIds.Count == 0)
+                throw new DomainException($"É necessário informar ao menos um serviço para adiciona na Ordem de Serviço", ErrorType.InvalidInput);
+
             var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
 
             foreach (var servicoId in dto.ServicosOriginaisIds)
