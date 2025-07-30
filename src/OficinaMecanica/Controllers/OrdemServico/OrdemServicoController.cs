@@ -80,13 +80,11 @@ namespace API.Controllers.OrdemServico
         /// <response code="201">Ordem de serviço criada com sucesso</response>
         /// <response code="400">Dados inválidos fornecidos</response>
         /// <response code="422">Veículo não encontrado</response>
-        /// <response code="409">Conflito - Ordem de serviço já existe</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost]
         [ProducesResponseType(typeof(RetornoOrdemServicoDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CriarOrdemServicoDTO dto)
         {
@@ -148,10 +146,12 @@ namespace API.Controllers.OrdemServico
         /// <returns>Nenhum conteúdo</returns>
         /// <response code="204">Serviço removido com sucesso</response>
         /// <response code="404">Ordem de serviço ou serviço não encontrado</response>
+        /// <response code="422">Erros de regra do domínio</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpDelete("{id}/servicos/{servicoIncluidoId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoverServico(Guid id, Guid servicoIncluidoId)
         {
@@ -167,10 +167,12 @@ namespace API.Controllers.OrdemServico
         /// <returns>Nenhum conteúdo</returns>
         /// <response code="204">Item removido com sucesso</response>
         /// <response code="404">Ordem de serviço ou item não encontrado</response>
+        /// <response code="422">Erro de regra do domínio</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpDelete("{id}/itens/{itemIncluidoId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoverItem(Guid id, Guid itemIncluidoId)
         {
@@ -206,11 +208,13 @@ namespace API.Controllers.OrdemServico
         /// <response code="204">Diagnóstico iniciado com sucesso</response>
         /// <response code="400">Dados inválidos fornecidos</response>
         /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="422">Erro de regra do domínio</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/iniciar-diagnostico")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> IniciarDiagnostico(Guid id)
         {
@@ -226,11 +230,13 @@ namespace API.Controllers.OrdemServico
         /// <response code="201">Orçamento gerado com sucesso</response>
         /// <response code="400">Dados inválidos fornecidos</response>
         /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="422">Erro de regra do domínio</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/orcamento")]
         [ProducesResponseType(typeof(RetornoOrcamentoDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GerarOrcamento(Guid id)
         {
@@ -246,11 +252,13 @@ namespace API.Controllers.OrdemServico
         /// <response code="204">Orçamento aprovado com sucesso</response>
         /// <response code="400">Dados inválidos fornecidos</response>
         /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="422">Erro de regra do domínio</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/orcamento/aprovar")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AprovarOrcamento(Guid id)
         {
@@ -266,11 +274,13 @@ namespace API.Controllers.OrdemServico
         /// <response code="204">Orçamento desaprovado com sucesso</response>
         /// <response code="400">Dados inválidos fornecidos</response>
         /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="422">Erro de regra do domínio</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/orcamento/desaprovar")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DesaprovarOrcamento(Guid id)
         {
@@ -286,11 +296,13 @@ namespace API.Controllers.OrdemServico
         /// <response code="204">Execução finalizada com sucesso</response>
         /// <response code="400">Dados inválidos fornecidos</response>
         /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="422">Erro de regra do domínio</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/finalizar-execucao")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> FinalizarExecucao(Guid id)
         {
@@ -306,11 +318,13 @@ namespace API.Controllers.OrdemServico
         /// <response code="204">Ordem de serviço entregue com sucesso</response>
         /// <response code="400">Dados inválidos fornecidos</response>
         /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="422">Erro de regra do domínio</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/entregar")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Entregar(Guid id)
         {
@@ -325,10 +339,12 @@ namespace API.Controllers.OrdemServico
         /// <returns>Dados sobre o tempo médio de execução</returns>
         /// <response code="200">Tempo médio calculado com sucesso</response>
         /// <response code="400">Parâmetros inválidos ou nenhuma ordem encontrada</response>
+        /// <response code="422">Erro de regra do domínio</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet("tempo-medio")]
         [ProducesResponseType(typeof(RetornoTempoMedioDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ObterTempoMedio([FromQuery] int quantidadeDias = 365)
         {
