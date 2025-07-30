@@ -1,3 +1,5 @@
+using Domain.OrdemServico.Aggregates.OrdemServico;
+using Domain.OrdemServico.Enums;
 using Domain.OrdemServico.ValueObjects.Orcamento;
 using FluentAssertions;
 using Shared.Exceptions;
@@ -83,6 +85,92 @@ namespace Tests.Domain.OrdemServico
 
             // Assert
             preco.Valor.Should().Be(precoValido);
+        }
+
+        #endregion
+
+        #region Testes Metodo GerarOrcamento
+
+        [Fact(DisplayName = "Deve gerar orçamento com sucesso")]
+        [Trait("Método", "GerarOrcamento")]
+        public void GerarOrcamento_ComServicosEItens_DeveGerarOrcamento()
+        {
+            // Arrange
+            var servicos = new List<ServicoIncluido>
+            {
+                ServicoIncluido.Criar(Guid.NewGuid(), "Troca de óleo", 50.00m),
+                ServicoIncluido.Criar(Guid.NewGuid(), "Revisão freios", 100.00m)
+            };
+            
+            var itens = new List<ItemIncluido>
+            {
+                ItemIncluido.Criar(Guid.NewGuid(), "Filtro de óleo", 25.00m, 1, TipoItemIncluidoEnum.Peca),
+                ItemIncluido.Criar(Guid.NewGuid(), "Óleo do motor", 30.00m, 2, TipoItemIncluidoEnum.Insumo)
+            };
+
+            var precoEsperado = 50.00m + 100.00m + (25.00m * 1) + (30.00m * 2); // Serviços + Item 1 (25*1) + Item 2 (30*2)
+
+            // Act
+            var orcamento = Orcamento.GerarOrcamento(servicos, itens);
+
+            // Assert
+            orcamento.Id.Should().NotBeEmpty();
+            orcamento.DataCriacao.Valor.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
+            orcamento.Preco.Valor.Should().Be(precoEsperado);
+        }
+
+        [Fact(DisplayName = "Deve gerar orçamento apenas com serviços")]
+        [Trait("Método", "GerarOrcamento")]
+        public void GerarOrcamento_ApenasComServicos_DeveGerarOrcamento()
+        {
+            // Arrange
+            var servicos = new List<ServicoIncluido>
+            {
+                ServicoIncluido.Criar(Guid.NewGuid(), "Diagnóstico", 80.00m)
+            };
+            var itens = new List<ItemIncluido>();
+
+            // Act
+            var orcamento = Orcamento.GerarOrcamento(servicos, itens);
+
+            // Assert
+            orcamento.Id.Should().NotBeEmpty();
+            orcamento.Preco.Valor.Should().Be(80.00m);
+        }
+
+        [Fact(DisplayName = "Deve gerar orçamento apenas com itens")]
+        [Trait("Método", "GerarOrcamento")]
+        public void GerarOrcamento_ApenasComItens_DeveGerarOrcamento()
+        {
+            // Arrange
+            var servicos = new List<ServicoIncluido>();
+            var itens = new List<ItemIncluido>
+            {
+                ItemIncluido.Criar(Guid.NewGuid(), "Pneu", 200.00m, 4, TipoItemIncluidoEnum.Peca)
+            };
+
+            // Act
+            var orcamento = Orcamento.GerarOrcamento(servicos, itens);
+
+            // Assert
+            orcamento.Id.Should().NotBeEmpty();
+            orcamento.Preco.Valor.Should().Be(800.00m); // 200 * 4
+        }
+
+        [Fact(DisplayName = "Deve gerar orçamento com valor zero se não houver serviços nem itens")]
+        [Trait("Método", "GerarOrcamento")]
+        public void GerarOrcamento_SemServicosNemItens_DeveGerarOrcamentoComValorZero()
+        {
+            // Arrange
+            var servicos = new List<ServicoIncluido>();
+            var itens = new List<ItemIncluido>();
+
+            // Act
+            var orcamento = Orcamento.GerarOrcamento(servicos, itens);
+
+            // Assert
+            orcamento.Id.Should().NotBeEmpty();
+            orcamento.Preco.Valor.Should().Be(0.00m);
         }
 
         #endregion

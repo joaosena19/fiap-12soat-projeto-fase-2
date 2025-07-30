@@ -1,3 +1,4 @@
+using Domain.OrdemServico.Aggregates.OrdemServico;
 using Domain.OrdemServico.Enums;
 using Domain.OrdemServico.ValueObjects.ItemIncluido;
 using FluentAssertions;
@@ -159,17 +160,98 @@ namespace Tests.Domain.OrdemServico
                 .WithMessage("*Tipo de item incluí­do na Ordem de Serviço*não é válido*");
         }
 
-        [Theory(DisplayName = "Deve aceitar tipos de item incluído válidos")]
-        [InlineData(TipoItemIncluidoEnum.Peca)]
-        [InlineData(TipoItemIncluidoEnum.Insumo)]
+        [Fact(DisplayName = "Deve aceitar todos os tipos de item incluído válidos")]
         [Trait("ValueObject", "TipoItemIncluido")]
-        public void TipoItemIncluido_ComEnumValido_DeveAceitarTipo(TipoItemIncluidoEnum tipoValido)
+        public void TipoItemIncluido_ComTodosEnumsValidos_DeveAceitarTipo()
         {
+            // Arrange & Act & Assert
+            foreach (TipoItemIncluidoEnum tipoValido in Enum.GetValues<TipoItemIncluidoEnum>())
+            {
+                var tipo = new TipoItemIncluido(tipoValido);
+                tipo.Valor.Should().Be(tipoValido);
+            }
+        }
+
+        #endregion
+
+        #region Testes Metodo Criar
+
+        [Fact(DisplayName = "Deve criar item incluído com sucesso")]
+        [Trait("Método", "Criar")]
+        public void Criar_ComParametrosValidos_DeveCriarItemIncluido()
+        {
+            // Arrange
+            var itemEstoqueOriginalId = Guid.NewGuid();
+            var nome = "Filtro de óleo";
+            var precoUnitario = 25.50m;
+            var quantidade = 2;
+            var tipo = TipoItemIncluidoEnum.Peca;
+
             // Act
-            var tipo = new TipoItemIncluido(tipoValido);
+            var itemIncluido = ItemIncluido.Criar(itemEstoqueOriginalId, nome, precoUnitario, quantidade, tipo);
 
             // Assert
-            tipo.Valor.Should().Be(tipoValido);
+            itemIncluido.Id.Should().NotBeEmpty();
+            itemIncluido.ItemEstoqueOriginalId.Should().Be(itemEstoqueOriginalId);
+            itemIncluido.Nome.Valor.Should().Be(nome);
+            itemIncluido.Preco.Valor.Should().Be(precoUnitario);
+            itemIncluido.Quantidade.Valor.Should().Be(quantidade);
+            itemIncluido.TipoItemIncluido.Valor.Should().Be(tipo);
+        }
+
+        #endregion
+
+        #region Testes Metodo AtualizarQuantidade
+
+        [Fact(DisplayName = "Deve atualizar quantidade com sucesso")]
+        [Trait("Método", "AtualizarQuantidade")]
+        public void AtualizarQuantidade_ComQuantidadeValida_DeveAtualizarQuantidade()
+        {
+            // Arrange
+            var itemIncluido = ItemIncluido.Criar(Guid.NewGuid(), "Filtro", 10.00m, 1, TipoItemIncluidoEnum.Peca);
+            var novaQuantidade = 5;
+
+            // Act
+            itemIncluido.AtualizarQuantidade(novaQuantidade);
+
+            // Assert
+            itemIncluido.Quantidade.Valor.Should().Be(novaQuantidade);
+        }
+
+        #endregion
+
+        #region Testes Metodo IncrementarQuantidade
+
+        [Fact(DisplayName = "Deve incrementar quantidade com sucesso")]
+        [Trait("Método", "IncrementarQuantidade")]
+        public void IncrementarQuantidade_ComQuantidadeValida_DeveIncrementarQuantidade()
+        {
+            // Arrange
+            var itemIncluido = ItemIncluido.Criar(Guid.NewGuid(), "Filtro", 10.00m, 2, TipoItemIncluidoEnum.Peca);
+            var quantidadeAdicional = 3;
+            var quantidadeEsperada = 5;
+
+            // Act
+            itemIncluido.IncrementarQuantidade(quantidadeAdicional);
+
+            // Assert
+            itemIncluido.Quantidade.Valor.Should().Be(quantidadeEsperada);
+        }
+
+        [Theory(DisplayName = "Não deve incrementar quantidade se quantidade adicional for inválida")]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(-10)]
+        [Trait("Método", "IncrementarQuantidade")]
+        public void IncrementarQuantidade_ComQuantidadeInvalida_DeveLancarExcecao(int quantidadeInvalida)
+        {
+            // Arrange
+            var itemIncluido = ItemIncluido.Criar(Guid.NewGuid(), "Filtro", 10.00m, 2, TipoItemIncluidoEnum.Peca);
+
+            // Act & Assert
+            FluentActions.Invoking(() => itemIncluido.IncrementarQuantidade(quantidadeInvalida))
+                .Should().Throw<DomainException>()
+                .WithMessage("A quantidade a adicionar deve ser maior que zero.");
         }
 
         #endregion

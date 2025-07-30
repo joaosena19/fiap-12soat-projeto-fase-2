@@ -1,3 +1,4 @@
+using Domain.OrdemServico.Aggregates.OrdemServico;
 using Domain.OrdemServico.ValueObjects.ServicoIncluido;
 using FluentAssertions;
 using Shared.Exceptions;
@@ -106,6 +107,29 @@ namespace Tests.Domain.OrdemServico
 
             // Assert
             preco.Valor.Should().Be(precoValido);
+        }
+
+        #endregion
+
+        #region Testes Metodo Criar
+
+        [Fact(DisplayName = "Deve criar serviço incluído com sucesso")]
+        [Trait("Método", "Criar")]
+        public void Criar_ComParametrosValidos_DeveCriarServicoIncluido()
+        {
+            // Arrange
+            var servicoOriginalId = Guid.NewGuid();
+            var nome = "Troca de óleo";
+            var preco = 75.50m;
+
+            // Act
+            var servicoIncluido = ServicoIncluido.Criar(servicoOriginalId, nome, preco);
+
+            // Assert
+            servicoIncluido.Id.Should().NotBeEmpty();
+            servicoIncluido.ServicoOriginalId.Should().Be(servicoOriginalId);
+            servicoIncluido.Nome.Valor.Should().Be(nome);
+            servicoIncluido.Preco.Valor.Should().Be(preco);
         }
 
         #endregion

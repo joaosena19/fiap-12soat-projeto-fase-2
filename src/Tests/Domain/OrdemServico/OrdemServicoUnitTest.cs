@@ -1,7 +1,9 @@
+using OrdemServicoAggregate = Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico;
 using Domain.OrdemServico.Enums;
 using Domain.OrdemServico.ValueObjects.OrdemServico;
 using FluentAssertions;
 using Shared.Exceptions;
+using System.Reflection;
 
 namespace Tests.Domain.OrdemServico
 {
@@ -240,22 +242,728 @@ namespace Tests.Domain.OrdemServico
                 .WithMessage("*Status da Ordem de Serviço*não é válido*");
         }
 
-        [Theory(DisplayName = "Deve aceitar status válidos")]
-        [InlineData(StatusOrdemServicoEnum.Cancelada)]
-        [InlineData(StatusOrdemServicoEnum.Recebida)]
-        [InlineData(StatusOrdemServicoEnum.EmDiagnostico)]
-        [InlineData(StatusOrdemServicoEnum.AguardandoAprovacao)]
-        [InlineData(StatusOrdemServicoEnum.EmExecucao)]
-        [InlineData(StatusOrdemServicoEnum.Finalizada)]
-        [InlineData(StatusOrdemServicoEnum.Entregue)]
+        [Fact(DisplayName = "Deve aceitar todos os status válidos")]
         [Trait("ValueObject", "Status")]
-        public void Status_ComEnumValido_DeveAceitarStatus(StatusOrdemServicoEnum statusValido)
+        public void Status_ComTodosEnumsValidos_DeveAceitarStatus()
         {
+            // Arrange & Act & Assert
+            foreach (StatusOrdemServicoEnum statusValido in Enum.GetValues<StatusOrdemServicoEnum>())
+            {
+                var status = new Status(statusValido);
+                status.Valor.Should().Be(statusValido);
+            }
+        }
+
+        #endregion
+
+        #region Testes Metodo Criar
+
+        [Fact(DisplayName = "Deve criar ordem de serviço com sucesso")]
+        [Trait("Método", "Criar")]
+        public void Criar_ComVeiculoId_DeveCriarOrdemServico()
+        {
+            // Arrange
+            var veiculoId = Guid.NewGuid();
+
             // Act
-            var status = new Status(statusValido);
+            var ordemServico = OrdemServicoAggregate.Criar(veiculoId);
 
             // Assert
-            status.Valor.Should().Be(statusValido);
+            ordemServico.Id.Should().NotBeEmpty();
+            ordemServico.VeiculoId.Should().Be(veiculoId);
+            ordemServico.Codigo.Valor.Should().StartWith("OS-");
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.Recebida);
+            ordemServico.Historico.DataCriacao.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
+            ordemServico.ServicosIncluidos.Should().BeEmpty();
+            ordemServico.ItensIncluidos.Should().BeEmpty();
+            ordemServico.Orcamento.Should().BeNull();
+        }
+
+        #endregion
+
+        #region Testes Metodo PermiteAlterarServicosItens
+
+        [Theory(DisplayName = "Deve permitir alterar serviços/itens nos status permitidos")]
+        [InlineData(StatusOrdemServicoEnum.Recebida)]
+        [InlineData(StatusOrdemServicoEnum.EmDiagnostico)]
+        [Trait("Método", "PermiteAlterarServicosItens")]
+        public void PermiteAlterarServicosItens_ComStatusPermitido_DeveRetornarTrue(StatusOrdemServicoEnum statusPermitido)
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            if (statusPermitido == StatusOrdemServicoEnum.EmDiagnostico)
+            {
+                ordemServico.IniciarDiagnostico();
+            }
+
+            // Act
+            var resultado = ordemServico.PermiteAlterarServicosItens();
+
+            // Assert
+            resultado.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Não deve permitir alterar serviços/itens nos status não permitidos")]
+        [Trait("Método", "PermiteAlterarServicosItens")]
+        public void PermiteAlterarServicosItens_ComStatusNaoPermitido_DeveRetornarFalse()
+        {
+            // Arrange
+            var statusNaoPermitidos = Enum.GetValues<StatusOrdemServicoEnum>()
+                .Except(new[] { StatusOrdemServicoEnum.Recebida, StatusOrdemServicoEnum.EmDiagnostico });
+
+            foreach (var statusNaoPermitido in statusNaoPermitidos)
+            {
+                var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+                
+                // Usar helper method para definir o status diretamente
+                DefinirStatusPorReflection(ordemServico, statusNaoPermitido);
+
+                // Act
+                var resultado = ordemServico.PermiteAlterarServicosItens();
+
+                // Assert
+                resultado.Should().BeFalse($"Status {statusNaoPermitido} não deveria permitir alterar serviços/itens");
+            }
+        }
+
+        #endregion
+
+        #region Testes Metodo AdicionarServico
+
+        [Fact(DisplayName = "Deve adicionar serviço com sucesso")]
+        [Trait("Método", "AdicionarServico")]
+        public void AdicionarServico_ComParametrosValidos_DeveAdicionarServico()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            var servicoId = Guid.NewGuid();
+            var nome = "Troca de óleo";
+            var preco = 75.50m;
+
+            // Act
+            ordemServico.AdicionarServico(servicoId, nome, preco);
+
+            // Assert
+            ordemServico.ServicosIncluidos.Should().HaveCount(1);
+            var servicoAdicionado = ordemServico.ServicosIncluidos.First();
+            servicoAdicionado.ServicoOriginalId.Should().Be(servicoId);
+            servicoAdicionado.Nome.Valor.Should().Be(nome);
+            servicoAdicionado.Preco.Valor.Should().Be(preco);
+        }
+
+        [Fact(DisplayName = "Não deve adicionar serviço se status não permitir")]
+        [Trait("Método", "AdicionarServico")]
+        public void AdicionarServico_ComStatusNaoPermitido_DeveLancarExcecao()
+        {
+            // Arrange
+            var statusInvalidos = Enum.GetValues<StatusOrdemServicoEnum>()
+                .Except(new[] { StatusOrdemServicoEnum.Recebida, StatusOrdemServicoEnum.EmDiagnostico });
+
+            foreach (var statusInvalido in statusInvalidos)
+            {
+                var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+                
+                // Definir status usando reflection
+                DefinirStatusPorReflection(ordemServico, statusInvalido);
+
+                // Act & Assert
+                FluentActions.Invoking(() => ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 10.00m))
+                    .Should().Throw<DomainException>()
+                    .WithMessage($"Não é possível adicionar serviços a uma Ordem de Serviço com o status '{statusInvalido}'.",
+                        $"Status {statusInvalido} não deveria permitir adicionar serviços");
+            }
+        }
+
+        [Fact(DisplayName = "Não deve adicionar serviço duplicado")]
+        [Trait("Método", "AdicionarServico")]
+        public void AdicionarServico_ComServicoJaIncluido_DeveLancarExcecao()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            var servicoId = Guid.NewGuid();
+            ordemServico.AdicionarServico(servicoId, "Teste", 10.00m);
+
+            // Act & Assert
+            FluentActions.Invoking(() => ordemServico.AdicionarServico(servicoId, "Teste 2", 20.00m))
+                .Should().Throw<DomainException>()
+                .WithMessage("Este serviço já foi incluído nesta OS.");
+        }
+
+        #endregion
+
+        #region Testes Metodo AdicionarItem
+
+        [Fact(DisplayName = "Deve adicionar item com sucesso")]
+        [Trait("Método", "AdicionarItem")]
+        public void AdicionarItem_ComParametrosValidos_DeveAdicionarItem()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            var itemId = Guid.NewGuid();
+            var nome = "Filtro de óleo";
+            var precoUnitario = 25.00m;
+            var quantidade = 2;
+            var tipo = TipoItemIncluidoEnum.Peca;
+
+            // Act
+            ordemServico.AdicionarItem(itemId, nome, precoUnitario, quantidade, tipo);
+
+            // Assert
+            ordemServico.ItensIncluidos.Should().HaveCount(1);
+            var itemAdicionado = ordemServico.ItensIncluidos.First();
+            itemAdicionado.ItemEstoqueOriginalId.Should().Be(itemId);
+            itemAdicionado.Nome.Valor.Should().Be(nome);
+            itemAdicionado.Preco.Valor.Should().Be(precoUnitario);
+            itemAdicionado.Quantidade.Valor.Should().Be(quantidade);
+            itemAdicionado.TipoItemIncluido.Valor.Should().Be(tipo);
+        }
+
+        [Fact(DisplayName = "Deve incrementar quantidade se item já existir")]
+        [Trait("Método", "AdicionarItem")]
+        public void AdicionarItem_ComItemJaExistente_DeveIncrementarQuantidade()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            var itemId = Guid.NewGuid();
+            ordemServico.AdicionarItem(itemId, "Filtro", 10.00m, 2, TipoItemIncluidoEnum.Peca);
+
+            // Act
+            ordemServico.AdicionarItem(itemId, "Filtro", 10.00m, 3, TipoItemIncluidoEnum.Peca);
+
+            // Assert
+            ordemServico.ItensIncluidos.Should().HaveCount(1);
+            var item = ordemServico.ItensIncluidos.First();
+            item.Quantidade.Valor.Should().Be(5); // 2 + 3
+        }
+
+        [Fact(DisplayName = "Não deve adicionar item se status não permitir")]
+        [Trait("Método", "AdicionarItem")]
+        public void AdicionarItem_ComStatusNaoPermitido_DeveLancarExcecao()
+        {
+            // Arrange
+            var statusInvalidos = Enum.GetValues<StatusOrdemServicoEnum>()
+                .Except(new[] { StatusOrdemServicoEnum.Recebida, StatusOrdemServicoEnum.EmDiagnostico });
+
+            foreach (var statusInvalido in statusInvalidos)
+            {
+                var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+                
+                // Definir status usando reflection
+                DefinirStatusPorReflection(ordemServico, statusInvalido);
+
+                // Act & Assert
+                FluentActions.Invoking(() => ordemServico.AdicionarItem(Guid.NewGuid(), "Teste", 10.00m, 1, TipoItemIncluidoEnum.Peca))
+                    .Should().Throw<DomainException>()
+                    .WithMessage($"Não é possível adicionar itens a uma Ordem de Serviço com o status '{statusInvalido}'.",
+                        $"Status {statusInvalido} não deveria permitir adicionar itens");
+            }
+        }
+
+        [Theory(DisplayName = "Não deve adicionar item com quantidade inválida")]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(-10)]
+        [Trait("Método", "AdicionarItem")]
+        public void AdicionarItem_ComQuantidadeInvalida_DeveLancarExcecao(int quantidadeInvalida)
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+
+            // Act & Assert
+            FluentActions.Invoking(() => ordemServico.AdicionarItem(Guid.NewGuid(), "Teste", 10.00m, quantidadeInvalida, TipoItemIncluidoEnum.Peca))
+                .Should().Throw<DomainException>()
+                .WithMessage("A quantidade deve ser maior que zero.");
+        }
+
+        #endregion
+
+        #region Testes Metodo RemoverServico
+
+        [Fact(DisplayName = "Deve remover serviço com sucesso")]
+        [Trait("Método", "RemoverServico")]
+        public void RemoverServico_ComServicoExistente_DeveRemoverServico()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 10.00m);
+            var servicoId = ordemServico.ServicosIncluidos.First().Id;
+
+            // Act
+            ordemServico.RemoverServico(servicoId);
+
+            // Assert
+            ordemServico.ServicosIncluidos.Should().BeEmpty();
+        }
+
+        [Fact(DisplayName = "Não deve remover serviço se status não permitir")]
+        [Trait("Método", "RemoverServico")]
+        public void RemoverServico_ComStatusNaoPermitido_DeveLancarExcecao()
+        {
+            // Arrange
+            var statusInvalidos = Enum.GetValues<StatusOrdemServicoEnum>()
+                .Except(new[] { StatusOrdemServicoEnum.Recebida, StatusOrdemServicoEnum.EmDiagnostico });
+
+            foreach (var statusInvalido in statusInvalidos)
+            {
+                var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+                ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 10.00m);
+                var servicoId = ordemServico.ServicosIncluidos.First().Id;
+                
+                // Definir status usando reflection
+                DefinirStatusPorReflection(ordemServico, statusInvalido);
+
+                // Act & Assert
+                FluentActions.Invoking(() => ordemServico.RemoverServico(servicoId))
+                    .Should().Throw<DomainException>()
+                    .WithMessage($"Não é possível remover serviços de uma Ordem de Serviço com o status '{statusInvalido}'.",
+                        $"Status {statusInvalido} não deveria permitir remover serviços");
+            }
+        }
+
+        [Fact(DisplayName = "Não deve remover serviço inexistente")]
+        [Trait("Método", "RemoverServico")]
+        public void RemoverServico_ComServicoInexistente_DeveLancarExcecao()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            var servicoIdInexistente = Guid.NewGuid();
+
+            // Act & Assert
+            FluentActions.Invoking(() => ordemServico.RemoverServico(servicoIdInexistente))
+                .Should().Throw<DomainException>()
+                .WithMessage("Serviço não encontrado nesta ordem de serviço.");
+        }
+
+        #endregion
+
+        #region Testes Metodo RemoverItem
+
+        [Fact(DisplayName = "Deve remover item com sucesso")]
+        [Trait("Método", "RemoverItem")]
+        public void RemoverItem_ComItemExistente_DeveRemoverItem()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.AdicionarItem(Guid.NewGuid(), "Teste", 10.00m, 1, TipoItemIncluidoEnum.Peca);
+            var itemId = ordemServico.ItensIncluidos.First().Id;
+
+            // Act
+            ordemServico.RemoverItem(itemId);
+
+            // Assert
+            ordemServico.ItensIncluidos.Should().BeEmpty();
+        }
+
+        [Fact(DisplayName = "Não deve remover item se status não permitir")]
+        [Trait("Método", "RemoverItem")]
+        public void RemoverItem_ComStatusNaoPermitido_DeveLancarExcecao()
+        {
+            // Arrange
+            var statusInvalidos = Enum.GetValues<StatusOrdemServicoEnum>()
+                .Except(new[] { StatusOrdemServicoEnum.Recebida, StatusOrdemServicoEnum.EmDiagnostico });
+
+            foreach (var statusInvalido in statusInvalidos)
+            {
+                var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+                ordemServico.AdicionarItem(Guid.NewGuid(), "Teste", 10.00m, 1, TipoItemIncluidoEnum.Peca);
+                var itemId = ordemServico.ItensIncluidos.First().Id;
+                
+                // Definir status usando reflection
+                DefinirStatusPorReflection(ordemServico, statusInvalido);
+
+                // Act & Assert
+                FluentActions.Invoking(() => ordemServico.RemoverItem(itemId))
+                    .Should().Throw<DomainException>()
+                    .WithMessage($"Não é possível remover itens de uma Ordem de Serviço com o status '{statusInvalido}'.",
+                        $"Status {statusInvalido} não deveria permitir remover itens");
+            }
+        }
+
+        [Fact(DisplayName = "Não deve remover item inexistente")]
+        [Trait("Método", "RemoverItem")]
+        public void RemoverItem_ComItemInexistente_DeveLancarExcecao()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            var itemIdInexistente = Guid.NewGuid();
+
+            // Act & Assert
+            FluentActions.Invoking(() => ordemServico.RemoverItem(itemIdInexistente))
+                .Should().Throw<DomainException>()
+                .WithMessage("Item não encontrado nesta ordem de serviço.");
+        }
+
+        #endregion
+
+        #region Testes Metodo Cancelar
+
+        [Fact(DisplayName = "Deve cancelar ordem de serviço com sucesso")]
+        [Trait("Método", "Cancelar")]
+        public void Cancelar_DeveAlterarStatusParaCancelada()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+
+            // Act
+            ordemServico.Cancelar();
+
+            // Assert
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.Cancelada);
+        }
+
+        #endregion
+
+        #region Testes Metodo IniciarDiagnostico
+
+        [Fact(DisplayName = "Deve iniciar diagnóstico com sucesso")]
+        [Trait("Método", "IniciarDiagnostico")]
+        public void IniciarDiagnostico_ComStatusRecebida_DeveAlterarStatusParaEmDiagnostico()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+
+            // Act
+            ordemServico.IniciarDiagnostico();
+
+            // Assert
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.EmDiagnostico);
+        }
+
+        [Fact(DisplayName = "Não deve iniciar diagnóstico se status não for Recebida")]
+        [Trait("Método", "IniciarDiagnostico")]
+        public void IniciarDiagnostico_ComTodosStatusDiferentesDeRecebida_DeveLancarExcecao()
+        {
+            // Arrange
+            var statusInvalidos = Enum.GetValues<StatusOrdemServicoEnum>()
+                .Except(new[] { StatusOrdemServicoEnum.Recebida });
+
+            foreach (var statusInvalido in statusInvalidos)
+            {
+                var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+                
+                // Definir status usando reflection
+                DefinirStatusPorReflection(ordemServico, statusInvalido);
+
+                // Act & Assert
+                FluentActions.Invoking(() => ordemServico.IniciarDiagnostico())
+                    .Should().Throw<DomainException>()
+                    .WithMessage($"Só é possível iniciar diagnóstico para um ordem de serviço com o status 'Recebida'", 
+                        $"Status {statusInvalido} não deveria permitir iniciar diagnóstico");
+            }
+        }
+
+        #endregion
+
+        #region Testes Metodo GerarOrcamento
+
+        [Fact(DisplayName = "Deve gerar orçamento com sucesso")]
+        [Trait("Método", "GerarOrcamento")]
+        public void GerarOrcamento_ComServicosIncluidos_DeveGerarOrcamento()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 50.00m);
+
+            // Act
+            ordemServico.GerarOrcamento();
+
+            // Assert
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.AguardandoAprovacao);
+            ordemServico.Orcamento.Should().NotBeNull();
+            ordemServico.Orcamento!.Preco.Valor.Should().Be(50.00m);
+        }
+
+        [Fact(DisplayName = "Não deve gerar orçamento se já existir")]
+        [Trait("Método", "GerarOrcamento")]
+        public void GerarOrcamento_ComOrcamentoJaExistente_DeveLancarExcecao()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 50.00m);
+            ordemServico.GerarOrcamento();
+
+            // Act & Assert
+            FluentActions.Invoking(() => ordemServico.GerarOrcamento())
+                .Should().Throw<DomainException>()
+                .WithMessage("Já existe um orçamento gerado para esta ordem de serviço.");
+        }
+
+        [Fact(DisplayName = "Não deve gerar orçamento se status não for EmDiagnostico")]
+        [Trait("Método", "GerarOrcamento")]
+        public void GerarOrcamento_ComStatusDiferenteDeEmDiagnostico_DeveLancarExcecao()
+        {
+            // Arrange
+            var statusInvalidos = Enum.GetValues<StatusOrdemServicoEnum>()
+                .Except(new[] { StatusOrdemServicoEnum.EmDiagnostico });
+
+            foreach (var statusInvalido in statusInvalidos)
+            {
+                var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+                
+                // Definir status usando reflection
+                DefinirStatusPorReflection(ordemServico, statusInvalido);
+
+                // Act & Assert
+                FluentActions.Invoking(() => ordemServico.GerarOrcamento())
+                    .Should().Throw<DomainException>()
+                    .WithMessage("Só é possível gerar orçamento para uma ordem de serviço com o status 'EmDiagnostico'",
+                        $"Status {statusInvalido} não deveria permitir gerar orçamento");
+            }
+        }
+
+        [Fact(DisplayName = "Não deve gerar orçamento sem serviços ou itens")]
+        [Trait("Método", "GerarOrcamento")]
+        public void GerarOrcamento_SemServicosOuItens_DeveLancarExcecao()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+
+            // Act & Assert
+            FluentActions.Invoking(() => ordemServico.GerarOrcamento())
+                .Should().Throw<DomainException>()
+                .WithMessage("Não é possível gerar orçamento sem pelo menos um serviço ou item incluído.");
+        }
+
+        #endregion
+
+        #region Testes Metodo AprovarOrcamento
+
+        [Fact(DisplayName = "Deve aprovar orçamento e iniciar execução")]
+        [Trait("Método", "AprovarOrcamento")]
+        public void AprovarOrcamento_ComOrcamentoExistente_DeveIniciarExecucao()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 50.00m);
+            ordemServico.GerarOrcamento();
+
+            // Act
+            ordemServico.AprovarOrcamento();
+
+            // Assert
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.EmExecucao);
+            ordemServico.Historico.DataInicioExecucao.Should().NotBeNull();
+        }
+
+        [Fact(DisplayName = "Não deve aprovar orçamento se não existir")]
+        [Trait("Método", "AprovarOrcamento")]
+        public void AprovarOrcamento_SemOrcamento_DeveLancarExcecao()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+
+            // Act & Assert
+            FluentActions.Invoking(() => ordemServico.AprovarOrcamento())
+                .Should().Throw<DomainException>()
+                .WithMessage("Não existe orçamento para aprovar. É necessário gerar o orçamento primeiro.");
+        }
+
+        #endregion
+
+        #region Testes Metodo DesaprovarOrcamento
+
+        [Fact(DisplayName = "Deve desaprovar orçamento e cancelar ordem")]
+        [Trait("Método", "DesaprovarOrcamento")]
+        public void DesaprovarOrcamento_ComOrcamentoExistente_DeveCancelarOrdem()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 50.00m);
+            ordemServico.GerarOrcamento();
+
+            // Act
+            ordemServico.DesaprovarOrcamento();
+
+            // Assert
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.Cancelada);
+        }
+
+        [Fact(DisplayName = "Não deve desaprovar orçamento se não existir")]
+        [Trait("Método", "DesaprovarOrcamento")]
+        public void DesaprovarOrcamento_SemOrcamento_DeveLancarExcecao()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+
+            // Act & Assert
+            FluentActions.Invoking(() => ordemServico.DesaprovarOrcamento())
+                .Should().Throw<DomainException>()
+                .WithMessage("Não existe orçamento para desaprovar. É necessário gerar o orçamento primeiro.");
+        }
+
+        #endregion
+
+        #region Testes Metodo IniciarExecucao
+
+        [Fact(DisplayName = "Deve iniciar execução com sucesso")]
+        [Trait("Método", "IniciarExecucao")]
+        public void IniciarExecucao_ComStatusAguardandoAprovacao_DeveIniciarExecucao()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 50.00m);
+            ordemServico.GerarOrcamento();
+
+            // Act
+            ordemServico.IniciarExecucao();
+
+            // Assert
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.EmExecucao);
+            ordemServico.Historico.DataInicioExecucao.Should().NotBeNull();
+        }
+
+        [Fact(DisplayName = "Não deve iniciar execução se status não for AguardandoAprovacao")]
+        [Trait("Método", "IniciarExecucao")]
+        public void IniciarExecucao_ComStatusDiferenteDeAguardandoAprovacao_DeveLancarExcecao()
+        {
+            // Arrange
+            var statusInvalidos = Enum.GetValues<StatusOrdemServicoEnum>()
+                .Except(new[] { StatusOrdemServicoEnum.AguardandoAprovacao });
+
+            foreach (var statusInvalido in statusInvalidos)
+            {
+                var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+                
+                // Definir status usando reflection
+                DefinirStatusPorReflection(ordemServico, statusInvalido);
+
+                // Act & Assert
+                FluentActions.Invoking(() => ordemServico.IniciarExecucao())
+                    .Should().Throw<DomainException>()
+                    .WithMessage("Só é possível iniciar execução para uma ordem de serviço com o status 'AguardandoAprovacao'",
+                        $"Status {statusInvalido} não deveria permitir iniciar execução");
+            }
+        }
+
+        #endregion
+
+        #region Testes Metodo FinalizarExecucao
+
+        [Fact(DisplayName = "Deve finalizar execução com sucesso")]
+        [Trait("Método", "FinalizarExecucao")]
+        public void FinalizarExecucao_ComStatusEmExecucao_DeveFinalizarExecucao()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 50.00m);
+            ordemServico.GerarOrcamento();
+            ordemServico.AprovarOrcamento();
+
+            // Act
+            ordemServico.FinalizarExecucao();
+
+            // Assert
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.Finalizada);
+            ordemServico.Historico.DataFinalizacao.Should().NotBeNull();
+        }
+
+        [Fact(DisplayName = "Não deve finalizar execução se status não for EmExecucao")]
+        [Trait("Método", "FinalizarExecucao")]
+        public void FinalizarExecucao_ComStatusDiferenteDeEmExecucao_DeveLancarExcecao()
+        {
+            // Arrange
+            var statusInvalidos = Enum.GetValues<StatusOrdemServicoEnum>()
+                .Except(new[] { StatusOrdemServicoEnum.EmExecucao });
+
+            foreach (var statusInvalido in statusInvalidos)
+            {
+                var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+                
+                // Definir status usando reflection
+                DefinirStatusPorReflection(ordemServico, statusInvalido);
+
+                // Act & Assert
+                FluentActions.Invoking(() => ordemServico.FinalizarExecucao())
+                    .Should().Throw<DomainException>()
+                    .WithMessage("Só é possível finalizar execução para uma ordem de serviço com o status 'EmExecucao'",
+                        $"Status {statusInvalido} não deveria permitir finalizar execução");
+            }
+        }
+
+        #endregion
+
+        #region Testes Metodo Entregar
+
+        [Fact(DisplayName = "Deve entregar ordem de serviço com sucesso")]
+        [Trait("Método", "Entregar")]
+        public void Entregar_ComStatusFinalizada_DeveEntregarOrdemServico()
+        {
+            // Arrange
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 50.00m);
+            ordemServico.GerarOrcamento();
+            ordemServico.AprovarOrcamento();
+            ordemServico.FinalizarExecucao();
+
+            // Act
+            ordemServico.Entregar();
+
+            // Assert
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.Entregue);
+            ordemServico.Historico.DataEntrega.Should().NotBeNull();
+        }
+
+        [Fact(DisplayName = "Não deve entregar se status não for Finalizada")]
+        [Trait("Método", "Entregar")]
+        public void Entregar_ComStatusDiferenteDeFinalizada_DeveLancarExcecao()
+        {
+            // Arrange
+            var statusInvalidos = Enum.GetValues<StatusOrdemServicoEnum>()
+                .Except(new[] { StatusOrdemServicoEnum.Finalizada });
+
+            foreach (var statusInvalido in statusInvalidos)
+            {
+                var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+                
+                // Definir status usando reflection
+                DefinirStatusPorReflection(ordemServico, statusInvalido);
+
+                // Act & Assert
+                FluentActions.Invoking(() => ordemServico.Entregar())
+                    .Should().Throw<DomainException>()
+                    .WithMessage("Só é possível entregar uma ordem de serviço com o status 'Finalizada'",
+                        $"Status {statusInvalido} não deveria permitir entrega");
+            }
+        }
+
+        #endregion
+
+        #region Helper Methods
+
+        /// <summary>
+        /// Define o status de uma ordem de serviço usando reflection
+        /// </summary>
+        /// <param name="ordemServico">A ordem de serviço</param>
+        /// <param name="status">O status a ser definido</param>
+        private static void DefinirStatusPorReflection(OrdemServicoAggregate ordemServico, StatusOrdemServicoEnum status)
+        {
+            var statusField = typeof(OrdemServicoAggregate).GetField("_status", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (statusField == null)
+            {
+                // Tentar buscar por property backing field
+                statusField = typeof(OrdemServicoAggregate).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+                    .FirstOrDefault(f => f.Name.Contains("Status") || f.Name.Contains("status"));
+            }
+
+            if (statusField != null)
+            {
+                statusField.SetValue(ordemServico, new Status(status));
+            }
+            else
+            {
+                // Fallback: usar a property Status se o field não for encontrado
+                var statusProperty = typeof(OrdemServicoAggregate).GetProperty("Status", BindingFlags.Public | BindingFlags.Instance);
+                var setMethod = statusProperty?.GetSetMethod(true);
+                setMethod?.Invoke(ordemServico, new object[] { new Status(status) });
+            }
         }
 
         #endregion

@@ -22,7 +22,7 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
         public static Orcamento GerarOrcamento(IEnumerable<ServicoIncluido> servicos, IEnumerable<ItemIncluido> itens)
         {
             var totalServicos = servicos.Sum(s => s.Preco.Valor);
-            var totalItens = itens.Sum(i => i.Preco.Valor);
+            var totalItens = itens.Sum(i => i.Preco.Valor * i.Quantidade.Valor);
             var total = totalServicos + totalItens;
 
             return new Orcamento(Uuid.NewSequential(), new DataCriacao(DateTime.UtcNow), new PrecoOrcamento(total));
