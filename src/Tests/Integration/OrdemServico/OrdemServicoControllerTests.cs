@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace Tests.Integration
+namespace Tests.Integration.OrdemServico
 {
     public class OrdemServicoControllerTests : IClassFixture<TestWebApplicationFactory<Program>>
     {
