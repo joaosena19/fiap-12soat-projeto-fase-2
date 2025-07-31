@@ -230,12 +230,14 @@ namespace API.Controllers.OrdemServico
         /// <response code="201">Orçamento gerado com sucesso</response>
         /// <response code="400">Dados inválidos fornecidos</response>
         /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="409">Orçamento já foi gerado</response>
         /// <response code="422">Erro de regra do domínio</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/orcamento")]
         [ProducesResponseType(typeof(RetornoOrcamentoDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GerarOrcamento(Guid id)
