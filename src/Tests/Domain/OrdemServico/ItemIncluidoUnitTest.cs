@@ -255,5 +255,30 @@ namespace Tests.Domain.OrdemServico
         }
 
         #endregion
+
+        #region Testes UUID Version 7
+
+        [Fact(DisplayName = "Deve gerar UUID versão 7 ao criar item incluído")]
+        [Trait("Método", "Criar")]
+        public void ItemIncluidoCriar_Deve_GerarUuidVersao7_Quando_CriarItemIncluido()
+        {
+            // Arrange
+            var itemEstoqueOriginalId = Guid.NewGuid();
+            var nome = "Filtro de Óleo";
+            var precoUnitario = 25.50m;
+            var quantidade = 2;
+            var tipo = TipoItemIncluidoEnum.Peca;
+
+            // Act
+            var itemIncluido = ItemIncluido.Criar(itemEstoqueOriginalId, nome, precoUnitario, quantidade, tipo);
+
+            // Assert
+            itemIncluido.Id.Should().NotBe(Guid.Empty);
+            var guidString = itemIncluido.Id.ToString();
+            var thirdGroup = guidString.Split('-')[2];
+            thirdGroup[0].Should().Be('7', "O UUID deve ser versão 7");
+        }
+
+        #endregion
     }
 }

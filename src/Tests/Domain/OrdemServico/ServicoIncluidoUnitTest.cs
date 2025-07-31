@@ -133,5 +133,28 @@ namespace Tests.Domain.OrdemServico
         }
 
         #endregion
+
+        #region Testes UUID Version 7
+
+        [Fact(DisplayName = "Deve gerar UUID versão 7 ao criar serviço incluído")]
+        [Trait("Método", "Criar")]
+        public void ServicoIncluidoCriar_Deve_GerarUuidVersao7_Quando_CriarServicoIncluido()
+        {
+            // Arrange
+            var servicoOriginalId = Guid.NewGuid();
+            var nome = "Troca de óleo";
+            var preco = 75.50m;
+
+            // Act
+            var servicoIncluido = ServicoIncluido.Criar(servicoOriginalId, nome, preco);
+
+            // Assert
+            servicoIncluido.Id.Should().NotBe(Guid.Empty);
+            var guidString = servicoIncluido.Id.ToString();
+            var thirdGroup = guidString.Split('-')[2];
+            thirdGroup[0].Should().Be('7', "O UUID deve ser versão 7");
+        }
+
+        #endregion
     }
 }

@@ -137,5 +137,27 @@ namespace Tests.Domain.Cadastros
         }
 
         #endregion
+
+        #region Testes UUID Version 7
+
+        [Fact(DisplayName = "Deve gerar UUID versão 7 ao criar serviço")]
+        [Trait("Método", "Criar")]
+        public void ServicoCriar_Deve_GerarUuidVersao7_Quando_CriarServico()
+        {
+            // Arrange
+            var nome = "Troca de óleo";
+            var preco = 150.00M;
+
+            // Act
+            var servico = Servico.Criar(nome, preco);
+
+            // Assert
+            servico.Id.Should().NotBe(Guid.Empty);
+            var guidString = servico.Id.ToString();
+            var thirdGroup = guidString.Split('-')[2];
+            thirdGroup[0].Should().Be('7', "O UUID deve ser versão 7");
+        }
+
+        #endregion
     }
 }

@@ -357,5 +357,32 @@ namespace Tests.Domain.Cadastros
         }
 
         #endregion
+
+        #region Testes UUID Version 7
+
+        [Fact(DisplayName = "Deve gerar UUID versão 7 ao criar veículo")]
+        [Trait("Método", "Criar")]
+        public void VeiculoCriar_Deve_GerarUuidVersao7_Quando_CriarVeiculo()
+        {
+            // Arrange
+            var clienteId = Guid.NewGuid();
+            var placa = "ABC1234";
+            var modelo = "Civic";
+            var marca = "Honda";
+            var cor = "Preto";
+            var ano = 2020;
+            var tipoVeiculo = TipoVeiculoEnum.Carro;
+
+            // Act
+            var veiculo = Veiculo.Criar(clienteId, placa, modelo, marca, cor, ano, tipoVeiculo);
+
+            // Assert
+            veiculo.Id.Should().NotBe(Guid.Empty);
+            var guidString = veiculo.Id.ToString();
+            var thirdGroup = guidString.Split('-')[2];
+            thirdGroup[0].Should().Be('7', "O UUID deve ser versão 7");
+        }
+
+        #endregion
     }
 }

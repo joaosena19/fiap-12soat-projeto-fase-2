@@ -991,5 +991,26 @@ namespace Tests.Domain.OrdemServico
         }
 
         #endregion
+
+        #region Testes UUID Version 7
+
+        [Fact(DisplayName = "Deve gerar UUID versão 7 ao criar ordem de serviço")]
+        [Trait("Método", "Criar")]
+        public void OrdemServicoCriar_Deve_GerarUuidVersao7_Quando_CriarOrdemServico()
+        {
+            // Arrange
+            var veiculoId = Guid.NewGuid();
+
+            // Act
+            var ordemServico = OrdemServicoAggregate.Criar(veiculoId);
+
+            // Assert
+            ordemServico.Id.Should().NotBe(Guid.Empty);
+            var guidString = ordemServico.Id.ToString();
+            var thirdGroup = guidString.Split('-')[2];
+            thirdGroup[0].Should().Be('7', "O UUID deve ser versão 7");
+        }
+
+        #endregion
     }
 }

@@ -174,5 +174,33 @@ namespace Tests.Domain.OrdemServico
         }
 
         #endregion
+
+        #region Testes UUID Version 7
+
+        [Fact(DisplayName = "Deve gerar UUID versão 7 ao criar orçamento")]
+        [Trait("Método", "GerarOrcamento")]
+        public void OrcamentoGerar_Deve_GerarUuidVersao7_Quando_GerarOrcamento()
+        {
+            // Arrange
+            var servicos = new List<ServicoIncluido>
+            {
+                ServicoIncluido.Criar(Guid.NewGuid(), "Troca de óleo", 50.00m)
+            };
+            var itens = new List<ItemIncluido>
+            {
+                ItemIncluido.Criar(Guid.NewGuid(), "Filtro", 25.00m, 1, TipoItemIncluidoEnum.Peca)
+            };
+
+            // Act
+            var orcamento = Orcamento.GerarOrcamento(servicos, itens);
+
+            // Assert
+            orcamento.Id.Should().NotBe(Guid.Empty);
+            var guidString = orcamento.Id.ToString();
+            var thirdGroup = guidString.Split('-')[2];
+            thirdGroup[0].Should().Be('7', "O UUID deve ser versão 7");
+        }
+
+        #endregion
     }
 }

@@ -363,5 +363,29 @@ namespace Tests.Domain.Estoque
         }
 
         #endregion
+
+        #region Testes UUID Version 7
+
+        [Fact(DisplayName = "Deve gerar UUID versão 7 ao criar item de estoque")]
+        [Trait("Método", "Criar")]
+        public void ItemEstoqueCriar_Deve_GerarUuidVersao7_Quando_CriarItemEstoque()
+        {
+            // Arrange
+            var nome = "Filtro de Óleo";
+            var quantidade = 50;
+            var tipo = TipoItemEstoqueEnum.Peca;
+            var preco = 25.50m;
+
+            // Act
+            var itemEstoque = ItemEstoque.Criar(nome, quantidade, tipo, preco);
+
+            // Assert
+            itemEstoque.Id.Should().NotBe(Guid.Empty);
+            var guidString = itemEstoque.Id.ToString();
+            var thirdGroup = guidString.Split('-')[2];
+            thirdGroup[0].Should().Be('7', "O UUID deve ser versão 7");
+        }
+
+        #endregion
     }
 }
