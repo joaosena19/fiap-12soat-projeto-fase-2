@@ -68,8 +68,10 @@ namespace Tests.Domain.Cadastros
         #region Testes ValueObject Placa
 
         [Theory(DisplayName = "Deve aceitar placas válidas")]
-        [InlineData("ABC1234")]
+        [InlineData("ABC1234")] //Padrão antigo
         [InlineData("XYZ5678")]
+        [InlineData("ABC1C34")] // Padrão mercosul
+        [InlineData("XYZ5G78")]
         [InlineData("ABC-1234")] // Com hífen - deve ser removido
         [InlineData("abc1234")] // Lowercase - deve ser convertido para uppercase
         [InlineData(" DEF9876 ")] // Com espaços - devem ser removidos
