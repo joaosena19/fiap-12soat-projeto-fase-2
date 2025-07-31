@@ -37,7 +37,7 @@ namespace Infrastructure.Repositories.OrdemServico
                 .Include(os => os.ServicosIncluidos)
                 .Include(os => os.ItensIncluidos)
                 .Include(os => os.Orcamento)
-                .FirstOrDefaultAsync(os => os.Codigo.Valor.ToUpper() == codigo.ToUpper());
+                .FirstOrDefaultAsync(os => os.Codigo.Valor.Trim().Replace("-", "").ToUpper() == codigo.Trim().Replace("-", "").ToUpper());
         }
 
         public async Task<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico> AtualizarAsync(Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico ordemServico)
