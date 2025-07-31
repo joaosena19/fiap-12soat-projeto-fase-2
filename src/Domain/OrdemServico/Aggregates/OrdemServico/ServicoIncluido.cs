@@ -1,8 +1,10 @@
 ﻿using Domain.OrdemServico.ValueObjects.ServicoIncluido;
+using Shared.Attributes;
 using UUIDNext;
 
 namespace Domain.OrdemServico.Aggregates.OrdemServico
 {
+    [AggregateMember]
     public class ServicoIncluido
     {
         public Guid Id { get; private init; }

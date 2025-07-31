@@ -1,9 +1,11 @@
-﻿using Shared.Enums;
-using System.Text.RegularExpressions;
+﻿using Shared.Attributes;
+using Shared.Enums;
 using Shared.Exceptions;
+using System.Text.RegularExpressions;
 
 namespace Domain.Cadastros.ValueObjects.Veiculo
 {
+    [ValueObject]
     public record Placa
     {
         private readonly string _valor = string.Empty;

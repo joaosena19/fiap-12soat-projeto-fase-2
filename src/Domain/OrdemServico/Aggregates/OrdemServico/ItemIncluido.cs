@@ -1,11 +1,13 @@
 using Domain.OrdemServico.Enums;
 using Domain.OrdemServico.ValueObjects.ItemIncluido;
+using Shared.Attributes;
 using Shared.Enums;
 using Shared.Exceptions;
 using UUIDNext;
 
 namespace Domain.OrdemServico.Aggregates.OrdemServico
 {
+    [AggregateMember]
     public class ItemIncluido
     {
         public Guid Id { get; private set; }

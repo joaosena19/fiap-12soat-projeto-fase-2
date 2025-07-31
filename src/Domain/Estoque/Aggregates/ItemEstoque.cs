@@ -1,11 +1,13 @@
 using Domain.Estoque.Enums;
 using Domain.Estoque.ValueObjects.ItemEstoque;
+using Shared.Attributes;
 using Shared.Enums;
 using Shared.Exceptions;
 using UUIDNext;
 
 namespace Domain.Estoque.Aggregates
 {
+    [AggregateRoot]
     public class ItemEstoque
     {
         public Guid Id { get; private set; }

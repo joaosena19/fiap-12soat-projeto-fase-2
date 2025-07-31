@@ -1,9 +1,11 @@
 using Domain.Cadastros.Enums;
 using Domain.Cadastros.ValueObjects.Veiculo;
+using Shared.Attributes;
 using UUIDNext;
 
 namespace Domain.Cadastros.Aggregates
 {
+    [AggregateRoot]
     public class Veiculo
     {
         public Guid Id { get; private set; }

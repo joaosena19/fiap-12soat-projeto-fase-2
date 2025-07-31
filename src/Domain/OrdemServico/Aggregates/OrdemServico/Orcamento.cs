@@ -1,8 +1,10 @@
 ﻿using UUIDNext;
 using Domain.OrdemServico.ValueObjects.Orcamento;
+using Shared.Attributes;
 
 namespace Domain.OrdemServico.Aggregates.OrdemServico
 {
+    [AggregateMember]
     public class Orcamento
     {
         public Guid Id { get; private init; }

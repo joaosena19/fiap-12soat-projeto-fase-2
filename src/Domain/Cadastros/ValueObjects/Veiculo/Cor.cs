@@ -1,8 +1,10 @@
-﻿using Shared.Enums;
+﻿using Shared.Attributes;
+using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Veiculo
 {
+    [ValueObject]
     public record Cor
     {
         private readonly string _valor = string.Empty;

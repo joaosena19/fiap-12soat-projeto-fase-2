@@ -1,9 +1,11 @@
 ﻿using Shared.Exceptions;
 using Shared.Enums;
 using System.Text.RegularExpressions;
+using Shared.Attributes;
 
 namespace Domain.OrdemServico.ValueObjects.OrdemServico
 {
+    [ValueObject]
     public record Codigo
     {
         private readonly string _valor = string.Empty;

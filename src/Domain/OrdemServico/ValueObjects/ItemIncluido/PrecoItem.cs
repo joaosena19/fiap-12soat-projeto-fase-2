@@ -1,8 +1,10 @@
-﻿using Shared.Enums;
+﻿using Shared.Attributes;
+using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.OrdemServico.ValueObjects.ItemIncluido
 {
+    [ValueObject]
     public record PrecoItem
     {
         private readonly decimal _valor = 0M;

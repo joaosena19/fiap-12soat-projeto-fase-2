@@ -1,9 +1,11 @@
 ﻿using Domain.OrdemServico.Enums;
-using Shared.Exceptions;
+using Shared.Attributes;
 using Shared.Enums;
+using Shared.Exceptions;
 
 namespace Domain.OrdemServico.ValueObjects.OrdemServico
 {
+    [ValueObject]
     public record Status
     {
         private readonly StatusOrdemServicoEnum _valor;

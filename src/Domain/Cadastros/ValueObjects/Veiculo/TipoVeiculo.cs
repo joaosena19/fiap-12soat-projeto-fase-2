@@ -1,9 +1,11 @@
 ﻿using Domain.Cadastros.Enums;
-using Shared.Exceptions;
+using Shared.Attributes;
 using Shared.Enums;
+using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Veiculo
 {
+    [ValueObject]
     public record TipoVeiculo
     {
         private readonly TipoVeiculoEnum _valor;

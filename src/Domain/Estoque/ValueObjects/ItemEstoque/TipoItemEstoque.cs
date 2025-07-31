@@ -1,9 +1,11 @@
 ﻿using Domain.Estoque.Enums;
-using Shared.Exceptions;
+using Shared.Attributes;
 using Shared.Enums;
+using Shared.Exceptions;
 
 namespace Domain.Estoque.ValueObjects.ItemEstoque
 {
+    [ValueObject]
     public record TipoItemEstoque
     {
         private readonly TipoItemEstoqueEnum _valor;

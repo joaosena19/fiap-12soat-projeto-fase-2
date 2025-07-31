@@ -1,8 +1,10 @@
 ﻿using Domain.Cadastros.ValueObjects.Servico;
+using Shared.Attributes;
 using UUIDNext;
 
 namespace Domain.Cadastros.Aggregates
 {
+    [AggregateRoot]
     public class Servico
     {
         public Guid Id { get; private set; }

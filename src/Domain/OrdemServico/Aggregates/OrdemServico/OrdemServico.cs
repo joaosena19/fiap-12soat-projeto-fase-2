@@ -3,9 +3,11 @@ using Domain.OrdemServico.ValueObjects.OrdemServico;
 using Shared.Exceptions;
 using Shared.Enums;
 using UUIDNext;
+using Shared.Attributes;
 
 namespace Domain.OrdemServico.Aggregates.OrdemServico
 {
+    [AggregateRoot]
     public class OrdemServico
     {
         public Guid Id { get; private init; }

@@ -1,8 +1,10 @@
-﻿using Shared.Enums;
+﻿using Shared.Attributes;
+using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.Estoque.ValueObjects.ItemEstoque
 {
+    [ValueObject]
     public record Nome
     {
         private readonly string _valor = string.Empty;

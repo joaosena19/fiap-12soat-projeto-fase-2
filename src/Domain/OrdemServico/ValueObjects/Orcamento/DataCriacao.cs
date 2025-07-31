@@ -1,8 +1,10 @@
-﻿using Shared.Enums;
+﻿using Shared.Attributes;
+using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.OrdemServico.ValueObjects.Orcamento
 {
+    [ValueObject]
     public record DataCriacao
     {
         private readonly DateTime _valor;

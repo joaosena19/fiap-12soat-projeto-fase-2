@@ -1,9 +1,11 @@
 using Domain.Cadastros.Enums;
+using Shared.Attributes;
 using Shared.Enums;
 using Shared.Exceptions;
 
 namespace Domain.Cadastros.ValueObjects.Cliente
 {
+    [ValueObject]
     public record DocumentoIdentificador
     {
         private readonly string _valor = string.Empty;

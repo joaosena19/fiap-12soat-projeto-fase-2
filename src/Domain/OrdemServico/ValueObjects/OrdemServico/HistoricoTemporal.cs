@@ -1,8 +1,10 @@
-﻿using Shared.Exceptions;
+﻿using Shared.Attributes;
 using Shared.Enums;
+using Shared.Exceptions;
 
 namespace Domain.OrdemServico.ValueObjects.OrdemServico
 {
+    [ValueObject]
     public record HistoricoTemporal
     {
         private readonly DateTime _dataCriacao;

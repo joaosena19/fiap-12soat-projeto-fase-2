@@ -1,8 +1,10 @@
 ﻿using Domain.Cadastros.ValueObjects.Cliente;
+using Shared.Attributes;
 using UUIDNext;
 
 namespace Domain.Cadastros.Aggregates
 {
+    [AggregateRoot]
     public class Cliente
     {
         public Guid Id { get; private set; }
