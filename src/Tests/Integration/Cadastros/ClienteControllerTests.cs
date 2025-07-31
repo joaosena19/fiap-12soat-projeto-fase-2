@@ -17,7 +17,7 @@ namespace Tests.Integration.Cadastros
         public ClienteControllerTests(TestWebApplicationFactory<Program> factory)
         {
             _factory = factory;
-            _client = _factory.CreateClient();
+            _client = _factory.CreateAuthenticatedClient();
         }
 
         [Fact(DisplayName = "POST deve retornar 201 Created e persistir novo Cliente no banco de dados.")]

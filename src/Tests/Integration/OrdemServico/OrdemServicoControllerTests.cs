@@ -21,7 +21,7 @@ namespace Tests.Integration.OrdemServico
         public OrdemServicoControllerTests(TestWebApplicationFactory<Program> factory)
         {
             _factory = factory;
-            _client = _factory.CreateClient();
+            _client = _factory.CreateAuthenticatedClient();
         }
 
         #region Método Get Tests

@@ -17,7 +17,7 @@ namespace Tests.Integration.Estoque
         public EstoqueItemControllerTests(TestWebApplicationFactory<Program> factory)
         {
             _factory = factory;
-            _client = _factory.CreateClient();
+            _client = _factory.CreateAuthenticatedClient();
         }
 
         [Fact(DisplayName = "POST deve retornar 201 Created e persistir novo Item de Estoque no banco de dados.")]
