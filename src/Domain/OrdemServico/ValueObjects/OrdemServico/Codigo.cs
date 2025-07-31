@@ -15,7 +15,7 @@ namespace Domain.OrdemServico.ValueObjects.OrdemServico
 
         public Codigo(string codigo)
         {
-            codigo = codigo?.Trim()?.ToUpper();
+            codigo = codigo?.Trim()?.ToUpper() ?? string.Empty;
             var _regex = new Regex(@"^OS-\d{8}-[A-Z0-9]{6}$", RegexOptions.Compiled);
 
             if (string.IsNullOrWhiteSpace(codigo) || !_regex.IsMatch(codigo))

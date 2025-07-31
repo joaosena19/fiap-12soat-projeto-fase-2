@@ -15,7 +15,7 @@ namespace Domain.Cadastros.Aggregates
         public Marca Marca { get; private set; } = null!;
         public Cor Cor { get; private set; } = null!;
         public Ano Ano { get; private set; } = null!;
-        public TipoVeiculo TipoVeiculo { get; private set; }
+        public TipoVeiculo TipoVeiculo { get; private set; } = null!;
 
         // Contrutor sem parâmetro para EF Core
         private Veiculo() { }
