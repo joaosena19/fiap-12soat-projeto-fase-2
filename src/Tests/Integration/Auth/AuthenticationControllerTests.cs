@@ -11,7 +11,7 @@ namespace Tests.Integration.Auth
         public AuthenticationControllerTests(TestWebApplicationFactory<Program> factory)
         {
             _factory = factory;
-            _client = _factory.CreateClient(); // Using non-authenticated client for auth tests
+            _client = _factory.CreateClient(); // Usa client sem autenticação
         }
 
         [Theory]
