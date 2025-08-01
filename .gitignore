@@ -57,3 +57,4 @@ nunit-*.xml
 .vs
 .env
 *.csproj.user
+CoverageReport
