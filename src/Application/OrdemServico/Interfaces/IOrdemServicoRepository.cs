@@ -8,6 +8,5 @@ namespace Application.OrdemServico.Interfaces
         Task<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico> AtualizarAsync(Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico ordemServico);
         Task<IEnumerable<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico>> ObterTodosAsync();
         Task<IEnumerable<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico>> ObterEntreguesUltimosDiasAsync(int quantidadeDias);
-        Task RemoverAsync(Guid id);
     }
 }

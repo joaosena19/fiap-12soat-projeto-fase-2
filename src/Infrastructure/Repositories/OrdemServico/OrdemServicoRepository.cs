@@ -82,15 +82,5 @@ namespace Infrastructure.Repositories.OrdemServico
                             os.Historico.DataCriacao.Date >= dataLimite.Date)
                 .ToListAsync();
         }
-
-        public async Task RemoverAsync(Guid id)
-        {
-            var ordemServico = await _context.OrdensServico.FindAsync(id);
-            if (ordemServico != null)
-            {
-                _context.OrdensServico.Remove(ordemServico);
-                await _context.SaveChangesAsync();
-            }
-        }
     }
 }
