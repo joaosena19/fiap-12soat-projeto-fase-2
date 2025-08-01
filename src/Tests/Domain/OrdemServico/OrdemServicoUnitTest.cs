@@ -12,6 +12,7 @@ namespace Tests.Domain.OrdemServico
         #region Testes ValueObject Codigo
 
         [Theory(DisplayName = "Não deve criar código se o formato for inválido")]
+        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
         [InlineData("OS-123")]
@@ -20,10 +21,10 @@ namespace Tests.Domain.OrdemServico
         [InlineData("OS-2024-123456")]
         [InlineData("ABC-20240101-123456")]
         [Trait("ValueObject", "Codigo")]
-        public void Codigo_ComFormatoInvalido_DeveLancarExcecao(string codigoInvalido)
+        public void Codigo_ComFormatoInvalido_DeveLancarExcecao(string? codigoInvalido)
         {
             // Act & Assert
-            FluentActions.Invoking(() => new Codigo(codigoInvalido))
+            FluentActions.Invoking(() => new Codigo(codigoInvalido!))
                 .Should().Throw<DomainException>()
                 .WithMessage("*Código*inválido. Formato esperado: OS-YYYYMMDD-ABC123");
         }
