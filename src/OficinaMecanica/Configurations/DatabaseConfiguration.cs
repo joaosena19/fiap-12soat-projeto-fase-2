@@ -23,24 +23,5 @@ namespace API.Configurations
 
             return services;
         }
-
-        /// <summary>
-        /// Remove o DbContext para evitar problemas com múltiplas instâncias (usado em testes)
-        /// </summary>
-        /// <param name="services">Coleção de serviços</param>
-        public static void RemoveDbContext(this IServiceCollection services)
-        {
-            var descriptor = services.FirstOrDefault(d => d.ServiceType == typeof(AppDbContext));
-            if (descriptor != null)
-            {
-                services.Remove(descriptor);
-            }
-            
-            var optionsDescriptor = services.FirstOrDefault(d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
-            if (optionsDescriptor != null)
-            {
-                services.Remove(optionsDescriptor);
-            }
-        }
     }
 }
