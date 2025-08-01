@@ -1,7 +1,7 @@
 using API.Middleware;
 using Application;
-using Application.Auth.Interfaces;
-using Application.Auth.Services;
+using Application.Authentication.Interfaces;
+using Application.Authentication.Services;
 using Application.Cadastros.Interfaces;
 using Application.Cadastros.Services;
 using Application.Estoque.Interfaces;
@@ -128,7 +128,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // Register application services
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();

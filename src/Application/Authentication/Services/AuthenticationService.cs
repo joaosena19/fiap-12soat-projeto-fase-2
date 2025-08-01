@@ -1,15 +1,15 @@
-using Application.Auth.DTO;
-using Application.Auth.Interfaces;
+using Application.Authentication.DTO;
+using Application.Authentication.Interfaces;
 using Microsoft.Extensions.Configuration;
 
-namespace Application.Auth.Services;
+namespace Application.Authentication.Services;
 
-public class AuthService : IAuthService
+public class AuthenticationService : IAuthenticationService
 {
     private readonly IConfiguration _configuration;
     private readonly ITokenService _tokenService;
 
-    public AuthService(IConfiguration configuration, ITokenService tokenService)
+    public AuthenticationService(IConfiguration configuration, ITokenService tokenService)
     {
         _configuration = configuration;
         _tokenService = tokenService;

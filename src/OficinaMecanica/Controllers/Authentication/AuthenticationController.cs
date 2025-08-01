@@ -1,5 +1,5 @@
-using Application.Auth.DTO;
-using Application.Auth.Interfaces;
+using Application.Authentication.DTO;
+using Application.Authentication.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,9 +9,9 @@ namespace API.Controllers.Authentication;
 [Route("api/authentication")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly IAuthService _authService;
+    private readonly IAuthenticationService _authService;
 
-    public AuthenticationController(IAuthService authService)
+    public AuthenticationController(IAuthenticationService authService)
     {
         _authService = authService;
     }

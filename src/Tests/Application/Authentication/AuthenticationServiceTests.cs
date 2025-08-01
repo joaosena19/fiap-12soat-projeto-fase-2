@@ -1,23 +1,23 @@
-using Application.Auth.DTO;
-using Application.Auth.Interfaces;
-using Application.Auth.Services;
+using Application.Authentication.DTO;
+using Application.Authentication.Interfaces;
+using Application.Authentication.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Moq;
 
-namespace Tests.Application.Auth
+namespace Tests.Application.Authentication
 {
-    public class AuthServiceTests
+    public class AuthenticationServiceTests
     {
         private readonly Mock<IConfiguration> _configurationMock;
         private readonly Mock<ITokenService> _tokenServiceMock;
-        private readonly AuthService _authService;
+        private readonly AuthenticationService _authenticationService;
 
-        public AuthServiceTests()
+        public AuthenticationServiceTests()
         {
             _configurationMock = new Mock<IConfiguration>();
             _tokenServiceMock = new Mock<ITokenService>();
-            _authService = new AuthService(_configurationMock.Object, _tokenServiceMock.Object);
+            _authenticationService = new AuthenticationService(_configurationMock.Object, _tokenServiceMock.Object);
         }
 
         #region Testes Método ValidateCredentialsAndGenerateToken
@@ -38,7 +38,7 @@ namespace Tests.Application.Auth
             var request = new TokenRequestDto(clientId, clientSecret);
 
             // Act
-            var result = _authService.ValidateCredentialsAndGenerateToken(request);
+            var result = _authenticationService.ValidateCredentialsAndGenerateToken(request);
 
             // Assert
             result.Should().NotBeNull();
@@ -61,7 +61,7 @@ namespace Tests.Application.Auth
             var request = new TokenRequestDto(wrongClientId, clientSecret);
 
             // Act
-            var result = _authService.ValidateCredentialsAndGenerateToken(request);
+            var result = _authenticationService.ValidateCredentialsAndGenerateToken(request);
 
             // Assert
             result.Should().BeNull();
@@ -83,7 +83,7 @@ namespace Tests.Application.Auth
             var request = new TokenRequestDto(clientId, wrongClientSecret);
 
             // Act
-            var result = _authService.ValidateCredentialsAndGenerateToken(request);
+            var result = _authenticationService.ValidateCredentialsAndGenerateToken(request);
 
             // Assert
             result.Should().BeNull();
@@ -104,7 +104,7 @@ namespace Tests.Application.Auth
             var request = new TokenRequestDto(clientId, clientSecret);
 
             // Act
-            var result = _authService.ValidateCredentialsAndGenerateToken(request);
+            var result = _authenticationService.ValidateCredentialsAndGenerateToken(request);
 
             // Assert
             result.Should().BeNull();
@@ -125,7 +125,7 @@ namespace Tests.Application.Auth
             var request = new TokenRequestDto(clientId, clientSecret);
 
             // Act
-            var result = _authService.ValidateCredentialsAndGenerateToken(request);
+            var result = _authenticationService.ValidateCredentialsAndGenerateToken(request);
 
             // Assert
             result.Should().BeNull();
@@ -146,7 +146,7 @@ namespace Tests.Application.Auth
             var request = new TokenRequestDto(clientId, clientSecret);
 
             // Act
-            var result = _authService.ValidateCredentialsAndGenerateToken(request);
+            var result = _authenticationService.ValidateCredentialsAndGenerateToken(request);
 
             // Assert
             result.Should().BeNull();
@@ -167,7 +167,7 @@ namespace Tests.Application.Auth
             var request = new TokenRequestDto(clientId, clientSecret);
 
             // Act
-            var result = _authService.ValidateCredentialsAndGenerateToken(request);
+            var result = _authenticationService.ValidateCredentialsAndGenerateToken(request);
 
             // Assert
             result.Should().BeNull();
