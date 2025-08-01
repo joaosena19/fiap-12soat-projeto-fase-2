@@ -22,17 +22,5 @@ namespace Shared.Exceptions
         {
             ErrorType = errorType;
         }
-
-        /// <summary>
-        /// Construtor com exception interna
-        /// </summary>
-        /// <param name="message">Mensagem de erro</param>
-        /// <param name="innerException">Exception interna</param>
-        /// <param name="errorType">Tipo de erro customizado (padrão: InvalidInput)</param>
-        public DomainException(string message, Exception innerException, ErrorType errorType = ErrorType.InvalidInput) 
-            : base(message, innerException)
-        {
-            ErrorType = errorType;
-        }
     }
 }
