@@ -8,6 +8,7 @@ using Infrastructure.AntiCorruptionLayer.OrdemServico;
 using Moq;
 using Shared.Enums;
 using Shared.Exceptions;
+using System.Reflection;
 
 namespace Tests.Application.OrdemServico
 {
@@ -138,6 +139,35 @@ namespace Tests.Application.OrdemServico
             resultado.Preco.Should().Be(item.Preco.Valor);
             resultado.Quantidade.Should().Be(item.Quantidade.Valor);
             resultado.TipoItemIncluido.Should().Be(TipoItemIncluidoEnum.Peca);
+        }
+
+        [Fact(DisplayName = "Deve lançar DomainException quando TipoItemEstoque não tem equivalente para conversão")]
+        [Trait("Método", "ObterItemEstoquePorIdAsync")]
+        public async Task ObterItemEstoquePorIdAsync_DeveLancarDomainException_QuandoTipoItemEstoqueNaoTemEquivalente()
+        {
+            // Arrange
+            var itemId = Guid.NewGuid();
+            var item = ItemEstoque.Criar("Item Teste", 5, TipoItemEstoqueEnum.Peca, 10.00m);
+            
+            // Usar reflection pra forçar um enum inválido
+            var tipoItemEstoqueProperty = typeof(ItemEstoque).GetProperty("TipoItemEstoque");
+            var tipoItemEstoque = tipoItemEstoqueProperty!.GetValue(item);
+            
+            var valorField = tipoItemEstoque!.GetType().GetField("_valor", BindingFlags.NonPublic | BindingFlags.Instance);
+            valorField!.SetValue(tipoItemEstoque, (TipoItemEstoqueEnum)999);
+
+            _itemEstoqueRepositoryMock.Setup(r => r.ObterPorIdAsync(itemId))
+                .ReturnsAsync(item);
+
+            // Act
+            var act = async () => await _service.ObterItemEstoquePorIdAsync(itemId);
+
+            // Assert
+            await act.Should().ThrowAsync<DomainException>()
+                .WithMessage("Tipo de item de estoque '999' não é válido.")
+                .Where(ex => ex.ErrorType == ErrorType.InvalidInput);
+
+            _itemEstoqueRepositoryMock.Verify(r => r.ObterPorIdAsync(itemId), Times.Once);
         }
 
         #endregion
