@@ -16,7 +16,7 @@ namespace API.Configurations
         /// <returns>Coleção de serviços configurada</returns>
         public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var connectionString = configuration.GetConnectionString("LocalhostConnection");
             
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(connectionString));
