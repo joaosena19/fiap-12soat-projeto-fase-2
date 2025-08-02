@@ -1,7 +1,5 @@
 using API.Configurations;
 using API.Middleware;
-using Infrastructure.Database;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +15,7 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseSwaggerDocumentation();
 app.UseHttpsRedirection();
+app.UseSecurityHeadersConfiguration();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
@@ -27,7 +26,5 @@ DevelopmentDataSeeder.SeedIfDevelopment(app);
 await app.RunAsync();
 
 //Necessário para testes de integração
-public partial class Program 
-{
-}
+public partial class Program { }
 
