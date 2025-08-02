@@ -9,7 +9,7 @@ namespace API.DTO
         /// Mensagem de erro
         /// </summary>
         /// <example>Mensagem de erro</example>
-        public string Message { get; set; } = string.Empty;
+        public string Message { get; set; }
 
         /// <summary>
         /// Código de status HTTP
