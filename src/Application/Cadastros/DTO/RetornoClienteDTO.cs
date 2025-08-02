@@ -1,4 +1,6 @@
-﻿namespace Application.Cadastros.DTO
+﻿using Domain.Cadastros.Enums;
+
+namespace Application.Cadastros.DTO
 {
     /// <summary>
     /// DTO para retorno de cliente
@@ -18,5 +20,11 @@
         /// </summary>
         /// <example>12345678901</example>
         public string DocumentoIdentificador { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Tipo do documento de identifação (CPF ou CNPJ)
+        /// </summary>
+        /// <example>CPF</example>
+        public string TipoDocumentoIdentificador { get; set; } = string.Empty;
     }
 }

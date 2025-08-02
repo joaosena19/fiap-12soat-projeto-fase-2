@@ -22,13 +22,13 @@ namespace Tests.Application.Cadastros
             _service = new ClienteService(_repoMock.Object, _mapper);
         }
 
-        [Fact(DisplayName = "N„o deve criar cliente se CPF j· existir")]
+        [Fact(DisplayName = "N√£o deve criar cliente se CPF j√° existir")]
         [Trait("Metodo", "CriarCliente")]
         public async Task CriarCliente_DeveLancarExcecao_SeCpfJaExistir()
         {
             // Arrange
             var cpf = "12345678909";
-            var nome = "Jo„o";
+            var nome = "Jo√£o";
             var clienteExistente = Cliente.Criar(nome, cpf);
 
             _repoMock.Setup(r => r.ObterPorDocumentoAsync(cpf))
@@ -39,7 +39,7 @@ namespace Tests.Application.Cadastros
 
             // Assert
             await act.Should().ThrowAsync<DomainException>()
-                .WithMessage("J· existe um cliente cadastrado com este documento.");
+                .WithMessage("J√° existe um cliente cadastrado com este documento.");
 
             _repoMock.Verify(r => r.SalvarAsync(It.IsAny<Cliente>()), Times.Never);
         }
@@ -50,7 +50,7 @@ namespace Tests.Application.Cadastros
         {
             // Arrange
             var cpf = "12345678909";
-            var nome = "Jo„o";
+            var nome = "Jo√£o";
 
             var clienteNovo = Cliente.Criar(nome, cpf);
 
@@ -75,8 +75,8 @@ namespace Tests.Application.Cadastros
         {
             // Arrange
             var id = Guid.NewGuid();
-            var nomeOriginal = "Jo„o";
-            var nomeNovo = "Jo„o Silva";
+            var nomeOriginal = "Jo√£o";
+            var nomeNovo = "Jo√£o Silva";
             var cpf = "12345678909";
 
             var clienteExistente = Cliente.Criar(nomeOriginal, cpf);
@@ -98,13 +98,13 @@ namespace Tests.Application.Cadastros
             _repoMock.Verify(r => r.AtualizarAsync(It.IsAny<Cliente>()), Times.Once);
         }
 
-        [Fact(DisplayName = "N„o deve atualizar cliente se n„o existir")]
+        [Fact(DisplayName = "N√£o deve atualizar cliente se n√£o existir")]
         [Trait("Metodo", "AtualizarCliente")]
         public async Task AtualizarCliente_DeveLancarExcecao_SeClienteNaoExistir()
         {
             // Arrange
             var id = Guid.NewGuid();
-            var nome = "Jo„o Silva";
+            var nome = "Jo√£o Silva";
 
             _repoMock.Setup(r => r.ObterPorIdAsync(id))
                 .ReturnsAsync((Cliente?)null);
@@ -114,7 +114,7 @@ namespace Tests.Application.Cadastros
 
             // Assert
             await act.Should().ThrowAsync<DomainException>()
-                .WithMessage("Cliente n„o encontrado.");
+                .WithMessage("Cliente n√£o encontrado.");
 
             _repoMock.Verify(r => r.AtualizarAsync(It.IsAny<Cliente>()), Times.Never);
         }
@@ -124,7 +124,7 @@ namespace Tests.Application.Cadastros
         public async Task Buscar_DeveRetornarTodosOsClientes()
         {
             // Arrange
-            var cliente1 = Cliente.Criar("Jo„o", "12345678909");
+            var cliente1 = Cliente.Criar("Jo√£o", "12345678909");
             var cliente2 = Cliente.Criar("Maria", "35434856015");
             var clientes = new List<Cliente> { cliente1, cliente2 };
 
@@ -137,12 +137,12 @@ namespace Tests.Application.Cadastros
             // Assert
             result.Should().NotBeNull();
             result.Should().HaveCount(2);
-            result.Should().Contain(c => c.Nome == "Jo„o" && c.DocumentoIdentificador == "12345678909");
-            result.Should().Contain(c => c.Nome == "Maria" && c.DocumentoIdentificador == "35434856015");
+            result.Should().Contain(c => c.Nome == "Jo√£o" && c.DocumentoIdentificador == "12345678909" && c.TipoDocumentoIdentificador == "CPF");
+            result.Should().Contain(c => c.Nome == "Maria" && c.DocumentoIdentificador == "35434856015" && c.TipoDocumentoIdentificador == "CPF");
             _repoMock.Verify(r => r.ObterTodosAsync(), Times.Once);
         }
 
-        [Fact(DisplayName = "Deve retornar lista vazia quando n„o h· clientes")]
+        [Fact(DisplayName = "Deve retornar lista vazia quando n√£o hÔøΩ clientes")]
         [Trait("Metodo", "Buscar")]
         public async Task Buscar_DeveRetornarListaVazia_QuandoNaoHaClientes()
         {
@@ -165,7 +165,7 @@ namespace Tests.Application.Cadastros
         {
             // Arrange
             var id = Guid.NewGuid();
-            var nome = "Jo„o";
+            var nome = "Jo√£o";
             var cpf = "12345678909";
             var cliente = Cliente.Criar(nome, cpf);
 
@@ -179,10 +179,11 @@ namespace Tests.Application.Cadastros
             result.Should().NotBeNull();
             result.Nome.Should().Be(nome);
             result.DocumentoIdentificador.Should().Be(cpf);
+            result.TipoDocumentoIdentificador.Should().Be("CPF");
             _repoMock.Verify(r => r.ObterPorIdAsync(id), Times.Once);
         }
 
-        [Fact(DisplayName = "Deve lanÁar exceÁ„o ao buscar cliente por ID quando n„o existir")]
+        [Fact(DisplayName = "Deve lan√ßar exce√ß√£o ao buscar cliente por ID quando n√£o existir")]
         [Trait("Metodo", "BuscarPorId")]
         public async Task BuscarPorId_DeveLancarExcecao_QuandoClienteNaoExistir()
         {
@@ -197,7 +198,7 @@ namespace Tests.Application.Cadastros
 
             // Assert
             await act.Should().ThrowAsync<DomainException>()
-                .WithMessage("Cliente n„o encontrado.");
+                .WithMessage("Cliente n√£o encontrado.");
             _repoMock.Verify(r => r.ObterPorIdAsync(id), Times.Once);
         }
 
@@ -207,7 +208,7 @@ namespace Tests.Application.Cadastros
         {
             // Arrange
             var cpf = "12345678909";
-            var nome = "Jo„o";
+            var nome = "Jo√£o";
             var cliente = Cliente.Criar(nome, cpf);
 
             _repoMock.Setup(r => r.ObterPorDocumentoAsync(cpf))
@@ -220,10 +221,11 @@ namespace Tests.Application.Cadastros
             result.Should().NotBeNull();
             result.Nome.Should().Be(nome);
             result.DocumentoIdentificador.Should().Be(cpf);
+            result.TipoDocumentoIdentificador.Should().Be("CPF");
             _repoMock.Verify(r => r.ObterPorDocumentoAsync(cpf), Times.Once);
         }
 
-        [Fact(DisplayName = "Deve lanÁar exceÁ„o ao buscar cliente por CPF quando n„o existir")]
+        [Fact(DisplayName = "Deve lan√ßar exce√ß√£o ao buscar cliente por CPF quando n√£o existir")]
         [Trait("Metodo", "BuscarPorDocumento")]
         public async Task BuscarPorDocumento_DeveLancarExcecao_QuandoClienteNaoExistir()
         {
@@ -238,7 +240,7 @@ namespace Tests.Application.Cadastros
 
             // Assert
             await act.Should().ThrowAsync<DomainException>()
-                .WithMessage("Cliente n„o encontrado.");
+                .WithMessage("Cliente n√£o encontrado.");
             _repoMock.Verify(r => r.ObterPorDocumentoAsync(cpf), Times.Once);
         }
     }

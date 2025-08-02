@@ -93,8 +93,8 @@ namespace Tests.Integration.Cadastros
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             clientes.Should().NotBeNull();
             clientes.Should().HaveCountGreaterThanOrEqualTo(2);
-            clientes.Should().Contain(c => c.Nome == "João" && c.DocumentoIdentificador == "12345678909");
-            clientes.Should().Contain(c => c.Nome == "Maria" && c.DocumentoIdentificador == "84405205060");
+            clientes.Should().Contain(c => c.Nome == "João" && c.DocumentoIdentificador == "12345678909" && c.TipoDocumentoIdentificador == "CPF");
+            clientes.Should().Contain(c => c.Nome == "Maria" && c.DocumentoIdentificador == "84405205060" && c.TipoDocumentoIdentificador == "CPF");
         }
 
         [Fact(DisplayName = "GET deve retornar 200 OK mesmo quando não há clientes")]
@@ -144,6 +144,7 @@ namespace Tests.Integration.Cadastros
             cliente.Id.Should().Be(clienteCriado.Id);
             cliente.Nome.Should().Be("João");
             cliente.DocumentoIdentificador.Should().Be("56227045020");
+            cliente.TipoDocumentoIdentificador.Should().Be("CPF");
         }
 
         [Fact(DisplayName = "GET /{id} deve retornar 404 NotFound quando cliente não existe")]
@@ -187,6 +188,7 @@ namespace Tests.Integration.Cadastros
             cliente.Id.Should().Be(clienteCriado!.Id);
             cliente.Nome.Should().Be("João");
             cliente.DocumentoIdentificador.Should().Be("34806653063");
+            cliente.TipoDocumentoIdentificador.Should().Be("CPF");
         }
 
         [Fact(DisplayName = "GET /cpf/{cpf} deve retornar 404 NotFound quando cliente não existe")]
@@ -232,6 +234,7 @@ namespace Tests.Integration.Cadastros
             cliente.Id.Should().Be(clienteCriado!.Id);
             cliente.Nome.Should().Be("Empresa CNPJ Formatado");
             cliente.DocumentoIdentificador.Should().Be("03984051000193");
+            cliente.TipoDocumentoIdentificador.Should().Be("CNPJ");
         }
 
         [Fact(DisplayName = "GET /documento/{cnpj} deve retornar 200 OK quando CNPJ existe e valor passado não tem formatação")]
@@ -263,6 +266,7 @@ namespace Tests.Integration.Cadastros
             cliente.Id.Should().Be(clienteCriado!.Id);
             cliente.Nome.Should().Be("Empresa CNPJ Sem Formatação");
             cliente.DocumentoIdentificador.Should().Be("38689954000126");
+            cliente.TipoDocumentoIdentificador.Should().Be("CNPJ");
         }
 
         [Fact(DisplayName = "GET /documento/{cpf} deve retornar 200 OK quando CPF existe e valor passado tem formatação")]
@@ -294,6 +298,7 @@ namespace Tests.Integration.Cadastros
             cliente.Id.Should().Be(clienteCriado!.Id);
             cliente.Nome.Should().Be("Cliente CPF Formatado");
             cliente.DocumentoIdentificador.Should().Be("79705026017");
+            cliente.TipoDocumentoIdentificador.Should().Be("CPF");
         }
 
         [Fact(DisplayName = "GET /documento/{cpf} deve retornar 200 OK quando CPF existe e valor passado não tem formatação")]
@@ -325,6 +330,7 @@ namespace Tests.Integration.Cadastros
             cliente.Id.Should().Be(clienteCriado!.Id);
             cliente.Nome.Should().Be("Cliente CPF Sem Formatação");
             cliente.DocumentoIdentificador.Should().Be("32744285072");
+            cliente.TipoDocumentoIdentificador.Should().Be("CPF");
         }
 
         [Fact(DisplayName = "POST deve salvar CNPJ sem formatação quando valor passado tem formatação")]

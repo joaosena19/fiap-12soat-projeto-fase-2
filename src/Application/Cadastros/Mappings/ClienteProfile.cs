@@ -10,7 +10,8 @@ namespace Application.Cadastros.Mappings
         {
             CreateMap<Cliente, RetornoClienteDTO>()
                 .ForMember(dest => dest.Nome, opt => opt.MapFrom(src => src.Nome.Valor))
-                .ForMember(dest => dest.DocumentoIdentificador, opt => opt.MapFrom(src => src.DocumentoIdentificador.Valor));
+                .ForMember(dest => dest.DocumentoIdentificador, opt => opt.MapFrom(src => src.DocumentoIdentificador.Valor))
+                .ForMember(dest => dest.TipoDocumentoIdentificador, opt => opt.MapFrom(src => src.DocumentoIdentificador.TipoDocumento.ToString()));
 
             CreateMap<CriarClienteDTO, Cliente>()
                 .ConstructUsing(src => Cliente.Criar(src.Nome, src.DocumentoIdentificador));
