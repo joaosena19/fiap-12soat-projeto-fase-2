@@ -25,7 +25,7 @@ namespace Infrastructure.Repositories.Cadastros
 
         public async Task<Cliente?> ObterPorDocumentoAsync(string documento)
         {
-            var documentoLimpo = Regex.Replace(documento, @"[^\d]", "");
+            var documentoLimpo = Regex.Replace(documento, @"[^\d]", "", RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
             return await _context.Clientes.FirstOrDefaultAsync(c => c.DocumentoIdentificador.Valor == documentoLimpo);
         }
