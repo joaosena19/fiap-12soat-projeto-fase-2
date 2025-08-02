@@ -1,5 +1,7 @@
 using API.Configurations;
 using API.Middleware;
+using Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +21,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Popula dados mock se estiver em ambiente de desenvolvimento
+DevelopmentDataSeeder.SeedIfDevelopment(app);
+
 await app.RunAsync();
 
 //Necessário para testes de integração
-public partial class Program { }
+public partial class Program 
+{
+}
+
