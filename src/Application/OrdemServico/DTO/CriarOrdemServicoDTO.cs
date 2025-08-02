@@ -1,9 +1,9 @@
-namespace Application.OrdemServico.DTO
+namespace Application.OrdemServico.Dtos
 {
     /// <summary>
     /// DTO para criação de ordem de serviço
     /// </summary>
-    public class CriarOrdemServicoDTO
+    public class CriarOrdemServicoDto
     {
         /// <summary>
         /// ID do veículo para o qual a ordem de serviço está sendo criada

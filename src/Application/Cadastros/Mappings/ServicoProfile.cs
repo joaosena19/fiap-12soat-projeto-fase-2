@@ -1,5 +1,5 @@
 using AutoMapper;
-using Application.Cadastros.DTO;
+using Application.Cadastros.Dtos;
 using Domain.Cadastros.Aggregates;
 
 namespace Application.Cadastros.Mappings
@@ -8,11 +8,11 @@ namespace Application.Cadastros.Mappings
     {
         public ServicoProfile()
         {
-            CreateMap<Servico, RetornoServicoDTO>()
+            CreateMap<Servico, RetornoServicoDto>()
                 .ForMember(dest => dest.Nome, opt => opt.MapFrom(src => src.Nome.Valor))
                 .ForMember(dest => dest.Preco, opt => opt.MapFrom(src => src.Preco.Valor));
 
-            CreateMap<CriarServicoDTO, Servico>()
+            CreateMap<CriarServicoDto, Servico>()
                 .ConstructUsing(src => Servico.Criar(src.Nome, src.Preco));
 
             // Note: For update operations, we'll use domain methods directly

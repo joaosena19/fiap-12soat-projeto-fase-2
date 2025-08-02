@@ -1,9 +1,9 @@
-namespace Application.Cadastros.DTO
+namespace Application.Cadastros.Dtos
 {
     /// <summary>
     /// DTO para atualização de serviço
     /// </summary>
-    public class AtualizarServicoDTO
+    public class AtualizarServicoDto
     {
         /// <summary>
         /// Nome completo do servico

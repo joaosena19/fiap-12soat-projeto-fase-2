@@ -1,5 +1,5 @@
 using Application.Estoque.Interfaces;
-using Application.OrdemServico.DTO.External;
+using Application.OrdemServico.Dtos.External;
 using Domain.Estoque.Aggregates;
 using Domain.Estoque.Enums;
 using Domain.OrdemServico.Enums;
@@ -133,7 +133,7 @@ namespace Tests.Application.OrdemServico
 
             // Assert
             resultado.Should().NotBeNull();
-            resultado.Should().BeOfType<ItemEstoqueExternalDTO>();
+            resultado.Should().BeOfType<ItemEstoqueExternalDto>();
             resultado!.Id.Should().Be(item.Id);
             resultado.Nome.Should().Be(item.Nome.Valor);
             resultado.Preco.Should().Be(item.Preco.Valor);

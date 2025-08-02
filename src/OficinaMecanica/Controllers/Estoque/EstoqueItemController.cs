@@ -1,5 +1,5 @@
-using API.DTO;
-using Application.Estoque.DTO;
+using API.Dtos;
+using Application.Estoque.Dtos;
 using Application.Estoque.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,8 +27,8 @@ namespace API.Controllers.Estoque
         /// <response code="200">Lista de itens de estoque retornada com sucesso</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<RetornoItemEstoqueDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(IEnumerable<RetornoItemEstoqueDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
             var result = await _itemEstoqueService.Buscar();
@@ -44,9 +44,9 @@ namespace API.Controllers.Estoque
         /// <response code="404">Item de estoque não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(RetornoItemEstoqueDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(RetornoItemEstoqueDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _itemEstoqueService.BuscarPorId(id);
@@ -62,10 +62,10 @@ namespace API.Controllers.Estoque
         /// <response code="400">Dados inválidos fornecidos</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost]
-        [ProducesResponseType(typeof(RetornoItemEstoqueDTO), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] CriarItemEstoqueDTO dto)
+        [ProducesResponseType(typeof(RetornoItemEstoqueDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Post([FromBody] CriarItemEstoqueDto dto)
         {
             var result = await _itemEstoqueService.CriarItemEstoque(dto);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
@@ -82,11 +82,11 @@ namespace API.Controllers.Estoque
         /// <response code="404">Item de estoque não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(RetornoItemEstoqueDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarItemEstoqueDTO dto)
+        [ProducesResponseType(typeof(RetornoItemEstoqueDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarItemEstoqueDto dto)
         {
             var result = await _itemEstoqueService.AtualizarItemEstoque(id, dto);
             return Ok(result);
@@ -103,11 +103,11 @@ namespace API.Controllers.Estoque
         /// <response code="404">Item de estoque não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPatch("{id}/quantidade")]
-        [ProducesResponseType(typeof(RetornoItemEstoqueDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateQuantidade(Guid id, [FromBody] AtualizarQuantidadeDTO dto)
+        [ProducesResponseType(typeof(RetornoItemEstoqueDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateQuantidade(Guid id, [FromBody] AtualizarQuantidadeDto dto)
         {
             var result = await _itemEstoqueService.AtualizarQuantidade(id, dto);
             return Ok(result);
@@ -124,10 +124,10 @@ namespace API.Controllers.Estoque
         /// <response code="404">Item de estoque não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet("{id}/disponibilidade")]
-        [ProducesResponseType(typeof(RetornoDisponibilidadeDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(RetornoDisponibilidadeDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> VerificarDisponibilidade(Guid id, int quantidadeRequisitada)
         {
             var result = await _itemEstoqueService.VerificarDisponibilidade(id, quantidadeRequisitada);

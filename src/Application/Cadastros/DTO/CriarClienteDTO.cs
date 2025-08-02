@@ -1,9 +1,9 @@
-﻿namespace Application.Cadastros.DTO
+﻿namespace Application.Cadastros.Dtos
 {
     /// <summary>
     /// DTO para criação de cliente
     /// </summary>
-    public class CriarClienteDTO
+    public class CriarClienteDto
     {
         /// <summary>
         /// Nome completo do cliente

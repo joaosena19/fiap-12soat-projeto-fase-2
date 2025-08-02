@@ -1,9 +1,9 @@
-﻿namespace Application.Cadastros.DTO
+﻿namespace Application.Cadastros.Dtos
 {
     /// <summary>
     /// DTO para criação de servico
     /// </summary>
-    public class CriarServicoDTO
+    public class CriarServicoDto
     {
         /// <summary>
         /// Nome completo do servico

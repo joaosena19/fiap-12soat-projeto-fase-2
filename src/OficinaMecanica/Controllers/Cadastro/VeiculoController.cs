@@ -1,5 +1,5 @@
-using API.DTO;
-using Application.Cadastros.DTO;
+using API.Dtos;
+using Application.Cadastros.Dtos;
 using Application.Cadastros.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,8 +27,8 @@ namespace API.Controllers.Cadastro
         /// <response code="200">Lista de veículos retornada com sucesso</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<RetornoVeiculoDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(IEnumerable<RetornoVeiculoDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
             var result = await _veiculoService.Buscar();
@@ -44,9 +44,9 @@ namespace API.Controllers.Cadastro
         /// <response code="404">Veículo não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(RetornoVeiculoDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(RetornoVeiculoDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _veiculoService.BuscarPorId(id);
@@ -62,9 +62,9 @@ namespace API.Controllers.Cadastro
         /// <response code="404">Veículo não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet("placa/{placa}")]
-        [ProducesResponseType(typeof(RetornoVeiculoDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(RetornoVeiculoDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByPlaca(string placa)
         {
             var result = await _veiculoService.BuscarPorPlaca(placa);
@@ -80,9 +80,9 @@ namespace API.Controllers.Cadastro
         /// <response code="422">Cliente não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet("cliente/{clienteId}")]
-        [ProducesResponseType(typeof(IEnumerable<RetornoVeiculoDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(IEnumerable<RetornoVeiculoDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByClienteId(Guid clienteId)
         {
             var result = await _veiculoService.BuscarPorClienteId(clienteId);
@@ -99,11 +99,11 @@ namespace API.Controllers.Cadastro
         /// <response code="409">Placa já cadastrada</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost]
-        [ProducesResponseType(typeof(RetornoVeiculoDTO), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status409Conflict)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] CriarVeiculoDTO dto)
+        [ProducesResponseType(typeof(RetornoVeiculoDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Post([FromBody] CriarVeiculoDto dto)
         {
             var result = await _veiculoService.CriarVeiculo(dto.ClienteId, dto.Placa, dto.Modelo, dto.Marca, dto.Cor, dto.Ano, dto.TipoVeiculo);
             return Created($"/api/cadastros/veiculos/{result.Id}", result);
@@ -120,11 +120,11 @@ namespace API.Controllers.Cadastro
         /// <response code="404">Veículo não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(RetornoVeiculoDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarVeiculoDTO dto)
+        [ProducesResponseType(typeof(RetornoVeiculoDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarVeiculoDto dto)
         {
             var result = await _veiculoService.AtualizarVeiculo(id, dto.Modelo, dto.Marca, dto.Cor, dto.Ano, dto.TipoVeiculo);
             return Ok(result);

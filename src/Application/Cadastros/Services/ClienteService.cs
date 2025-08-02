@@ -1,4 +1,4 @@
-﻿using Application.Cadastros.DTO;
+﻿using Application.Cadastros.Dtos;
 using Application.Cadastros.Interfaces;
 using AutoMapper;
 using Domain.Cadastros.Aggregates;
@@ -18,7 +18,7 @@ namespace Application.Cadastros.Services
             _mapper = mapper;
         }
 
-        public async Task<RetornoClienteDTO> CriarCliente(string nome, string documento)
+        public async Task<RetornoClienteDto> CriarCliente(string nome, string documento)
         {
             var clienteExistente = await _clienteRepository.ObterPorDocumentoAsync(documento);
             if (clienteExistente != null)
@@ -27,10 +27,10 @@ namespace Application.Cadastros.Services
             var novoCliente = Cliente.Criar(nome, documento);
             var result = await _clienteRepository.SalvarAsync(novoCliente);
 
-            return _mapper.Map<RetornoClienteDTO>(result);
+            return _mapper.Map<RetornoClienteDto>(result);
         }
 
-        public async Task<RetornoClienteDTO> AtualizarCliente(Guid id, string nome)
+        public async Task<RetornoClienteDto> AtualizarCliente(Guid id, string nome)
         {
             var cliente = await _clienteRepository.ObterPorIdAsync(id);
             if (cliente == null)
@@ -39,31 +39,31 @@ namespace Application.Cadastros.Services
             cliente.Atualizar(nome);
             var result = await _clienteRepository.AtualizarAsync(cliente);
 
-            return _mapper.Map<RetornoClienteDTO>(result);
+            return _mapper.Map<RetornoClienteDto>(result);
         }
 
-        public async Task<IEnumerable<RetornoClienteDTO>> Buscar()
+        public async Task<IEnumerable<RetornoClienteDto>> Buscar()
         {
             var clientes = await _clienteRepository.ObterTodosAsync();
-            return _mapper.Map<IEnumerable<RetornoClienteDTO>>(clientes);
+            return _mapper.Map<IEnumerable<RetornoClienteDto>>(clientes);
         }
 
-        public async Task<RetornoClienteDTO> BuscarPorId(Guid id)
+        public async Task<RetornoClienteDto> BuscarPorId(Guid id)
         {
             var cliente = await _clienteRepository.ObterPorIdAsync(id);
             if (cliente == null)
                 throw new DomainException("Cliente não encontrado.", ErrorType.ResourceNotFound);
 
-            return _mapper.Map<RetornoClienteDTO>(cliente);
+            return _mapper.Map<RetornoClienteDto>(cliente);
         }
 
-        public async Task<RetornoClienteDTO> BuscarPorDocumento(string documento)
+        public async Task<RetornoClienteDto> BuscarPorDocumento(string documento)
         {
             var cliente = await _clienteRepository.ObterPorDocumentoAsync(documento);
             if (cliente == null)
                 throw new DomainException("Cliente não encontrado.", ErrorType.ResourceNotFound);
 
-            return _mapper.Map<RetornoClienteDTO>(cliente);
+            return _mapper.Map<RetornoClienteDto>(cliente);
         }
     }
 }

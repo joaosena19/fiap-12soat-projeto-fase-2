@@ -1,4 +1,4 @@
-using Application.Estoque.DTO;
+using Application.Estoque.Dtos;
 using Application.Estoque.Interfaces;
 using Application.Estoque.Services;
 using AutoMapper;
@@ -31,7 +31,7 @@ namespace Tests.Application.Estoque
         public async Task CriarItemEstoque_DeveLancarExcecao_SeNomeJaExistir()
         {
             // Arrange
-            var dto = new CriarItemEstoqueDTO
+            var dto = new CriarItemEstoqueDto
             {
                 Nome = "Filtro de Óleo",
                 Quantidade = 50,
@@ -59,7 +59,7 @@ namespace Tests.Application.Estoque
         public async Task CriarItemEstoque_DeveSalvarItemEstoque_SeNomeNaoExistir()
         {
             // Arrange
-            var dto = new CriarItemEstoqueDTO
+            var dto = new CriarItemEstoqueDto
             {
                 Nome = "Filtro de Óleo",
                 Quantidade = 50,
@@ -103,7 +103,7 @@ namespace Tests.Application.Estoque
         {
             // Arrange
             var id = Guid.NewGuid();
-            var dto = new AtualizarItemEstoqueDTO
+            var dto = new AtualizarItemEstoqueDto
             {
                 Nome = "Filtro de Óleo Premium",
                 Quantidade = 75,
@@ -139,7 +139,7 @@ namespace Tests.Application.Estoque
         {
             // Arrange
             var id = Guid.NewGuid();
-            var dto = new AtualizarItemEstoqueDTO
+            var dto = new AtualizarItemEstoqueDto
             {
                 Nome = "Filtro de Óleo Premium",
                 Quantidade = 75,
@@ -169,7 +169,7 @@ namespace Tests.Application.Estoque
         {
             // Arrange
             var id = Guid.NewGuid();
-            var dto = new AtualizarQuantidadeDTO { Quantidade = 100 };
+            var dto = new AtualizarQuantidadeDto { Quantidade = 100 };
 
             var itemExistente = ItemEstoque.Criar("Filtro de Óleo", 50, TipoItemEstoqueEnum.Peca, 25.50m);
             var itemAtualizado = ItemEstoque.Criar("Filtro de Óleo", dto.Quantidade, TipoItemEstoqueEnum.Peca, 25.50m);
@@ -196,7 +196,7 @@ namespace Tests.Application.Estoque
         {
             // Arrange
             var id = Guid.NewGuid();
-            var dto = new AtualizarQuantidadeDTO { Quantidade = 100 };
+            var dto = new AtualizarQuantidadeDto { Quantidade = 100 };
 
             _repoMock.Setup(r => r.ObterPorIdAsync(id))
                 .ReturnsAsync((ItemEstoque?)null);

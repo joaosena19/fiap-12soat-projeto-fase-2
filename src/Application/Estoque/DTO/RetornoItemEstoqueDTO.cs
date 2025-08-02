@@ -1,11 +1,9 @@
-using Domain.Estoque.Enums;
-
-namespace Application.Estoque.DTO
+namespace Application.Estoque.Dtos
 {
     /// <summary>
     /// DTO para retorno de item de estoque
     /// </summary>
-    public class RetornoItemEstoqueDTO
+    public class RetornoItemEstoqueDto
     {
         public Guid Id { get; set; } = Guid.Empty;
 

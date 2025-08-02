@@ -1,8 +1,8 @@
 using Application.OrdemServico.Interfaces;
 using Application.OrdemServico.Interfaces.External;
 using Application.OrdemServico.Services;
-using Application.OrdemServico.DTO;
-using Application.OrdemServico.DTO.External;
+using Application.OrdemServico.Dtos;
+using Application.OrdemServico.Dtos.External;
 using AutoMapper;
 using Domain.OrdemServico.Enums;
 using FluentAssertions;
@@ -214,7 +214,7 @@ namespace Tests.Application.OrdemServico
         {
             // Arrange
             var veiculoId = Guid.NewGuid();
-            var dto = new CriarOrdemServicoDTO { VeiculoId = veiculoId };
+            var dto = new CriarOrdemServicoDto { VeiculoId = veiculoId };
             var novaOrdemServico = OrdemServicoAggregate.Criar(veiculoId);
 
             _veiculoExternalServiceMock.Setup(v => v.VerificarExistenciaVeiculo(veiculoId))
@@ -245,7 +245,7 @@ namespace Tests.Application.OrdemServico
         {
             // Arrange
             var veiculoId = Guid.NewGuid();
-            var dto = new CriarOrdemServicoDTO { VeiculoId = veiculoId };
+            var dto = new CriarOrdemServicoDto { VeiculoId = veiculoId };
 
             _veiculoExternalServiceMock.Setup(v => v.VerificarExistenciaVeiculo(veiculoId))
                 .ReturnsAsync(false);
@@ -267,7 +267,7 @@ namespace Tests.Application.OrdemServico
         {
             // Arrange
             var veiculoId = Guid.NewGuid();
-            var dto = new CriarOrdemServicoDTO { VeiculoId = veiculoId };
+            var dto = new CriarOrdemServicoDto { VeiculoId = veiculoId };
             var ordemServicoExistente = OrdemServicoAggregate.Criar(veiculoId);
             var novaOrdemServico = OrdemServicoAggregate.Criar(veiculoId);
 
@@ -308,19 +308,19 @@ namespace Tests.Application.OrdemServico
             var servicoId1 = Guid.NewGuid();
             var servicoId2 = Guid.NewGuid();
             
-            var dto = new AdicionarServicosDTO
+            var dto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servicoId1, servicoId2 }
             };
 
             var ordemServico = OrdemServicoAggregate.Criar(veiculoId);
-            var servico1 = new ServicoExternalDTO
+            var servico1 = new ServicoExternalDto
             {
                 Id = servicoId1,
                 Nome = "Troca de Óleo",
                 Preco = 150.00m
             };
-            var servico2 = new ServicoExternalDTO
+            var servico2 = new ServicoExternalDto
             {
                 Id = servicoId2,
                 Nome = "Alinhamento",
@@ -359,7 +359,7 @@ namespace Tests.Application.OrdemServico
             // Arrange
             var ordemServicoId = Guid.NewGuid();
             var servicoId = Guid.NewGuid();
-            var dto = new AdicionarServicosDTO
+            var dto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servicoId }
             };
@@ -387,7 +387,7 @@ namespace Tests.Application.OrdemServico
             var ordemServicoId = Guid.NewGuid();
             var veiculoId = Guid.NewGuid();
             var servicoId = Guid.NewGuid();
-            var dto = new AdicionarServicosDTO
+            var dto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servicoId }
             };
@@ -398,7 +398,7 @@ namespace Tests.Application.OrdemServico
                 .ReturnsAsync(ordemServico);
 
             _servicoExternalServiceMock.Setup(s => s.ObterServicoPorIdAsync(servicoId))
-                .ReturnsAsync((ServicoExternalDTO?)null);
+                .ReturnsAsync((ServicoExternalDto?)null);
 
             // Act
             var act = async () => await _service.AdicionarServicos(ordemServicoId, dto);
@@ -419,7 +419,7 @@ namespace Tests.Application.OrdemServico
             // Arrange
             var ordemServicoId = Guid.NewGuid();
             var veiculoId = Guid.NewGuid();
-            var dto = new AdicionarServicosDTO
+            var dto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = null!
             };
@@ -453,14 +453,14 @@ namespace Tests.Application.OrdemServico
             var ordemServicoId = Guid.NewGuid();
             var veiculoId = Guid.NewGuid();
             var itemId = Guid.NewGuid();
-            var dto = new AdicionarItemDTO
+            var dto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = itemId,
                 Quantidade = 2
             };
 
             var ordemServico = OrdemServicoAggregate.Criar(veiculoId);
-            var itemEstoque = new ItemEstoqueExternalDTO
+            var itemEstoque = new ItemEstoqueExternalDto
             {
                 Id = itemId,
                 Nome = "Filtro de Óleo",
@@ -497,7 +497,7 @@ namespace Tests.Application.OrdemServico
             // Arrange
             var ordemServicoId = Guid.NewGuid();
             var itemId = Guid.NewGuid();
-            var dto = new AdicionarItemDTO
+            var dto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = itemId,
                 Quantidade = 2
@@ -526,7 +526,7 @@ namespace Tests.Application.OrdemServico
             var ordemServicoId = Guid.NewGuid();
             var veiculoId = Guid.NewGuid();
             var itemId = Guid.NewGuid();
-            var dto = new AdicionarItemDTO
+            var dto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = itemId,
                 Quantidade = 2
@@ -538,7 +538,7 @@ namespace Tests.Application.OrdemServico
                 .ReturnsAsync(ordemServico);
 
             _estoqueExternalServiceMock.Setup(e => e.ObterItemEstoquePorIdAsync(itemId))
-                .ReturnsAsync((ItemEstoqueExternalDTO?)null);
+                .ReturnsAsync((ItemEstoqueExternalDto?)null);
 
             // Act
             var act = async () => await _service.AdicionarItem(ordemServicoId, dto);
@@ -561,14 +561,14 @@ namespace Tests.Application.OrdemServico
             var veiculoId = Guid.NewGuid();
             var itemId = Guid.NewGuid();
             var quantidadeEsperada = 5;
-            var dto = new AdicionarItemDTO
+            var dto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = itemId,
                 Quantidade = quantidadeEsperada
             };
 
             var ordemServico = OrdemServicoAggregate.Criar(veiculoId);
-            var itemEstoque = new ItemEstoqueExternalDTO
+            var itemEstoque = new ItemEstoqueExternalDto
             {
                 Id = itemId,
                 Nome = "Parafuso",
@@ -917,7 +917,7 @@ namespace Tests.Application.OrdemServico
             ordemServico.AdicionarItem(itemId, "Filtro de Óleo", 25.50m, 2, TipoItemIncluidoEnum.Peca);
             ordemServico.GerarOrcamento();
 
-            var itemEstoque = new ItemEstoqueExternalDTO
+            var itemEstoque = new ItemEstoqueExternalDto
             {
                 Id = itemId,
                 Nome = "Filtro de Óleo",
@@ -1430,13 +1430,13 @@ namespace Tests.Application.OrdemServico
             var codigo = ordemServico.Codigo.Valor;
             var documentoCliente = "12345678901";
 
-            var dto = new BuscaPublicaOrdemServicoDTO
+            var dto = new BuscaPublicaOrdemServicoDto
             {
                 CodigoOrdemServico = codigo,
                 DocumentoIdentificadorCliente = documentoCliente
             };
 
-            var cliente = new ClienteExternalDTO
+            var cliente = new ClienteExternalDto
             {
                 Id = Guid.NewGuid(),
                 Nome = "João Silva",
@@ -1467,7 +1467,7 @@ namespace Tests.Application.OrdemServico
         {
             // Arrange
             var codigo = "OS-20250125-INEXISTENTE";
-            var dto = new BuscaPublicaOrdemServicoDTO
+            var dto = new BuscaPublicaOrdemServicoDto
             {
                 CodigoOrdemServico = codigo,
                 DocumentoIdentificadorCliente = "12345678901"
@@ -1495,7 +1495,7 @@ namespace Tests.Application.OrdemServico
             var ordemServico = OrdemServicoAggregate.Criar(veiculoId);
             var codigo = ordemServico.Codigo.Valor;
 
-            var dto = new BuscaPublicaOrdemServicoDTO
+            var dto = new BuscaPublicaOrdemServicoDto
             {
                 CodigoOrdemServico = codigo,
                 DocumentoIdentificadorCliente = "12345678901"
@@ -1505,7 +1505,7 @@ namespace Tests.Application.OrdemServico
                 .ReturnsAsync(ordemServico);
 
             _clienteExternalServiceMock.Setup(c => c.ObterClientePorVeiculoIdAsync(veiculoId))
-                .ReturnsAsync((ClienteExternalDTO?)null);
+                .ReturnsAsync((ClienteExternalDto?)null);
 
             // Act
             var result = await _service.BuscaPublica(dto);
@@ -1526,13 +1526,13 @@ namespace Tests.Application.OrdemServico
             var ordemServico = OrdemServicoAggregate.Criar(veiculoId);
             var codigo = ordemServico.Codigo.Valor;
 
-            var dto = new BuscaPublicaOrdemServicoDTO
+            var dto = new BuscaPublicaOrdemServicoDto
             {
                 CodigoOrdemServico = codigo,
                 DocumentoIdentificadorCliente = "12345678901"
             };
 
-            var cliente = new ClienteExternalDTO
+            var cliente = new ClienteExternalDto
             {
                 Id = Guid.NewGuid(),
                 Nome = "João Silva",
@@ -1560,7 +1560,7 @@ namespace Tests.Application.OrdemServico
         public async Task BuscaPublica_ComExcecaoNoRepository_DeveRetornarNull()
         {
             // Arrange
-            var dto = new BuscaPublicaOrdemServicoDTO
+            var dto = new BuscaPublicaOrdemServicoDto
             {
                 CodigoOrdemServico = "OS-20250125-TESTE",
                 DocumentoIdentificadorCliente = "12345678901"
@@ -1587,7 +1587,7 @@ namespace Tests.Application.OrdemServico
             var ordemServico = OrdemServicoAggregate.Criar(veiculoId);
             var codigo = ordemServico.Codigo.Valor;
 
-            var dto = new BuscaPublicaOrdemServicoDTO
+            var dto = new BuscaPublicaOrdemServicoDto
             {
                 CodigoOrdemServico = codigo,
                 DocumentoIdentificadorCliente = "12345678901"
@@ -1614,7 +1614,7 @@ namespace Tests.Application.OrdemServico
         public async Task BuscaPublica_ComExcecaoInesperada_DeveRetornarNull()
         {
             // Arrange
-            var dto = new BuscaPublicaOrdemServicoDTO
+            var dto = new BuscaPublicaOrdemServicoDto
             {
                 CodigoOrdemServico = "OS-20250125-TESTE",
                 DocumentoIdentificadorCliente = "12345678901"

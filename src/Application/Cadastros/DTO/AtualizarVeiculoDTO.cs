@@ -1,11 +1,11 @@
 using Domain.Cadastros.Enums;
 
-namespace Application.Cadastros.DTO
+namespace Application.Cadastros.Dtos
 {
     /// <summary>
     /// DTO para atualização de veículo
     /// </summary>
-    public class AtualizarVeiculoDTO
+    public class AtualizarVeiculoDto
     {
         /// <summary>
         /// Modelo do veículo

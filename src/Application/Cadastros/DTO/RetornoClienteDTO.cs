@@ -1,11 +1,9 @@
-﻿using Domain.Cadastros.Enums;
-
-namespace Application.Cadastros.DTO
+﻿namespace Application.Cadastros.Dtos
 {
     /// <summary>
     /// DTO para retorno de cliente
     /// </summary>
-    public class RetornoClienteDTO
+    public class RetornoClienteDto
     {
         public Guid Id { get; set; } = Guid.Empty;
 

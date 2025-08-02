@@ -1,5 +1,5 @@
 using AutoMapper;
-using Application.OrdemServico.DTO;
+using Application.OrdemServico.Dtos;
 using Domain.OrdemServico.Aggregates.OrdemServico;
 
 namespace Application.OrdemServico.Mappings
@@ -9,7 +9,7 @@ namespace Application.OrdemServico.Mappings
         public OrdemServicoProfile()
         {
             // Mapeamento completo (com serviços, itens e orçamento)
-            CreateMap<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico, RetornoOrdemServicoCompletaDTO>()
+            CreateMap<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico, RetornoOrdemServicoCompletaDto>()
                 .ForMember(dest => dest.Codigo, opt => opt.MapFrom(src => src.Codigo.Valor))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Valor))
                 .ForMember(dest => dest.DataCriacao, opt => opt.MapFrom(src => src.Historico.DataCriacao))
@@ -21,7 +21,7 @@ namespace Application.OrdemServico.Mappings
                 .ForMember(dest => dest.Orcamento, opt => opt.MapFrom(src => src.Orcamento));
 
             // Mapeamento básico (sem serviços, itens e orçamento)
-            CreateMap<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico, RetornoOrdemServicoDTO>()
+            CreateMap<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico, RetornoOrdemServicoDto>()
                 .ForMember(dest => dest.Codigo, opt => opt.MapFrom(src => src.Codigo.Valor))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Valor))
                 .ForMember(dest => dest.DataCriacao, opt => opt.MapFrom(src => src.Historico.DataCriacao))
@@ -30,7 +30,7 @@ namespace Application.OrdemServico.Mappings
                 .ForMember(dest => dest.DataEntrega, opt => opt.MapFrom(src => src.Historico.DataEntrega));
 
             // Mapeamento com serviços e itens (sem orçamento)
-            CreateMap<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico, RetornoOrdemServicoComServicosItensDTO>()
+            CreateMap<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico, RetornoOrdemServicoComServicosItensDto>()
                 .ForMember(dest => dest.Codigo, opt => opt.MapFrom(src => src.Codigo.Valor))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Valor))
                 .ForMember(dest => dest.DataCriacao, opt => opt.MapFrom(src => src.Historico.DataCriacao))
@@ -40,17 +40,17 @@ namespace Application.OrdemServico.Mappings
                 .ForMember(dest => dest.ServicosIncluidos, opt => opt.MapFrom(src => src.ServicosIncluidos))
                 .ForMember(dest => dest.ItensIncluidos, opt => opt.MapFrom(src => src.ItensIncluidos));
 
-            CreateMap<ServicoIncluido, RetornoServicoIncluidoDTO>()
+            CreateMap<ServicoIncluido, RetornoServicoIncluidoDto>()
                 .ForMember(dest => dest.Nome, opt => opt.MapFrom(src => src.Nome.Valor))
                 .ForMember(dest => dest.Preco, opt => opt.MapFrom(src => src.Preco.Valor));
 
-            CreateMap<ItemIncluido, RetornoItemIncluidoDTO>()
+            CreateMap<ItemIncluido, RetornoItemIncluidoDto>()
                 .ForMember(dest => dest.Nome, opt => opt.MapFrom(src => src.Nome.Valor))
                 .ForMember(dest => dest.Quantidade, opt => opt.MapFrom(src => src.Quantidade.Valor))
                 .ForMember(dest => dest.TipoItemIncluido, opt => opt.MapFrom(src => src.TipoItemIncluido.Valor))
                 .ForMember(dest => dest.Preco, opt => opt.MapFrom(src => src.Preco.Valor));
 
-            CreateMap<Domain.OrdemServico.Aggregates.OrdemServico.Orcamento, RetornoOrcamentoDTO>()
+            CreateMap<Domain.OrdemServico.Aggregates.OrdemServico.Orcamento, RetornoOrcamentoDto>()
                 .ForMember(dest => dest.DataCriacao, opt => opt.MapFrom(src => src.DataCriacao.Valor))
                 .ForMember(dest => dest.Preco, opt => opt.MapFrom(src => src.Preco.Valor));
         }

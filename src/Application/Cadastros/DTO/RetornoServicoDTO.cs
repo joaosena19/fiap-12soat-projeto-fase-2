@@ -1,9 +1,9 @@
-﻿namespace Application.Cadastros.DTO
+﻿namespace Application.Cadastros.Dtos
 {
     /// <summary>
     /// DTO para retorno de servico
     /// </summary>
-    public class RetornoServicoDTO
+    public class RetornoServicoDto
     {
         public Guid Id { get; set; } = Guid.Empty;
 

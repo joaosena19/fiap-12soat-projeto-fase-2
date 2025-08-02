@@ -1,9 +1,9 @@
-namespace Application.Estoque.DTO
+namespace Application.Estoque.Dtos
 {
     /// <summary>
     /// DTO para retorno de verificação de disponibilidade
     /// </summary>
-    public class RetornoDisponibilidadeDTO
+    public class RetornoDisponibilidadeDto
     {
         /// <summary>
         /// Indica se o item está disponível na quantidade solicitada

@@ -1,9 +1,9 @@
-namespace Application.OrdemServico.DTO
+namespace Application.OrdemServico.Dtos
 {
     /// <summary>
     /// DTO para retorno completo de ordem de serviço
     /// </summary>
-    public class RetornoOrdemServicoCompletaDTO
+    public class RetornoOrdemServicoCompletaDto
     {
         public Guid Id { get; set; } = Guid.Empty;
 
@@ -52,16 +52,16 @@ namespace Application.OrdemServico.DTO
         /// <summary>
         /// Lista de serviços incluídos na ordem de serviço
         /// </summary>
-        public List<RetornoServicoIncluidoDTO> ServicosIncluidos { get; set; } = new();
+        public List<RetornoServicoIncluidoDto> ServicosIncluidos { get; set; } = new();
 
         /// <summary>
         /// Lista de itens incluídos na ordem de serviço
         /// </summary>
-        public List<RetornoItemIncluidoDTO> ItensIncluidos { get; set; } = new();
+        public List<RetornoItemIncluidoDto> ItensIncluidos { get; set; } = new();
 
         /// <summary>
         /// Orçamento gerado (se disponível)
         /// </summary>
-        public RetornoOrcamentoDTO? Orcamento { get; set; }
+        public RetornoOrcamentoDto? Orcamento { get; set; }
     }
 }

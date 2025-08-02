@@ -1,9 +1,9 @@
-namespace Application.OrdemServico.DTO
+namespace Application.OrdemServico.Dtos
 {
     /// <summary>
     /// DTO para retorno de orçamento
     /// </summary>
-    public class RetornoOrcamentoDTO
+    public class RetornoOrcamentoDto
     {
         public Guid Id { get; set; } = Guid.Empty;
 

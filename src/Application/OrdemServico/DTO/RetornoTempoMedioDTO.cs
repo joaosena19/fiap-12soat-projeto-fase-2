@@ -1,9 +1,9 @@
-namespace Application.OrdemServico.DTO
+namespace Application.OrdemServico.Dtos
 {
     /// <summary>
     /// DTO para retorno do tempo médio de ordens de serviço
     /// </summary>
-    public class RetornoTempoMedioDTO
+    public class RetornoTempoMedioDto
     {
         /// <summary>
         /// Quantidade de dias considerados no cálculo

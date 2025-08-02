@@ -1,5 +1,5 @@
 using Application.Cadastros.Interfaces;
-using Application.OrdemServico.DTO.External;
+using Application.OrdemServico.Dtos.External;
 using Application.OrdemServico.Interfaces.External;
 
 namespace Infrastructure.AntiCorruptionLayer.OrdemServico
@@ -16,14 +16,14 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
             _servicoRepository = servicoRepository;
         }
 
-        public async Task<ServicoExternalDTO?> ObterServicoPorIdAsync(Guid servicoId)
+        public async Task<ServicoExternalDto?> ObterServicoPorIdAsync(Guid servicoId)
         {
             var servico = await _servicoRepository.ObterPorIdAsync(servicoId);
             
             if (servico == null)
                 return null;
 
-            return new ServicoExternalDTO
+            return new ServicoExternalDto
             {
                 Id = servico.Id,
                 Nome = servico.Nome.Valor,

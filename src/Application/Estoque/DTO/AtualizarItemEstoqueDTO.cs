@@ -1,11 +1,11 @@
 using Domain.Estoque.Enums;
 
-namespace Application.Estoque.DTO
+namespace Application.Estoque.Dtos
 {
     /// <summary>
     /// DTO para atualização de item de estoque
     /// </summary>
-    public class AtualizarItemEstoqueDTO
+    public class AtualizarItemEstoqueDto
     {
         /// <summary>
         /// Nome do item de estoque

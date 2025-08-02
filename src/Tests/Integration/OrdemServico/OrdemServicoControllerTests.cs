@@ -1,6 +1,6 @@
-using Application.Cadastros.DTO;
-using Application.Estoque.DTO;
-using Application.OrdemServico.DTO;
+using Application.Cadastros.Dtos;
+using Application.Estoque.Dtos;
+using Application.OrdemServico.Dtos;
 using Domain.Cadastros.Enums;
 using Domain.Estoque.Enums;
 using Domain.OrdemServico.Enums;
@@ -44,7 +44,7 @@ namespace Tests.Integration.OrdemServico
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             
-            var ordensServico = await response.Content.ReadFromJsonAsync<List<RetornoOrdemServicoCompletaDTO>>();
+            var ordensServico = await response.Content.ReadFromJsonAsync<List<RetornoOrdemServicoCompletaDto>>();
             ordensServico.Should().NotBeNull();
             ordensServico.Should().BeEmpty();
         }
@@ -55,7 +55,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Get Test",
                 DocumentoIdentificador = "33604492076"
@@ -63,10 +63,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "GET1234",
@@ -79,9 +79,9 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
-            var createDto = new CriarOrdemServicoDTO
+            var createDto = new CriarOrdemServicoDto
             {
                 VeiculoId = veiculo!.Id
             };
@@ -95,7 +95,7 @@ namespace Tests.Integration.OrdemServico
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             
-            var ordensServico = await response.Content.ReadFromJsonAsync<List<RetornoOrdemServicoCompletaDTO>>();
+            var ordensServico = await response.Content.ReadFromJsonAsync<List<RetornoOrdemServicoCompletaDto>>();
             ordensServico.Should().NotBeNull();
             ordensServico.Should().HaveCountGreaterThan(1);
             ordensServico!.Where(os => os.VeiculoId == veiculo.Id).Should().HaveCount(1);
@@ -111,7 +111,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente GetById Test",
                 DocumentoIdentificador = "47730216086"
@@ -119,10 +119,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "GID1234",
@@ -135,9 +135,9 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
-            var createDto = new CriarOrdemServicoDTO
+            var createDto = new CriarOrdemServicoDto
             {
                 VeiculoId = veiculo!.Id
             };
@@ -145,7 +145,7 @@ namespace Tests.Integration.OrdemServico
             var createResponse = await _client.PostAsJsonAsync("/api/ordens-servico", createDto);
             createResponse.EnsureSuccessStatusCode();
             
-            var createdOrdem = await createResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var createdOrdem = await createResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
             createdOrdem.Should().NotBeNull();
 
             // Act
@@ -154,7 +154,7 @@ namespace Tests.Integration.OrdemServico
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             
-            var ordemServico = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoCompletaDTO>();
+            var ordemServico = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoCompletaDto>();
             ordemServico.Should().NotBeNull();
             ordemServico!.Id.Should().Be(createdOrdem.Id);
             ordemServico.VeiculoId.Should().Be(veiculo.Id);
@@ -185,7 +185,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente GetByCodigo Test",
                 DocumentoIdentificador = "02593875097"
@@ -193,10 +193,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "COD1234",
@@ -209,9 +209,9 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
-            var createDto = new CriarOrdemServicoDTO
+            var createDto = new CriarOrdemServicoDto
             {
                 VeiculoId = veiculo!.Id
             };
@@ -219,7 +219,7 @@ namespace Tests.Integration.OrdemServico
             var createResponse = await _client.PostAsJsonAsync("/api/ordens-servico", createDto);
             createResponse.EnsureSuccessStatusCode();
             
-            var createdOrdem = await createResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var createdOrdem = await createResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
             createdOrdem.Should().NotBeNull();
 
             // Act
@@ -228,7 +228,7 @@ namespace Tests.Integration.OrdemServico
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             
-            var ordemServico = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoCompletaDTO>();
+            var ordemServico = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoCompletaDto>();
             ordemServico.Should().NotBeNull();
             ordemServico!.Id.Should().Be(createdOrdem.Id);
             ordemServico.Codigo.Should().Be(createdOrdem.Codigo);
@@ -262,7 +262,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Post Test",
                 DocumentoIdentificador = "46809315071"
@@ -270,10 +270,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "PST1234",
@@ -286,9 +286,9 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
-            var createDto = new CriarOrdemServicoDTO
+            var createDto = new CriarOrdemServicoDto
             {
                 VeiculoId = veiculo!.Id
             };
@@ -299,7 +299,7 @@ namespace Tests.Integration.OrdemServico
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
             
-            var createdOrdem = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var createdOrdem = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
             createdOrdem.Should().NotBeNull();
             createdOrdem!.VeiculoId.Should().Be(veiculo.Id);
             createdOrdem.Codigo.Should().NotBeNullOrWhiteSpace();
@@ -321,7 +321,7 @@ namespace Tests.Integration.OrdemServico
         public async Task Post_ComVeiculoInexistente_DeveRetornarStatus422()
         {
             // Arrange
-            var createDto = new CriarOrdemServicoDTO
+            var createDto = new CriarOrdemServicoDto
             {
                 VeiculoId = Guid.NewGuid() // Veículo que não existe
             };
@@ -342,7 +342,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Multi Test",
                 DocumentoIdentificador = "59918722010"
@@ -350,10 +350,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "MLT1234",
@@ -366,10 +366,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
-            var createDto1 = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
-            var createDto2 = new CriarOrdemServicoDTO { VeiculoId = veiculo.Id };
+            var createDto1 = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
+            var createDto2 = new CriarOrdemServicoDto { VeiculoId = veiculo.Id };
 
             // Act
             var response1 = await _client.PostAsJsonAsync("/api/ordens-servico", createDto1);
@@ -379,8 +379,8 @@ namespace Tests.Integration.OrdemServico
             response1.StatusCode.Should().Be(HttpStatusCode.Created);
             response2.StatusCode.Should().Be(HttpStatusCode.Created);
 
-            var ordem1 = await response1.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
-            var ordem2 = await response2.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem1 = await response1.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
+            var ordem2 = await response2.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             ordem1.Should().NotBeNull();
             ordem2.Should().NotBeNull();
@@ -407,7 +407,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente AddServicos Test",
                 DocumentoIdentificador = "90216912059"
@@ -415,10 +415,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "SRV1234",
@@ -431,10 +431,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Troca de Óleo Teste",
                 Preco = 80.00m
@@ -442,18 +442,18 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico para permitir adicionar serviços
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
@@ -464,7 +464,7 @@ namespace Tests.Integration.OrdemServico
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var resultado = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDTO>();
+            var resultado = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDto>();
             resultado.Should().NotBeNull();
             resultado!.ServicosIncluidos.Should().HaveCount(1);
             resultado.ServicosIncluidos.First().ServicoOriginalId.Should().Be(servico.Id);
@@ -484,7 +484,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             var ordemIdInexistente = Guid.NewGuid();
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { Guid.NewGuid() }
             };
@@ -502,7 +502,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Servico Inexistente",
                 DocumentoIdentificador = "91351688030"
@@ -510,10 +510,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "SIN1234",
@@ -526,18 +526,18 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { Guid.NewGuid() } // Serviço inexistente
             };
@@ -562,7 +562,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente AddItem Test",
                 DocumentoIdentificador = "92875848003"
@@ -570,10 +570,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "ITM1234",
@@ -586,10 +586,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar item de estoque de teste
-            var itemEstoqueDto = new CriarItemEstoqueDTO
+            var itemEstoqueDto = new CriarItemEstoqueDto
             {
                 Nome = "Filtro de Óleo Item Test",
                 Quantidade = 100,
@@ -599,18 +599,18 @@ namespace Tests.Integration.OrdemServico
 
             var itemResponse = await _client.PostAsJsonAsync("/api/estoque/itens", itemEstoqueDto);
             itemResponse.EnsureSuccessStatusCode();
-            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDTO>();
+            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico para permitir adicionar itens
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarItemDto = new AdicionarItemDTO
+            var adicionarItemDto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = itemEstoque!.Id,
                 Quantidade = 2
@@ -622,7 +622,7 @@ namespace Tests.Integration.OrdemServico
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var resultado = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDTO>();
+            var resultado = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDto>();
             resultado.Should().NotBeNull();
             resultado!.ItensIncluidos.Should().HaveCount(1);
             resultado.ItensIncluidos.First().ItemEstoqueOriginalId.Should().Be(itemEstoque.Id);
@@ -647,7 +647,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Increment Test",
                 DocumentoIdentificador = "63546196031"
@@ -655,10 +655,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "INC1234",
@@ -671,10 +671,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar item de estoque de teste
-            var itemEstoqueDto = new CriarItemEstoqueDTO
+            var itemEstoqueDto = new CriarItemEstoqueDto
             {
                 Nome = "Filtro Increment Test",
                 Quantidade = 100,
@@ -684,18 +684,18 @@ namespace Tests.Integration.OrdemServico
 
             var itemResponse = await _client.PostAsJsonAsync("/api/estoque/itens", itemEstoqueDto);
             itemResponse.EnsureSuccessStatusCode();
-            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDTO>();
+            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarItemDto = new AdicionarItemDTO
+            var adicionarItemDto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = itemEstoque!.Id,
                 Quantidade = 2
@@ -711,7 +711,7 @@ namespace Tests.Integration.OrdemServico
             // Assert
             secondResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var resultado = await secondResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDTO>();
+            var resultado = await secondResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDto>();
             resultado.Should().NotBeNull();
             resultado!.ItensIncluidos.Should().HaveCount(1); // Deve ter apenas 1 item, não 2
             resultado.ItensIncluidos.First().ItemEstoqueOriginalId.Should().Be(itemEstoque.Id);
@@ -732,7 +732,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             var ordemIdInexistente = Guid.NewGuid();
-            var adicionarItemDto = new AdicionarItemDTO
+            var adicionarItemDto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = Guid.NewGuid(),
                 Quantidade = 1
@@ -751,7 +751,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Item Inexistente",
                 DocumentoIdentificador = "53154657053"
@@ -759,10 +759,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "IIN1234",
@@ -775,18 +775,18 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarItemDto = new AdicionarItemDTO
+            var adicionarItemDto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = Guid.NewGuid(), // Item inexistente
                 Quantidade = 1
@@ -812,7 +812,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Remove Servico",
                 DocumentoIdentificador = "68297761045"
@@ -820,10 +820,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "RMS1234",
@@ -836,10 +836,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Serviço Remove Test",
                 Preco = 90.00m
@@ -847,25 +847,25 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico e adicionar serviço
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
 
             var addResponse = await _client.PostAsJsonAsync($"/api/ordens-servico/{ordem.Id}/servicos", adicionarServicosDto);
             addResponse.EnsureSuccessStatusCode();
-            var ordemComServico = await addResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDTO>();
+            var ordemComServico = await addResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDto>();
             var servicoIncluidoId = ordemComServico!.ServicosIncluidos.First().Id;
 
             // Act
@@ -906,7 +906,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Status Inválido",
                 DocumentoIdentificador = "08252118089"
@@ -914,10 +914,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "STS1234",
@@ -930,10 +930,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Serviço Status Test",
                 Preco = 100.00m
@@ -941,25 +941,25 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico e adicionar serviço
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
 
             var addResponse = await _client.PostAsJsonAsync($"/api/ordens-servico/{ordem.Id}/servicos", adicionarServicosDto);
             addResponse.EnsureSuccessStatusCode();
-            var ordemComServico = await addResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDTO>();
+            var ordemComServico = await addResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDto>();
             var servicoIncluidoId = ordemComServico!.ServicosIncluidos.First().Id;
 
             // Gerar orçamento para mudar o status para AguardandoAprovacao
@@ -985,7 +985,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Remove Item",
                 DocumentoIdentificador = "66466232018"
@@ -993,10 +993,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "RMI1234",
@@ -1009,10 +1009,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar item de estoque de teste
-            var itemEstoqueDto = new CriarItemEstoqueDTO
+            var itemEstoqueDto = new CriarItemEstoqueDto
             {
                 Nome = "Item Remove Test",
                 Quantidade = 100,
@@ -1022,18 +1022,18 @@ namespace Tests.Integration.OrdemServico
 
             var itemResponse = await _client.PostAsJsonAsync("/api/estoque/itens", itemEstoqueDto);
             itemResponse.EnsureSuccessStatusCode();
-            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDTO>();
+            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico e adicionar item
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarItemDto = new AdicionarItemDTO
+            var adicionarItemDto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = itemEstoque!.Id,
                 Quantidade = 1
@@ -1041,7 +1041,7 @@ namespace Tests.Integration.OrdemServico
 
             var addResponse = await _client.PostAsJsonAsync($"/api/ordens-servico/{ordem.Id}/itens", adicionarItemDto);
             addResponse.EnsureSuccessStatusCode();
-            var ordemComItem = await addResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDTO>();
+            var ordemComItem = await addResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDto>();
             var itemIncluidoId = ordemComItem!.ItensIncluidos.First().Id;
 
             // Act
@@ -1082,7 +1082,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Item Status Inválido",
                 DocumentoIdentificador = "07564613084"
@@ -1090,10 +1090,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "IST1234",
@@ -1106,10 +1106,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar item de estoque de teste
-            var itemEstoqueDto = new CriarItemEstoqueDTO
+            var itemEstoqueDto = new CriarItemEstoqueDto
             {
                 Nome = "Item Status Test",
                 Quantidade = 100,
@@ -1119,18 +1119,18 @@ namespace Tests.Integration.OrdemServico
 
             var itemResponse = await _client.PostAsJsonAsync("/api/estoque/itens", itemEstoqueDto);
             itemResponse.EnsureSuccessStatusCode();
-            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDTO>();
+            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico e adicionar item
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarItemDto = new AdicionarItemDTO
+            var adicionarItemDto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = itemEstoque!.Id,
                 Quantidade = 1
@@ -1138,7 +1138,7 @@ namespace Tests.Integration.OrdemServico
 
             var addResponse = await _client.PostAsJsonAsync($"/api/ordens-servico/{ordem.Id}/itens", adicionarItemDto);
             addResponse.EnsureSuccessStatusCode();
-            var ordemComItem = await addResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDTO>();
+            var ordemComItem = await addResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoComServicosItensDto>();
             var itemIncluidoId = ordemComItem!.ItensIncluidos.First().Id;
 
             // Gerar orçamento para mudar o status para AguardandoAprovacao
@@ -1164,7 +1164,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Cancelar Test",
                 DocumentoIdentificador = "97212050016"
@@ -1172,10 +1172,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "CAN1234",
@@ -1188,13 +1188,13 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Act
             var response = await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/cancelar", null);
@@ -1235,7 +1235,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Diagnostico Test",
                 DocumentoIdentificador = "61810280052"
@@ -1243,10 +1243,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "DIA1234",
@@ -1259,13 +1259,13 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Act
             var response = await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
@@ -1299,7 +1299,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Diagnostico Status Inválido",
                 DocumentoIdentificador = "45574376059"
@@ -1307,10 +1307,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "DSI1235",
@@ -1323,13 +1323,13 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Cancelar a ordem para deixá-la em status inválido
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/cancelar", null);
@@ -1354,7 +1354,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Orçamento Test",
                 DocumentoIdentificador = "00995435081"
@@ -1362,10 +1362,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "ORC1234",
@@ -1378,10 +1378,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Serviço Orçamento Test",
                 Preco = 120.00m
@@ -1389,18 +1389,18 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico e adicionar serviço
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
@@ -1413,7 +1413,7 @@ namespace Tests.Integration.OrdemServico
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-            var resultado = await response.Content.ReadFromJsonAsync<RetornoOrcamentoDTO>();
+            var resultado = await response.Content.ReadFromJsonAsync<RetornoOrcamentoDto>();
             resultado.Should().NotBeNull();
             resultado!.Preco.Should().BeGreaterThan(0);
 
@@ -1443,7 +1443,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Orçamento Status Inválido",
                 DocumentoIdentificador = "10703165046"
@@ -1451,10 +1451,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "OSI1234",
@@ -1467,13 +1467,13 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Act - Tentar gerar orçamento com ordem em status Recebida (sem serviços)
             var response = await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/orcamento", null);
@@ -1491,7 +1491,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Orçamento Existente",
                 DocumentoIdentificador = "01305624084"
@@ -1499,10 +1499,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "OEX1234",
@@ -1515,10 +1515,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Serviço Orçamento Existente",
                 Preco = 130.00m
@@ -1526,18 +1526,18 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico e adicionar serviço
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
@@ -1568,7 +1568,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Aprovar Orçamento",
                 DocumentoIdentificador = "33507068001"
@@ -1576,10 +1576,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "APR1234",
@@ -1592,10 +1592,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Serviço Aprovar Test",
                 Preco = 140.00m
@@ -1603,18 +1603,18 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico, adicionar serviço e gerar orçamento
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
@@ -1654,7 +1654,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Aprovar Status Inválido",
                 DocumentoIdentificador = "19345824090"
@@ -1662,10 +1662,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "ASI1234",
@@ -1678,13 +1678,13 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Act - Tentar aprovar orçamento em ordem sem orçamento (status Recebida)
             var response = await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/orcamento/aprovar", null);
@@ -1702,7 +1702,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Estoque Insuficiente",
                 DocumentoIdentificador = "71102408000"
@@ -1710,10 +1710,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "EST1234",
@@ -1726,7 +1726,7 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar item de estoque com quantidade limitada
             var itemEstoqueDto = new
@@ -1739,10 +1739,10 @@ namespace Tests.Integration.OrdemServico
 
             var itemResponse = await _client.PostAsJsonAsync("/api/estoque/itens", itemEstoqueDto);
             itemResponse.EnsureSuccessStatusCode();
-            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDTO>();
+            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Serviço Estoque Test",
                 Preco = 200.00m
@@ -1750,25 +1750,25 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico, adicionar serviço e item com quantidade maior que disponível
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
 
             await _client.PostAsJsonAsync($"/api/ordens-servico/{ordem.Id}/servicos", adicionarServicosDto);
 
-            var adicionarItemDto = new AdicionarItemDTO
+            var adicionarItemDto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = itemEstoque!.Id,
                 Quantidade = 5 // Maior que a quantidade disponível (1)
@@ -1793,7 +1793,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Atualizar Estoque",
                 DocumentoIdentificador = "66901151004"
@@ -1801,10 +1801,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "ATE1234",
@@ -1817,10 +1817,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar item de estoque com quantidade suficiente
-            var itemEstoqueDto = new CriarItemEstoqueDTO
+            var itemEstoqueDto = new CriarItemEstoqueDto
             {
                 Nome = "Item Atualizar Estoque",
                 Quantidade = 10,
@@ -1830,10 +1830,10 @@ namespace Tests.Integration.OrdemServico
 
             var itemResponse = await _client.PostAsJsonAsync("/api/estoque/itens", itemEstoqueDto);
             itemResponse.EnsureSuccessStatusCode();
-            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDTO>();
+            var itemEstoque = await itemResponse.Content.ReadFromJsonAsync<RetornoItemEstoqueDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Serviço Atualizar Estoque",
                 Preco = 250.00m
@@ -1841,18 +1841,18 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico, adicionar serviço e item
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
@@ -1860,7 +1860,7 @@ namespace Tests.Integration.OrdemServico
             await _client.PostAsJsonAsync($"/api/ordens-servico/{ordem.Id}/servicos", adicionarServicosDto);
 
             var quantidadeUtilizada = 3;
-            var adicionarItemDto = new AdicionarItemDTO
+            var adicionarItemDto = new AdicionarItemDto
             {
                 ItemEstoqueOriginalId = itemEstoque!.Id,
                 Quantidade = quantidadeUtilizada
@@ -1901,7 +1901,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Desaprovar Orçamento",
                 DocumentoIdentificador = "99591675003"
@@ -1909,10 +1909,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "DES1234",
@@ -1925,10 +1925,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Serviço Desaprovar Test",
                 Preco = 150.00m
@@ -1936,18 +1936,18 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Iniciar diagnóstico, adicionar serviço e gerar orçamento
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
@@ -1987,7 +1987,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Desaprovar Status Inválido",
                 DocumentoIdentificador = "02686881097"
@@ -1995,10 +1995,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "DSI1234",
@@ -2011,13 +2011,13 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Act - Tentar desaprovar orçamento em ordem sem orçamento (status Recebida)
             var response = await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/orcamento/desaprovar", null);
@@ -2039,7 +2039,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Finalizar Execução",
                 DocumentoIdentificador = "37152507040"
@@ -2047,10 +2047,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "FIN1234",
@@ -2063,10 +2063,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Serviço Finalizar Test",
                 Preco = 160.00m
@@ -2074,18 +2074,18 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Fluxo completo: diagnóstico -> serviço -> orçamento -> aprovar
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
@@ -2126,7 +2126,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Finalizar Status Inválido",
                 DocumentoIdentificador = "22311077082"
@@ -2134,10 +2134,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "FSI1234",
@@ -2150,13 +2150,13 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Act - Tentar finalizar execução em ordem sem estar em execução (status Recebida)
             var response = await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/finalizar-execucao", null);
@@ -2178,7 +2178,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Entregar",
                 DocumentoIdentificador = "69876716050"
@@ -2186,10 +2186,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "ENT1234",
@@ -2202,10 +2202,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Serviço Entregar Test",
                 Preco = 170.00m
@@ -2213,18 +2213,18 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Fluxo completo: diagnóstico -> serviço -> orçamento -> aprovar -> finalizar
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
@@ -2266,7 +2266,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Entregar Status Inválido",
                 DocumentoIdentificador = "42255228068"
@@ -2274,10 +2274,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "ESI1234",
@@ -2290,13 +2290,13 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Act - Tentar entregar ordem sem estar finalizada (status Recebida)
             var response = await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/entregar", null);
@@ -2318,7 +2318,7 @@ namespace Tests.Integration.OrdemServico
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Tempo Médio",
                 DocumentoIdentificador = "47403229002"
@@ -2326,10 +2326,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "TMP1234",
@@ -2342,10 +2342,10 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar serviço de teste
-            var servicoDto = new CriarServicoDTO
+            var servicoDto = new CriarServicoDto
             {
                 Nome = "Serviço Tempo Médio",
                 Preco = 300.00m
@@ -2353,18 +2353,18 @@ namespace Tests.Integration.OrdemServico
 
             var servicoResponse = await _client.PostAsJsonAsync("/api/cadastros/servicos", servicoDto);
             servicoResponse.EnsureSuccessStatusCode();
-            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await servicoResponse.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Criar e completar uma ordem de serviço para ter dados no cálculo
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
             // Completar fluxo da ordem de serviço
             await _client.PostAsync($"/api/ordens-servico/{ordem!.Id}/iniciar-diagnostico", null);
 
-            var adicionarServicosDto = new AdicionarServicosDTO
+            var adicionarServicosDto = new AdicionarServicosDto
             {
                 ServicosOriginaisIds = new List<Guid> { servico!.Id }
             };
@@ -2383,7 +2383,7 @@ namespace Tests.Integration.OrdemServico
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var resultado = await response.Content.ReadFromJsonAsync<RetornoTempoMedioDTO>();
+            var resultado = await response.Content.ReadFromJsonAsync<RetornoTempoMedioDto>();
             resultado.Should().NotBeNull();
             resultado!.QuantidadeDias.Should().Be(quantidadeDias);
             resultado.QuantidadeOrdensAnalisadas.Should().BeGreaterThanOrEqualTo(1);
@@ -2454,7 +2454,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Busca Pública",
                 DocumentoIdentificador = "56838566044"
@@ -2462,10 +2462,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "BUS1234",
@@ -2478,15 +2478,15 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
-            var buscaDto = new BuscaPublicaOrdemServicoDTO
+            var buscaDto = new BuscaPublicaOrdemServicoDto
             {
                 CodigoOrdemServico = ordem!.Codigo,
                 DocumentoIdentificadorCliente = cliente.DocumentoIdentificador
@@ -2498,7 +2498,7 @@ namespace Tests.Integration.OrdemServico
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var resultado = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoCompletaDTO>();
+            var resultado = await response.Content.ReadFromJsonAsync<RetornoOrdemServicoCompletaDto>();
             resultado.Should().NotBeNull();
             resultado!.Id.Should().Be(ordem.Id);
             resultado.Codigo.Should().Be(ordem.Codigo);
@@ -2509,7 +2509,7 @@ namespace Tests.Integration.OrdemServico
         public async Task BuscaPublica_ComOrdemInexistente_DeveRetornarStatus200()
         {
             // Arrange
-            var buscaDto = new BuscaPublicaOrdemServicoDTO
+            var buscaDto = new BuscaPublicaOrdemServicoDto
             {
                 CodigoOrdemServico = "OS-INEXISTENTE-123",
                 DocumentoIdentificadorCliente = "99999999999"
@@ -2531,7 +2531,7 @@ namespace Tests.Integration.OrdemServico
         {
             // Arrange
             // Criar cliente de teste
-            var clienteDto = new CriarClienteDTO
+            var clienteDto = new CriarClienteDto
             {
                 Nome = "Cliente Para Codigo",
                 DocumentoIdentificador = "31944036059"
@@ -2539,10 +2539,10 @@ namespace Tests.Integration.OrdemServico
 
             var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
             clienteResponse.EnsureSuccessStatusCode();
-            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Criar veículo de teste
-            var veiculoDto = new CriarVeiculoDTO
+            var veiculoDto = new CriarVeiculoDto
             {
                 ClienteId = cliente!.Id,
                 Placa = "CLI1234",
@@ -2555,15 +2555,15 @@ namespace Tests.Integration.OrdemServico
 
             var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
             veiculoResponse.EnsureSuccessStatusCode();
-            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Criar ordem de serviço
-            var ordemDto = new CriarOrdemServicoDTO { VeiculoId = veiculo!.Id };
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
             var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
             ordemResponse.EnsureSuccessStatusCode();
-            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDTO>();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
-            var buscaDto = new BuscaPublicaOrdemServicoDTO
+            var buscaDto = new BuscaPublicaOrdemServicoDto
             {
                 CodigoOrdemServico = ordem!.Codigo,
                 DocumentoIdentificadorCliente = "88888888888" // Cliente inexistente
@@ -2584,7 +2584,7 @@ namespace Tests.Integration.OrdemServico
         public async Task BuscaPublica_ComDadosInvalidos_DeveRetornarStatus200()
         {
             // Arrange
-            var buscaDto = new BuscaPublicaOrdemServicoDTO
+            var buscaDto = new BuscaPublicaOrdemServicoDto
             {
                 CodigoOrdemServico = "",
                 DocumentoIdentificadorCliente = ""

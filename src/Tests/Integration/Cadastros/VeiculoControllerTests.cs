@@ -1,4 +1,4 @@
-using Application.Cadastros.DTO;
+using Application.Cadastros.Dtos;
 using Domain.Cadastros.Enums;
 using FluentAssertions;
 using Infrastructure.Database;
@@ -173,7 +173,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync("/api/cadastros/veiculos");
-            var veiculos = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoVeiculoDTO>>();
+            var veiculos = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoVeiculoDto>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -195,7 +195,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync("/api/cadastros/veiculos");
-            var veiculos = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoVeiculoDTO>>();
+            var veiculos = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoVeiculoDto>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -239,7 +239,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync($"/api/cadastros/veiculos/{veiculoCriado!.Id}");
-            var veiculo = await response.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await response.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -300,7 +300,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync($"/api/cadastros/veiculos/placa/GPL0001");
-            var veiculo = await response.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await response.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -450,7 +450,7 @@ namespace Tests.Integration.Cadastros
 
             // Act - Tentar encontrar com placa em lowercase
             var response = await _client.GetAsync($"/api/cadastros/veiculos/placa/ghi9012");
-            var veiculo = await response.Content.ReadFromJsonAsync<RetornoVeiculoDTO>();
+            var veiculo = await response.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -502,7 +502,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync($"/api/cadastros/veiculos/cliente/{clienteCriado.Id}");
-            var veiculos = await response.Content.ReadFromJsonAsync<List<RetornoVeiculoDTO>>();
+            var veiculos = await response.Content.ReadFromJsonAsync<List<RetornoVeiculoDto>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -531,7 +531,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync($"/api/cadastros/veiculos/cliente/{clienteCriado!.Id}");
-            var veiculos = await response.Content.ReadFromJsonAsync<List<RetornoVeiculoDTO>>();
+            var veiculos = await response.Content.ReadFromJsonAsync<List<RetornoVeiculoDto>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);

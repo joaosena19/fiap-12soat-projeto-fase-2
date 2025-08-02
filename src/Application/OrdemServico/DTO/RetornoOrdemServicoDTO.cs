@@ -1,9 +1,9 @@
-namespace Application.OrdemServico.DTO
+namespace Application.OrdemServico.Dtos
 {
     /// <summary>
     /// DTO para retorno básico de ordem de serviço (sem serviços, itens e orçamento)
     /// </summary>
-    public class RetornoOrdemServicoDTO
+    public class RetornoOrdemServicoDto
     {
         public Guid Id { get; set; } = Guid.Empty;
 

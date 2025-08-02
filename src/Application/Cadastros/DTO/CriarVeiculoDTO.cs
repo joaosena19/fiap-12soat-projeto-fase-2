@@ -1,12 +1,11 @@
 using Domain.Cadastros.Enums;
-using System.Text.Json.Serialization;
 
-namespace Application.Cadastros.DTO
+namespace Application.Cadastros.Dtos
 {
     /// <summary>
     /// DTO para criação de veículo
     /// </summary>
-    public class CriarVeiculoDTO
+    public class CriarVeiculoDto
     {
         /// <summary>
         /// Id do cliente proprietário do veículo

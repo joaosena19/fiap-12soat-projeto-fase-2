@@ -1,4 +1,4 @@
-using API.DTO;
+using API.Dtos;
 using API.Extensions;
 using Shared.Exceptions;
 using System.Net;
@@ -36,20 +36,20 @@ namespace API.Middleware
         {
             context.Response.ContentType = "application/json";
 
-            ErrorResponseDTO response;
+            ErrorResponseDto response;
 
             switch (exception)
             {
                 case DomainException domainEx:
                     _logger.LogWarning(domainEx, "Domain exception occurred: {Message}", domainEx.Message);
                     var httpStatusCode = domainEx.ErrorType.ToHttpStatusCode();
-                    response = new ErrorResponseDTO(domainEx.Message, (int)httpStatusCode);
+                    response = new ErrorResponseDto(domainEx.Message, (int)httpStatusCode);
                     context.Response.StatusCode = (int)httpStatusCode;
                     break;
 
                 default:
                     _logger.LogError(exception, "An unexpected error occurred: {Message}", exception.Message);
-                    response = new ErrorResponseDTO("Ocorreu um erro interno no servidor.", (int)HttpStatusCode.InternalServerError);
+                    response = new ErrorResponseDto("Ocorreu um erro interno no servidor.", (int)HttpStatusCode.InternalServerError);
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     break;
             }

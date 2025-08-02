@@ -1,9 +1,9 @@
-namespace API.DTO
+namespace API.Dtos
 {
     /// <summary>
     /// DTO para respostas de erro padronizadas da API
     /// </summary>
-    public class ErrorResponseDTO
+    public class ErrorResponseDto
     {
         /// <summary>
         /// Mensagem de erro
@@ -22,7 +22,7 @@ namespace API.DTO
         /// </summary>
         /// <param name="message">Mensagem de erro</param>
         /// <param name="statusCode">Código de status HTTP</param>
-        public ErrorResponseDTO(string message, int statusCode)
+        public ErrorResponseDto(string message, int statusCode)
         {
             Message = message;
             StatusCode = statusCode;

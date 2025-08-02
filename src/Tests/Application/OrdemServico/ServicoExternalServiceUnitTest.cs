@@ -1,5 +1,5 @@
 using Application.Cadastros.Interfaces;
-using Application.OrdemServico.DTO.External;
+using Application.OrdemServico.Dtos.External;
 using Domain.Cadastros.Aggregates;
 using FluentAssertions;
 using Infrastructure.AntiCorruptionLayer.OrdemServico;
@@ -84,7 +84,7 @@ namespace Tests.Application.OrdemServico
 
             // Assert
             resultado.Should().NotBeNull();
-            resultado.Should().BeOfType<ServicoExternalDTO>();
+            resultado.Should().BeOfType<ServicoExternalDto>();
             resultado!.Id.Should().Be(servico.Id);
             resultado.Nome.Should().Be(servico.Nome.Valor);
             resultado.Preco.Should().Be(servico.Preco.Valor);

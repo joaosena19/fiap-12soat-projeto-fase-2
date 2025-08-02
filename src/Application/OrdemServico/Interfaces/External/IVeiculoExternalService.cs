@@ -1,4 +1,4 @@
-using Application.OrdemServico.DTO.External;
+using Application.OrdemServico.Dtos.External;
 
 namespace Application.OrdemServico.Interfaces.External
 {

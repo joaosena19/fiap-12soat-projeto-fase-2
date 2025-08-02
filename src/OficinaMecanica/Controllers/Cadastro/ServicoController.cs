@@ -1,5 +1,5 @@
-using API.DTO;
-using Application.Cadastros.DTO;
+using API.Dtos;
+using Application.Cadastros.Dtos;
 using Application.Cadastros.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,8 +27,8 @@ namespace API.Controllers.Cadastro
         /// <response code="200">Lista de serviços retornada com sucesso</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<RetornoServicoDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(IEnumerable<RetornoServicoDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
             var result = await _servicoService.Buscar();
@@ -44,9 +44,9 @@ namespace API.Controllers.Cadastro
         /// <response code="404">Serviço não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(RetornoServicoDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(RetornoServicoDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _servicoService.BuscarPorId(id);
@@ -63,11 +63,11 @@ namespace API.Controllers.Cadastro
         /// <response code="409">Conflito - Serviço já existe</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost]
-        [ProducesResponseType(typeof(RetornoServicoDTO), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status409Conflict)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] CriarServicoDTO dto)
+        [ProducesResponseType(typeof(RetornoServicoDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Post([FromBody] CriarServicoDto dto)
         {
             var result = await _servicoService.CriarServico(dto.Nome, dto.Preco);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
@@ -84,11 +84,11 @@ namespace API.Controllers.Cadastro
         /// <response code="404">Serviço não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(RetornoServicoDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarServicoDTO dto)
+        [ProducesResponseType(typeof(RetornoServicoDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarServicoDto dto)
         {
             var result = await _servicoService.AtualizarServico(id, dto.Nome, dto.Preco);
             return Ok(result);

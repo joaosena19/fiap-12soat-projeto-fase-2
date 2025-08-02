@@ -1,5 +1,5 @@
 using AutoMapper;
-using Application.Cadastros.DTO;
+using Application.Cadastros.Dtos;
 using Domain.Cadastros.Aggregates;
 
 namespace Application.Cadastros.Mappings
@@ -8,7 +8,7 @@ namespace Application.Cadastros.Mappings
     {
         public VeiculoProfile()
         {
-            CreateMap<Veiculo, RetornoVeiculoDTO>()
+            CreateMap<Veiculo, RetornoVeiculoDto>()
                 .ForMember(dest => dest.Placa, opt => opt.MapFrom(src => src.Placa.Valor))
                 .ForMember(dest => dest.Modelo, opt => opt.MapFrom(src => src.Modelo.Valor))
                 .ForMember(dest => dest.Marca, opt => opt.MapFrom(src => src.Marca.Valor))
@@ -16,7 +16,7 @@ namespace Application.Cadastros.Mappings
                 .ForMember(dest => dest.Ano, opt => opt.MapFrom(src => src.Ano.Valor))
                 .ForMember(dest => dest.TipoVeiculo, opt => opt.MapFrom(src => src.TipoVeiculo.Valor));
 
-            CreateMap<CriarVeiculoDTO, Veiculo>()
+            CreateMap<CriarVeiculoDto, Veiculo>()
                 .ConstructUsing(src => Veiculo.Criar(src.ClienteId, src.Placa, src.Modelo, src.Marca, src.Cor, src.Ano, src.TipoVeiculo));
 
             // Note: For update operations, we'll use domain methods directly

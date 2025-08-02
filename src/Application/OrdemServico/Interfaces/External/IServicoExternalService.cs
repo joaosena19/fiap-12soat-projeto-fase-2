@@ -1,4 +1,4 @@
-using Application.OrdemServico.DTO.External;
+using Application.OrdemServico.Dtos.External;
 
 namespace Application.OrdemServico.Interfaces.External
 {
@@ -7,6 +7,6 @@ namespace Application.OrdemServico.Interfaces.External
     /// </summary>
     public interface IServicoExternalService
     {
-        Task<ServicoExternalDTO?> ObterServicoPorIdAsync(Guid servicoId);
+        Task<ServicoExternalDto?> ObterServicoPorIdAsync(Guid servicoId);
     }
 }

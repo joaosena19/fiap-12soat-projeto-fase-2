@@ -1,4 +1,4 @@
-using Application.Cadastros.DTO;
+using Application.Cadastros.Dtos;
 using Domain.Cadastros.Enums;
 using FluentAssertions;
 using Infrastructure.Database;
@@ -87,7 +87,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync("/api/cadastros/clientes");
-            var clientes = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoClienteDTO>>();
+            var clientes = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoClienteDto>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -109,7 +109,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync("/api/cadastros/clientes");
-            var clientes = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoClienteDTO>>();
+            var clientes = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoClienteDto>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -136,7 +136,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync($"/api/cadastros/clientes/{clienteCriado!.Id}");
-            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -180,7 +180,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync($"/api/cadastros/clientes/documento/34806653063");
-            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -226,7 +226,7 @@ namespace Tests.Integration.Cadastros
             var cnpjFormatado = Uri.EscapeDataString("03.984.051/0001-93");
             var response = await _client.GetAsync($"/api/cadastros/clientes/documento/{cnpjFormatado}");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -258,7 +258,7 @@ namespace Tests.Integration.Cadastros
             var cnpjSemFormatacao = "38689954000126";
             var response = await _client.GetAsync($"/api/cadastros/clientes/documento/{cnpjSemFormatacao}");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -290,7 +290,7 @@ namespace Tests.Integration.Cadastros
             var cpfFormatado = "797.050.260-17";
             var response = await _client.GetAsync($"/api/cadastros/clientes/documento/{cpfFormatado}");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -322,7 +322,7 @@ namespace Tests.Integration.Cadastros
             var cpfSemFormatacao = "32744285072";
             var response = await _client.GetAsync($"/api/cadastros/clientes/documento/{cpfSemFormatacao}");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDTO>();
+            var cliente = await response.Content.ReadFromJsonAsync<RetornoClienteDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);

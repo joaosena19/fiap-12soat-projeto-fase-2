@@ -1,9 +1,9 @@
-namespace Application.Estoque.DTO
+namespace Application.Estoque.Dtos
 {
     /// <summary>
     /// DTO para atualização de quantidade do item de estoque
     /// </summary>
-    public class AtualizarQuantidadeDTO
+    public class AtualizarQuantidadeDto
     {
 
         /// <summary>

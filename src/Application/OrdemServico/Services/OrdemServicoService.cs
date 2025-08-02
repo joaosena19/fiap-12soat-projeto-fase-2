@@ -1,4 +1,4 @@
-using Application.OrdemServico.DTO;
+using Application.OrdemServico.Dtos;
 using Application.OrdemServico.Interfaces;
 using Application.OrdemServico.Interfaces.External;
 using AutoMapper;
@@ -32,31 +32,31 @@ namespace Application.OrdemServico.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<RetornoOrdemServicoCompletaDTO>> Buscar()
+        public async Task<IEnumerable<RetornoOrdemServicoCompletaDto>> Buscar()
         {
             var ordensServico = await _ordemServicoRepository.ObterTodosAsync();
-            return _mapper.Map<IEnumerable<RetornoOrdemServicoCompletaDTO>>(ordensServico);
+            return _mapper.Map<IEnumerable<RetornoOrdemServicoCompletaDto>>(ordensServico);
         }
 
-        public async Task<RetornoOrdemServicoCompletaDTO> BuscarPorId(Guid id)
+        public async Task<RetornoOrdemServicoCompletaDto> BuscarPorId(Guid id)
         {
             var ordemServico = await _ordemServicoRepository.ObterPorIdAsync(id);
             if (ordemServico == null)
                 throw new DomainException("Ordem de serviço não encontrada.", ErrorType.ResourceNotFound);
 
-            return _mapper.Map<RetornoOrdemServicoCompletaDTO>(ordemServico);
+            return _mapper.Map<RetornoOrdemServicoCompletaDto>(ordemServico);
         }
 
-        public async Task<RetornoOrdemServicoCompletaDTO> BuscarPorCodigo(string codigo)
+        public async Task<RetornoOrdemServicoCompletaDto> BuscarPorCodigo(string codigo)
         {
             var ordemServico = await _ordemServicoRepository.ObterPorCodigoAsync(codigo);
             if (ordemServico == null)
                 throw new DomainException("Ordem de serviço não encontrada.", ErrorType.ResourceNotFound);
 
-            return _mapper.Map<RetornoOrdemServicoCompletaDTO>(ordemServico);
+            return _mapper.Map<RetornoOrdemServicoCompletaDto>(ordemServico);
         }
 
-        public async Task<RetornoOrdemServicoDTO> CriarOrdemServico(CriarOrdemServicoDTO dto)
+        public async Task<RetornoOrdemServicoDto> CriarOrdemServico(CriarOrdemServicoDto dto)
         {
             var veiculoExiste = await _veiculoExternalService.VerificarExistenciaVeiculo(dto.VeiculoId);
             if (!veiculoExiste)
@@ -73,10 +73,10 @@ namespace Application.OrdemServico.Services
             } while (ordemServicoExistente != null);
 
             var result = await _ordemServicoRepository.SalvarAsync(novaOrdemServico);
-            return _mapper.Map<RetornoOrdemServicoDTO>(result);
+            return _mapper.Map<RetornoOrdemServicoDto>(result);
         }
 
-        public async Task<RetornoOrdemServicoComServicosItensDTO> AdicionarServicos(Guid ordemServicoId, AdicionarServicosDTO dto)
+        public async Task<RetornoOrdemServicoComServicosItensDto> AdicionarServicos(Guid ordemServicoId, AdicionarServicosDto dto)
         {
             if (dto.ServicosOriginaisIds is null || dto.ServicosOriginaisIds.Count == 0)
                 throw new DomainException($"É necessário informar ao menos um serviço para adiciona na Ordem de Serviço", ErrorType.InvalidInput);
@@ -93,10 +93,10 @@ namespace Application.OrdemServico.Services
             }
 
             var result = await _ordemServicoRepository.AtualizarAsync(ordemServico);
-            return _mapper.Map<RetornoOrdemServicoComServicosItensDTO>(result);
+            return _mapper.Map<RetornoOrdemServicoComServicosItensDto>(result);
         }
 
-        public async Task<RetornoOrdemServicoComServicosItensDTO> AdicionarItem(Guid ordemServicoId, AdicionarItemDTO dto)
+        public async Task<RetornoOrdemServicoComServicosItensDto> AdicionarItem(Guid ordemServicoId, AdicionarItemDto dto)
         {
             var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
 
@@ -112,7 +112,7 @@ namespace Application.OrdemServico.Services
                 itemEstoque.TipoItemIncluido);
 
             var result = await _ordemServicoRepository.AtualizarAsync(ordemServico);
-            return _mapper.Map<RetornoOrdemServicoComServicosItensDTO>(result);
+            return _mapper.Map<RetornoOrdemServicoComServicosItensDto>(result);
         }
 
         public async Task RemoverServico(Guid ordemServicoId, Guid servicoIncluidoId)
@@ -147,13 +147,13 @@ namespace Application.OrdemServico.Services
             await _ordemServicoRepository.AtualizarAsync(ordemServico);
         }
 
-        public async Task<RetornoOrcamentoDTO> GerarOrcamento(Guid ordemServicoId)
+        public async Task<RetornoOrcamentoDto> GerarOrcamento(Guid ordemServicoId)
         {
             var ordemServico = await ObterOrdemServicoPorId(ordemServicoId);
             ordemServico.GerarOrcamento();
 
             var result = await _ordemServicoRepository.AtualizarAsync(ordemServico);
-            return _mapper.Map<RetornoOrcamentoDTO>(result.Orcamento);
+            return _mapper.Map<RetornoOrcamentoDto>(result.Orcamento);
         }
 
         public async Task AprovarOrcamento(Guid ordemServicoId)
@@ -212,7 +212,7 @@ namespace Application.OrdemServico.Services
             await _ordemServicoRepository.AtualizarAsync(ordemServico);
         }
 
-        public async Task<RetornoTempoMedioDTO> ObterTempoMedio(int quantidadeDias = 365)
+        public async Task<RetornoTempoMedioDto> ObterTempoMedio(int quantidadeDias = 365)
         {
             if (quantidadeDias < 1 || quantidadeDias > 365)
                 throw new DomainException("A quantidade de dias deve estar entre 1 e 365.", ErrorType.InvalidInput);
@@ -239,7 +239,7 @@ namespace Application.OrdemServico.Services
             var duracaoMediaExecucao = new TimeSpan((long)mediaExecucaoTicks);
             var tempoMedioExecucaoHoras = Math.Round(duracaoMediaExecucao.TotalHours, 2);
 
-            return new RetornoTempoMedioDTO
+            return new RetornoTempoMedioDto
             {
                 QuantidadeDias = quantidadeDias,
                 DataInicio = DateTime.UtcNow.AddDays(-quantidadeDias),
@@ -250,7 +250,7 @@ namespace Application.OrdemServico.Services
             };
         }
 
-        public async Task<RetornoOrdemServicoCompletaDTO?> BuscaPublica(BuscaPublicaOrdemServicoDTO dto)
+        public async Task<RetornoOrdemServicoCompletaDto?> BuscaPublica(BuscaPublicaOrdemServicoDto dto)
         {
             try
             {
@@ -266,7 +266,7 @@ namespace Application.OrdemServico.Services
                 if (cliente.DocumentoIdentificador != dto.DocumentoIdentificadorCliente)
                     return null; // Sempre retorna null para não revelar informações
 
-                return _mapper.Map<RetornoOrdemServicoCompletaDTO>(ordemServico);
+                return _mapper.Map<RetornoOrdemServicoCompletaDto>(ordemServico);
             }
             catch
             {

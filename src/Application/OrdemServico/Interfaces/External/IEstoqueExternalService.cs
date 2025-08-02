@@ -1,4 +1,4 @@
-using Application.OrdemServico.DTO.External;
+using Application.OrdemServico.Dtos.External;
 using Domain.OrdemServico.Enums;
 
 namespace Application.OrdemServico.Interfaces.External
@@ -8,7 +8,7 @@ namespace Application.OrdemServico.Interfaces.External
     /// </summary>
     public interface IEstoqueExternalService
     {
-        Task<ItemEstoqueExternalDTO?> ObterItemEstoquePorIdAsync(Guid itemId);
+        Task<ItemEstoqueExternalDto?> ObterItemEstoquePorIdAsync(Guid itemId);
         Task<bool> VerificarDisponibilidadeAsync(Guid itemId, int quantidadeNecessaria);
         Task AtualizarQuantidadeEstoqueAsync(Guid itemId, int novaQuantidade);
     }

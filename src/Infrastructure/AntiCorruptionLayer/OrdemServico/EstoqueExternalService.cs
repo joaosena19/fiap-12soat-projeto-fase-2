@@ -1,5 +1,5 @@
 using Application.Estoque.Interfaces;
-using Application.OrdemServico.DTO.External;
+using Application.OrdemServico.Dtos.External;
 using Application.OrdemServico.Interfaces.External;
 using Domain.Estoque.Enums;
 using Domain.OrdemServico.Enums;
@@ -20,14 +20,14 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
             _itemEstoqueRepository = itemEstoqueRepository;
         }
 
-        public async Task<ItemEstoqueExternalDTO?> ObterItemEstoquePorIdAsync(Guid itemId)
+        public async Task<ItemEstoqueExternalDto?> ObterItemEstoquePorIdAsync(Guid itemId)
         {
             var item = await _itemEstoqueRepository.ObterPorIdAsync(itemId);
             
             if (item == null)
                 return null;
 
-            return new ItemEstoqueExternalDTO
+            return new ItemEstoqueExternalDto
             {
                 Id = item.Id,
                 Nome = item.Nome.Valor,

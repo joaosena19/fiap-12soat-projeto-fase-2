@@ -1,9 +1,9 @@
-namespace Application.OrdemServico.DTO
+namespace Application.OrdemServico.Dtos
 {
     /// <summary>
     /// DTO para adicionar item à ordem de serviço
     /// </summary>
-    public class AdicionarItemDTO
+    public class AdicionarItemDto
     {
         /// <summary>
         /// ID do item de estoque

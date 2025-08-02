@@ -1,9 +1,9 @@
-namespace Application.OrdemServico.DTO
+namespace Application.OrdemServico.Dtos
 {
     /// <summary>
     /// DTO para adicionar serviços à ordem de serviço
     /// </summary>
-    public class AdicionarServicosDTO
+    public class AdicionarServicosDto
     {
         /// <summary>
         /// Lista de IDs dos serviços a serem adicionados

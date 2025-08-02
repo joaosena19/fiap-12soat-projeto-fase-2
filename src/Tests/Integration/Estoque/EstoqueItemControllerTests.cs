@@ -1,4 +1,4 @@
-using Application.Estoque.DTO;
+using Application.Estoque.Dtos;
 using Domain.Estoque.Enums;
 using FluentAssertions;
 using Infrastructure.Database;
@@ -164,7 +164,7 @@ namespace Tests.Integration.Estoque
 
             // Act
             var response = await _client.GetAsync("/api/estoque/itens");
-            var itens = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoItemEstoqueDTO>>();
+            var itens = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoItemEstoqueDto>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -190,7 +190,7 @@ namespace Tests.Integration.Estoque
 
             // Act
             var response = await _client.GetAsync("/api/estoque/itens");
-            var itens = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoItemEstoqueDTO>>();
+            var itens = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoItemEstoqueDto>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -222,7 +222,7 @@ namespace Tests.Integration.Estoque
 
             // Act
             var response = await _client.GetAsync($"/api/estoque/itens/{itemCriado!.Id}");
-            var item = await response.Content.ReadFromJsonAsync<RetornoItemEstoqueDTO>();
+            var item = await response.Content.ReadFromJsonAsync<RetornoItemEstoqueDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -273,7 +273,7 @@ namespace Tests.Integration.Estoque
 
             // Act
             var response = await _client.GetAsync($"/api/estoque/itens/{itemCriado!.Id}/disponibilidade?quantidadeRequisitada={quantidadeRequisitada}");
-            var disponibilidade = await response.Content.ReadFromJsonAsync<RetornoDisponibilidadeDTO>();
+            var disponibilidade = await response.Content.ReadFromJsonAsync<RetornoDisponibilidadeDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -308,7 +308,7 @@ namespace Tests.Integration.Estoque
 
             // Act
             var response = await _client.GetAsync($"/api/estoque/itens/{itemCriado!.Id}/disponibilidade?quantidadeRequisitada={quantidadeRequisitada}");
-            var disponibilidade = await response.Content.ReadFromJsonAsync<RetornoDisponibilidadeDTO>();
+            var disponibilidade = await response.Content.ReadFromJsonAsync<RetornoDisponibilidadeDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);

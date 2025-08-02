@@ -1,4 +1,4 @@
-using Application.Estoque.DTO;
+using Application.Estoque.Dtos;
 using Application.Estoque.Interfaces;
 using AutoMapper;
 using Domain.Estoque.Aggregates;
@@ -18,7 +18,7 @@ namespace Application.Estoque.Services
             _mapper = mapper;
         }
 
-        public async Task<RetornoItemEstoqueDTO> CriarItemEstoque(CriarItemEstoqueDTO dto)
+        public async Task<RetornoItemEstoqueDto> CriarItemEstoque(CriarItemEstoqueDto dto)
         {
             var itemExistente = await _itemEstoqueRepository.ObterPorNomeAsync(dto.Nome);
             if (itemExistente != null)
@@ -27,10 +27,10 @@ namespace Application.Estoque.Services
             var novoItemEstoque = ItemEstoque.Criar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco);
             var result = await _itemEstoqueRepository.SalvarAsync(novoItemEstoque);
 
-            return _mapper.Map<RetornoItemEstoqueDTO>(result);
+            return _mapper.Map<RetornoItemEstoqueDto>(result);
         }
 
-        public async Task<RetornoItemEstoqueDTO> AtualizarItemEstoque(Guid id, AtualizarItemEstoqueDTO dto)
+        public async Task<RetornoItemEstoqueDto> AtualizarItemEstoque(Guid id, AtualizarItemEstoqueDto dto)
         {
             var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
             if (itemEstoque == null)
@@ -39,10 +39,10 @@ namespace Application.Estoque.Services
             itemEstoque.Atualizar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco);
             var result = await _itemEstoqueRepository.AtualizarAsync(itemEstoque);
 
-            return _mapper.Map<RetornoItemEstoqueDTO>(result);
+            return _mapper.Map<RetornoItemEstoqueDto>(result);
         }
 
-        public async Task<RetornoItemEstoqueDTO> AtualizarQuantidade(Guid id, AtualizarQuantidadeDTO dto)
+        public async Task<RetornoItemEstoqueDto> AtualizarQuantidade(Guid id, AtualizarQuantidadeDto dto)
         {
             var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
             if (itemEstoque == null)
@@ -51,25 +51,25 @@ namespace Application.Estoque.Services
             itemEstoque.AtualizarQuantidade(dto.Quantidade);
             var result = await _itemEstoqueRepository.AtualizarAsync(itemEstoque);
 
-            return _mapper.Map<RetornoItemEstoqueDTO>(result);
+            return _mapper.Map<RetornoItemEstoqueDto>(result);
         }
 
-        public async Task<IEnumerable<RetornoItemEstoqueDTO>> Buscar()
+        public async Task<IEnumerable<RetornoItemEstoqueDto>> Buscar()
         {
             var itensEstoque = await _itemEstoqueRepository.ObterTodosAsync();
-            return _mapper.Map<IEnumerable<RetornoItemEstoqueDTO>>(itensEstoque);
+            return _mapper.Map<IEnumerable<RetornoItemEstoqueDto>>(itensEstoque);
         }
 
-        public async Task<RetornoItemEstoqueDTO> BuscarPorId(Guid id)
+        public async Task<RetornoItemEstoqueDto> BuscarPorId(Guid id)
         {
             var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
             if (itemEstoque == null)
                 throw new DomainException("Item de estoque não encontrado.", ErrorType.ResourceNotFound);
 
-            return _mapper.Map<RetornoItemEstoqueDTO>(itemEstoque);
+            return _mapper.Map<RetornoItemEstoqueDto>(itemEstoque);
         }
 
-        public async Task<RetornoDisponibilidadeDTO> VerificarDisponibilidade(Guid id, int quantidadeRequisitada)
+        public async Task<RetornoDisponibilidadeDto> VerificarDisponibilidade(Guid id, int quantidadeRequisitada)
         {
             var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
             if (itemEstoque == null)
@@ -77,7 +77,7 @@ namespace Application.Estoque.Services
 
             var disponivel = itemEstoque.VerificarDisponibilidade(quantidadeRequisitada);
 
-            return new RetornoDisponibilidadeDTO
+            return new RetornoDisponibilidadeDto
             {
                 Disponivel = disponivel,
                 QuantidadeEmEstoque = itemEstoque.Quantidade.Valor,

@@ -1,5 +1,5 @@
 using Application.Cadastros.Interfaces;
-using Application.OrdemServico.DTO.External;
+using Application.OrdemServico.Dtos.External;
 using Application.OrdemServico.Interfaces.External;
 
 namespace Infrastructure.AntiCorruptionLayer.OrdemServico
@@ -18,7 +18,7 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
             _clienteRepository = clienteRepository;
         }
 
-        public async Task<ClienteExternalDTO?> ObterClientePorVeiculoIdAsync(Guid veiculoId)
+        public async Task<ClienteExternalDto?> ObterClientePorVeiculoIdAsync(Guid veiculoId)
         {
             var veiculo = await _veiculoRepository.ObterPorIdAsync(veiculoId);
             if (veiculo == null)
@@ -28,7 +28,7 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
             if (cliente == null)
                 return null;
 
-            return new ClienteExternalDTO
+            return new ClienteExternalDto
             {
                 Id = cliente.Id,
                 Nome = cliente.Nome.Valor,

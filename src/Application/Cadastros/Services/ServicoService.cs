@@ -1,4 +1,4 @@
-﻿using Application.Cadastros.DTO;
+﻿using Application.Cadastros.Dtos;
 using Application.Cadastros.Interfaces;
 using AutoMapper;
 using Domain.Cadastros.Aggregates;
@@ -18,7 +18,7 @@ namespace Application.Cadastros.Services
             _mapper = mapper;
         }
 
-        public async Task<RetornoServicoDTO> CriarServico(string nome, decimal preco)
+        public async Task<RetornoServicoDto> CriarServico(string nome, decimal preco)
         {
             var servicoExistente = await _servicoRepository.ObterPorNomeAsync(nome);
             if (servicoExistente != null)
@@ -27,10 +27,10 @@ namespace Application.Cadastros.Services
             var novoServico = Servico.Criar(nome, preco);
             var result = await _servicoRepository.SalvarAsync(novoServico);
 
-            return _mapper.Map<RetornoServicoDTO>(result);
+            return _mapper.Map<RetornoServicoDto>(result);
         }
 
-        public async Task<RetornoServicoDTO> AtualizarServico(Guid id, string nome, decimal preco)
+        public async Task<RetornoServicoDto> AtualizarServico(Guid id, string nome, decimal preco)
         {
             var servico = await _servicoRepository.ObterPorIdAsync(id);
             if (servico == null)
@@ -39,22 +39,22 @@ namespace Application.Cadastros.Services
             servico.Atualizar(nome, preco);
             var result = await _servicoRepository.AtualizarAsync(servico);
 
-            return _mapper.Map<RetornoServicoDTO>(result);
+            return _mapper.Map<RetornoServicoDto>(result);
         }
 
-        public async Task<IEnumerable<RetornoServicoDTO>> Buscar()
+        public async Task<IEnumerable<RetornoServicoDto>> Buscar()
         {
             var servicos = await _servicoRepository.ObterTodosAsync();
-            return _mapper.Map<IEnumerable<RetornoServicoDTO>>(servicos);
+            return _mapper.Map<IEnumerable<RetornoServicoDto>>(servicos);
         }
 
-        public async Task<RetornoServicoDTO> BuscarPorId(Guid id)
+        public async Task<RetornoServicoDto> BuscarPorId(Guid id)
         {
             var servico = await _servicoRepository.ObterPorIdAsync(id);
             if (servico == null)
                 throw new DomainException("Serviço não encontrado.", ErrorType.ResourceNotFound);
 
-            return _mapper.Map<RetornoServicoDTO>(servico);
+            return _mapper.Map<RetornoServicoDto>(servico);
         }
     }
 }

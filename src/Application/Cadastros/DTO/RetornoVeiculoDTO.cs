@@ -1,11 +1,9 @@
-using Domain.Cadastros.ValueObjects.Veiculo;
-
-namespace Application.Cadastros.DTO
+namespace Application.Cadastros.Dtos
 {
     /// <summary>
     /// DTO para retorno de veículo
     /// </summary>
-    public class RetornoVeiculoDTO
+    public class RetornoVeiculoDto
     {
         public Guid Id { get; set; } = Guid.Empty;
 

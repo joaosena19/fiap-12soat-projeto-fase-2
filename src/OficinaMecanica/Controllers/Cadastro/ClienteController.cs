@@ -1,5 +1,5 @@
-using API.DTO;
-using Application.Cadastros.DTO;
+using API.Dtos;
+using Application.Cadastros.Dtos;
 using Application.Cadastros.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,8 +27,8 @@ namespace API.Controllers.Cadastro
         /// <response code="200">Lista de clientes retornada com sucesso</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<RetornoClienteDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(IEnumerable<RetornoClienteDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
             var result = await _clienteService.Buscar();
@@ -44,9 +44,9 @@ namespace API.Controllers.Cadastro
         /// <response code="404">Cliente não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(RetornoClienteDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _clienteService.BuscarPorId(id);
@@ -62,9 +62,9 @@ namespace API.Controllers.Cadastro
         /// <response code="404">Cliente não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpGet("documento/{documento}")]
-        [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(RetornoClienteDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByDocumento(string documento)
         {
             //Necessário pois CNPJ tem / , então se mandarem com formatação, vai encodar
@@ -84,11 +84,11 @@ namespace API.Controllers.Cadastro
         /// <response code="409">Conflito - Cliente já existe</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost]
-        [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status409Conflict)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] CriarClienteDTO dto)
+        [ProducesResponseType(typeof(RetornoClienteDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Post([FromBody] CriarClienteDto dto)
         {
             var result = await _clienteService.CriarCliente(dto.Nome, dto.DocumentoIdentificador);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
@@ -105,11 +105,11 @@ namespace API.Controllers.Cadastro
         /// <response code="404">Cliente não encontrado</response>
         /// <response code="500">Erro interno do servidor</response>
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(RetornoClienteDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarClienteDTO dto)
+        [ProducesResponseType(typeof(RetornoClienteDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarClienteDto dto)
         {
             var result = await _clienteService.AtualizarCliente(id, dto.Nome);
             return Ok(result);

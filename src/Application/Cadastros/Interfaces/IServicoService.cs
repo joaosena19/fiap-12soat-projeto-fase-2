@@ -1,12 +1,12 @@
-﻿using Application.Cadastros.DTO;
+﻿using Application.Cadastros.Dtos;
 
 namespace Application.Cadastros.Interfaces
 {
     public interface IServicoService
     {
-        Task<RetornoServicoDTO> CriarServico(string nome, decimal preco);
-        Task<RetornoServicoDTO> AtualizarServico(Guid id, string nome, decimal preco);
-        Task<IEnumerable<RetornoServicoDTO>> Buscar();
-        Task<RetornoServicoDTO> BuscarPorId(Guid id);
+        Task<RetornoServicoDto> CriarServico(string nome, decimal preco);
+        Task<RetornoServicoDto> AtualizarServico(Guid id, string nome, decimal preco);
+        Task<IEnumerable<RetornoServicoDto>> Buscar();
+        Task<RetornoServicoDto> BuscarPorId(Guid id);
     }
 }

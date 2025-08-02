@@ -1,9 +1,9 @@
-namespace Application.OrdemServico.DTO
+namespace Application.OrdemServico.Dtos
 {
     /// <summary>
     /// DTO para busca pública de ordem de serviço por código e documento do cliente
     /// </summary>
-    public class BuscaPublicaOrdemServicoDTO
+    public class BuscaPublicaOrdemServicoDto
     {
         /// <summary>
         /// Código da ordem de serviço

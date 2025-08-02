@@ -1,4 +1,4 @@
-using Application.Authentication.DTO;
+using Application.Authentication.Dtos;
 
 namespace Application.Authentication.Interfaces;
 

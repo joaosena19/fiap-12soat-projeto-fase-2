@@ -1,5 +1,5 @@
 using Application.Cadastros.Interfaces;
-using Application.OrdemServico.DTO.External;
+using Application.OrdemServico.Dtos.External;
 using Domain.Cadastros.Aggregates;
 using Domain.Cadastros.Enums;
 using FluentAssertions;
@@ -125,7 +125,7 @@ namespace Tests.Application.OrdemServico
 
             // Assert
             resultado.Should().NotBeNull();
-            resultado.Should().BeOfType<ClienteExternalDTO>();
+            resultado.Should().BeOfType<ClienteExternalDto>();
             resultado!.Id.Should().Be(cliente.Id);
             resultado.Nome.Should().Be(cliente.Nome.Valor);
             resultado.DocumentoIdentificador.Should().Be(cliente.DocumentoIdentificador.Valor);

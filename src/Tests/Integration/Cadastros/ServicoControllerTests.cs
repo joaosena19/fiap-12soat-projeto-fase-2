@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
-using Application.Cadastros.DTO;
+using Application.Cadastros.Dtos;
 using Infrastructure.Database;
 
 namespace Tests.Integration.Cadastros
@@ -86,7 +86,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync("/api/cadastros/servicos");
-            var servicos = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoServicoDTO>>();
+            var servicos = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoServicoDto>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -108,7 +108,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync("/api/cadastros/servicos");
-            var servicos = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoServicoDTO>>();
+            var servicos = await response.Content.ReadFromJsonAsync<IEnumerable<RetornoServicoDto>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -135,7 +135,7 @@ namespace Tests.Integration.Cadastros
 
             // Act
             var response = await _client.GetAsync($"/api/cadastros/servicos/{servicoCriado!.Id}");
-            var servico = await response.Content.ReadFromJsonAsync<RetornoServicoDTO>();
+            var servico = await response.Content.ReadFromJsonAsync<RetornoServicoDto>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
