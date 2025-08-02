@@ -2,6 +2,7 @@ using Application.Estoque.Dtos;
 using Application.Estoque.Interfaces;
 using AutoMapper;
 using Domain.Estoque.Aggregates;
+using Domain.OrdemServico.Aggregates.OrdemServico;
 using Shared.Enums;
 using Shared.Exceptions;
 
@@ -32,9 +33,7 @@ namespace Application.Estoque.Services
 
         public async Task<RetornoItemEstoqueDto> AtualizarItemEstoque(Guid id, AtualizarItemEstoqueDto dto)
         {
-            var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
-            if (itemEstoque == null)
-                throw new DomainException("Item de estoque não encontrado.", ErrorType.ResourceNotFound);
+            var itemEstoque = await ObterItemEstoquePorId(id);
 
             itemEstoque.Atualizar(dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco);
             var result = await _itemEstoqueRepository.AtualizarAsync(itemEstoque);
@@ -44,9 +43,7 @@ namespace Application.Estoque.Services
 
         public async Task<RetornoItemEstoqueDto> AtualizarQuantidade(Guid id, AtualizarQuantidadeDto dto)
         {
-            var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
-            if (itemEstoque == null)
-                throw new DomainException("Item de estoque não encontrado.", ErrorType.ResourceNotFound);
+            var itemEstoque = await ObterItemEstoquePorId(id);
 
             itemEstoque.AtualizarQuantidade(dto.Quantidade);
             var result = await _itemEstoqueRepository.AtualizarAsync(itemEstoque);
@@ -62,18 +59,14 @@ namespace Application.Estoque.Services
 
         public async Task<RetornoItemEstoqueDto> BuscarPorId(Guid id)
         {
-            var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
-            if (itemEstoque == null)
-                throw new DomainException("Item de estoque não encontrado.", ErrorType.ResourceNotFound);
+            var itemEstoque = await ObterItemEstoquePorId(id);
 
             return _mapper.Map<RetornoItemEstoqueDto>(itemEstoque);
         }
 
         public async Task<RetornoDisponibilidadeDto> VerificarDisponibilidade(Guid id, int quantidadeRequisitada)
         {
-            var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
-            if (itemEstoque == null)
-                throw new DomainException("Item de estoque não encontrado.", ErrorType.ResourceNotFound);
+            var itemEstoque = await ObterItemEstoquePorId(id);
 
             var disponivel = itemEstoque.VerificarDisponibilidade(quantidadeRequisitada);
 
@@ -83,6 +76,15 @@ namespace Application.Estoque.Services
                 QuantidadeEmEstoque = itemEstoque.Quantidade.Valor,
                 QuantidadeSolicitada = quantidadeRequisitada
             };
+        }
+
+        private async Task<ItemEstoque> ObterItemEstoquePorId(Guid id)
+        {
+            var itemEstoque = await _itemEstoqueRepository.ObterPorIdAsync(id);
+            if (itemEstoque == null)
+                throw new DomainException("Item de estoque não encontrado.", ErrorType.ResourceNotFound);
+
+            return itemEstoque;
         }
     }
 }
