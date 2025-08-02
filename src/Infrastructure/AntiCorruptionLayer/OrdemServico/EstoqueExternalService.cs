@@ -62,7 +62,7 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
         /// Converte o tipo de item de estoque (do bounded context de Estoque) 
         /// para o tipo de item incluído (do bounded context de OrdemServico)
         /// </summary>
-        private TipoItemIncluidoEnum ConverterTipoItemEstoqueParaTipoItemIncluido(TipoItemEstoqueEnum tipoItemEstoque)
+        private static TipoItemIncluidoEnum ConverterTipoItemEstoqueParaTipoItemIncluido(TipoItemEstoqueEnum tipoItemEstoque)
         {
             return tipoItemEstoque switch
             {
