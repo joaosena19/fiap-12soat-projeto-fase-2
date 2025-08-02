@@ -40,7 +40,7 @@ namespace Infrastructure.Database
 
             // Obtém alguns clientes existentes para associar aos veículos
             var clientes = context.Clientes.Take(5).ToList();
-            if (clientes.Count() < 5)
+            if (clientes.Count < 5)
                 return; // Se não há clientes suficientes, não cria veículos
 
             // 2. Cria dados de teste para veículos
@@ -125,7 +125,7 @@ namespace Infrastructure.Database
             var servicos = context.Servicos.Take(3).ToList();
             var itensEstoque = context.ItensEstoque.Take(3).ToList();
 
-            if (veiculos.Count() < 3 || servicos.Count() < 3 || itensEstoque.Count() < 3)
+            if (veiculos.Count < 3 || servicos.Count < 3 || itensEstoque.Count < 3)
                 return; // Se não há dados suficientes, não cria ordens de serviço
 
             var ordensServico = new List<OrdemServico>();
