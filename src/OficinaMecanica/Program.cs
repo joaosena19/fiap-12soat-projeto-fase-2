@@ -19,7 +19,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
 
 //Necessário para testes de integração
 public partial class Program { }
