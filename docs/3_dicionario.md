@@ -25,6 +25,8 @@ Aqui está a aplicação da Linguagem Ubíqua do DDD, separada por subdomínios.
   - **Cancelada**: indica que a Ordem de Serviço teve seu processo parado e não irá mais avançar para outros Status. Normalmente, esse Status é atribuído quando o Cliente não aprova o Orçamento.  
   
 **Usuário**: pessoas que interagem diretamente com o sistema, no caso, o Administrador.  
+**Serviço Incluído**: serviço quando está dentro de uma Ordem de Serviço.
+**Item Incluído**: item de estoque quando está dentro de uma Ordem de Serviço.
 
 ### Subdomínio: Gestão de Cadastros
 **Cliente**: registro que representa a pessoa Cliente.  
@@ -35,7 +37,7 @@ Aqui está a aplicação da Linguagem Ubíqua do DDD, separada por subdomínios.
 **Estoque**: catálogo que lista os Insumos e Peças cadastrados no Sistema, bem como a sua quantidade disponível.  
 **Insumo**: itens do estoque que são consumidos durante a Execução da Ordem de Serviço. Para todos os efeitos práticos, é tratado da mesma forma que Peça.  
 **Peça**: itens do estoque que substituem/incrementam componentes do Veículo. Para todos os efeitos práticos, é tratado da mesma forma que Insumo.  
-**Peça/Insumo**: termo agrupador para Peças e Insumos, pois são frequentemente usados em conjunto.  
+**Item / Item Estoque**: termo agrupador para Peças e Insumos, pois são frequentemente usados em conjunto.  
 
 ---
 Anterior: [Domínio](2_dominio.md)  
