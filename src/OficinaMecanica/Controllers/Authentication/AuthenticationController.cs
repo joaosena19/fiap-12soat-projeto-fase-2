@@ -1,3 +1,4 @@
+using API.Dtos;
 using Application.Authentication.Dtos;
 using Application.Authentication.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -17,30 +18,21 @@ public class AuthenticationController : ControllerBase
     }
 
     /// <summary>
-    /// AutenticaÁ„o que recebe client credentials e retorna um Bearer token
+    /// Autentica√ß√£o que recebe client credentials e retorna um Bearer token
     /// </summary>
     /// <param name="request">Client credentials</param>
     /// <returns>JWT access token</returns>
     /// <response code="200">Retorna o token JWT</response>
-    /// <response code="401">Credenciais inv·lidas</response>
+    /// <response code="400">Dados inv√°lidos fornecidos</response>
+    /// <response code="401">Credenciais inv√°lidas</response>
     [HttpPost("token")]
     [ProducesResponseType(typeof(TokenResponseDto), 200)]
-    [ProducesResponseType(401)]
+    [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
     [AllowAnonymous]
     public ActionResult<TokenResponseDto> GetToken([FromBody] TokenRequestDto request)
     {
-        if (string.IsNullOrEmpty(request.ClientId) || string.IsNullOrEmpty(request.ClientSecret))
-        {
-            return BadRequest("ClientId e ClientSecret requeridos.");
-        }
-
         var tokenResponse = _authService.ValidateCredentialsAndGenerateToken(request);
-        
-        if (tokenResponse == null)
-        {
-            return Unauthorized("Credenciais inv·lidas.");
-        }
-
         return Ok(tokenResponse);
     }
 }

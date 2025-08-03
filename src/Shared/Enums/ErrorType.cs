@@ -31,6 +31,11 @@ namespace Shared.Enums
         Conflict,
 
         /// <summary>
+        /// Não autorizado
+        /// </summary>
+        Unauthorized,
+
+        /// <summary>
         /// Erro inesperado (erro padrão)
         /// </summary>
         UnexpectedError

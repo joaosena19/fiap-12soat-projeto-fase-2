@@ -1,6 +1,8 @@
 using Application.Authentication.Dtos;
 using Application.Authentication.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Shared.Exceptions;
+using Shared.Enums;
 
 namespace Application.Authentication.Services;
 
@@ -15,20 +17,19 @@ public class AuthenticationService : IAuthenticationService
         _tokenService = tokenService;
     }
 
-    public TokenResponseDto? ValidateCredentialsAndGenerateToken(TokenRequestDto request)
+    public TokenResponseDto ValidateCredentialsAndGenerateToken(TokenRequestDto request)
     {
+        if (string.IsNullOrEmpty(request.ClientId) || string.IsNullOrEmpty(request.ClientSecret))
+            throw new DomainException("ClientId e ClientSecret requeridos.", ErrorType.InvalidInput);
+
         var configuredClientId = _configuration["ApiCredentials:ClientId"];
         var configuredClientSecret = _configuration["ApiCredentials:ClientSecret"];
 
         if (string.IsNullOrEmpty(configuredClientId) || string.IsNullOrEmpty(configuredClientSecret))
-        {
-            return null;
-        }
+            throw new DomainException("Credenciais inválidas.", ErrorType.Unauthorized);
 
         if (request.ClientId != configuredClientId || request.ClientSecret != configuredClientSecret)
-        {
-            return null;
-        }
+            throw new DomainException("Credenciais inválidas.", ErrorType.Unauthorized);
 
         var token = _tokenService.GenerateToken(request.ClientId);
         return new TokenResponseDto(token);

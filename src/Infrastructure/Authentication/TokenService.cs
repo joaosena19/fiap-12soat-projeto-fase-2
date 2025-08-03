@@ -23,9 +23,7 @@ public class TokenService : ITokenService
         var audience = _configuration["Jwt:Audience"];
 
         if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience))
-        {
-            throw new InvalidOperationException("Configuração JWT faltando ou incompleta.");
-        }
+            throw new InvalidOperationException("Configuração JWT está ausente");
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

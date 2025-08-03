@@ -22,6 +22,7 @@ namespace API.Extensions
                 ErrorType.ReferenceNotFound => HttpStatusCode.UnprocessableEntity,
                 ErrorType.DomainRuleBroken => HttpStatusCode.UnprocessableEntity,
                 ErrorType.Conflict => HttpStatusCode.Conflict,
+                ErrorType.Unauthorized => HttpStatusCode.Unauthorized,
                 ErrorType.UnexpectedError => HttpStatusCode.InternalServerError,
                 _ => HttpStatusCode.InternalServerError
             };
