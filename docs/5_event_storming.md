@@ -12,5 +12,5 @@ Imagem em alta resolução, recomendável [fazer o download](attachments/event_s
 Disponível completo em [MIRO](https://miro.com/app/board/uXjVIg-nlx4=/) e em [arquivo PDF](attachments/event_storming.pdf).
 
 ---
-Anterior: [Domain Storytelling](4_domain_storytelling.md)
-Próximo: [Tecnologias Utilizadas](6_tecnologias.md)
+Anterior: [Domain Storytelling](4_domain_storytelling.md)  
+Próximo: [Tecnologias Utilizadas](6_tecnologias.md)  

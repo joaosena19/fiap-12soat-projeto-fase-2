@@ -14,7 +14,7 @@
 
 ## Endpoints
 
-Acesse pelo Swagger executando a aplicação, ou pela [documentação Redoc disponível](attachments/oficina_mecanica_api_docs.html).
+Acesse pelo Swagger executando a aplicação, ou pela [documentação Redoc disponível](attachments/oficina_mecanica_api_docs.html) (necessário fazer download do arquivo).
 
 ## Códigos de Status HTTP
 

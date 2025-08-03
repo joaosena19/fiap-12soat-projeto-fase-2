@@ -25,8 +25,8 @@ Aqui está a aplicação da Linguagem Ubíqua do DDD, separada por subdomínios.
   - **Cancelada**: indica que a Ordem de Serviço teve seu processo parado e não irá mais avançar para outros Status. Normalmente, esse Status é atribuído quando o Cliente não aprova o Orçamento.  
   
 **Usuário**: pessoas que interagem diretamente com o sistema, no caso, o Administrador.  
-**Serviço Incluído**: serviço quando está dentro de uma Ordem de Serviço.
-**Item Incluído**: item de estoque quando está dentro de uma Ordem de Serviço.
+**Serviço Incluído**: serviço quando está dentro de uma Ordem de Serviço.  
+**Item Incluído**: item de estoque quando está dentro de uma Ordem de Serviço.  
 
 ### Subdomínio: Gestão de Cadastros
 **Cliente**: registro que representa a pessoa Cliente.  
