@@ -274,7 +274,7 @@ namespace Tests.Application.OrdemServico
             _veiculoExternalServiceMock.Setup(v => v.VerificarExistenciaVeiculo(veiculoId))
                 .ReturnsAsync(true);
 
-            // Primeira chamada retorna a OS existente, segunda chamada retorna null, assim vai forçar fazer um loop no do while. Os códigos vão ser diferentes, mas o ponto é testar que se o repository retorna OS existente, o código deve criar OS de novo
+            // Primeira chamada retorna a OS existente, segunda chamada retorna null, assim vai forçar fazer um loop no do while. Os códigos vão ser diferentes, mas o ponto é testar que se quando o repository retorna OS existente, o domain deve criar OS de novo
             _ordemServicoRepositoryMock.SetupSequence(r => r.ObterPorCodigoAsync(It.IsAny<string>()))
                 .ReturnsAsync(ordemServicoExistente)
                 .ReturnsAsync((OrdemServicoAggregate?)null);
