@@ -23,7 +23,7 @@ namespace API.Configurations
 
             if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
             {
-                throw new InvalidOperationException("Configuração JWT está ausente. Por favor, verifique o appsettings.json.");
+                throw new InvalidOperationException("Configuração JWT está ausente");
             }
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
