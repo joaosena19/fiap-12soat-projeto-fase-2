@@ -132,6 +132,37 @@ namespace Tests.Domain.OrdemServico
                 .WithMessage("A data de entrega não pode ser anterior à data de finalização.");
         }
 
+        [Fact(DisplayName = "Não deve criar histórico temporal se data de finalização for informada sem data de início de execução")]
+        [Trait("ValueObject", "HistoricoTemporal")]
+        public void HistoricoTemporal_ComDataFinalizacaoSemDataInicio_DeveLancarExcecao()
+        {
+            // Arrange
+            var dataCriacao = DateTime.UtcNow;
+            DateTime? dataInicioExecucao = null;
+            var dataFinalizacao = dataCriacao.AddHours(2);
+
+            // Act & Assert
+            FluentActions.Invoking(() => new HistoricoTemporal(dataCriacao, dataInicioExecucao, dataFinalizacao))
+                .Should().Throw<DomainException>()
+                .WithMessage("A data de finalização não pode ser anterior à data de início de execução.");
+        }
+
+        [Fact(DisplayName = "Não deve criar histórico temporal se data de entrega for informada sem data de finalização")]
+        [Trait("ValueObject", "HistoricoTemporal")]
+        public void HistoricoTemporal_ComDataEntregaSemDataFinalizacao_DeveLancarExcecao()
+        {
+            // Arrange
+            var dataCriacao = DateTime.UtcNow;
+            var dataInicioExecucao = dataCriacao.AddHours(1);
+            DateTime? dataFinalizacao = null;
+            var dataEntrega = dataInicioExecucao.AddHours(2);
+
+            // Act & Assert
+            FluentActions.Invoking(() => new HistoricoTemporal(dataCriacao, dataInicioExecucao, dataFinalizacao, dataEntrega))
+                .Should().Throw<DomainException>()
+                .WithMessage("A data de entrega não pode ser anterior à data de finalização.");
+        }
+
         [Fact(DisplayName = "Deve aceitar histórico temporal com apenas data de criação")]
         [Trait("ValueObject", "HistoricoTemporal")]
         public void HistoricoTemporal_ComApenasDataCriacao_DeveAceitarHistorico()
