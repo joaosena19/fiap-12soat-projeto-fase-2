@@ -1,4 +1,4 @@
-# 9. API
+# 10. API
 
 ## Autenticação
 - **Tipo**: JWT Bearer Token
@@ -51,5 +51,5 @@ Acesse pelo Swagger executando a aplicação, ou pela [documentação Redoc disp
 ```
 
 ---
-Anterior: [Arquitetura](8_arquitetura.md)  
-Próximo: [Testes](10_testes.md)
+Anterior: [Particularidades](9_particularidades.md)  
+Próximo: [Testes](11_testes.md)

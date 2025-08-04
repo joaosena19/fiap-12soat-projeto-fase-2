@@ -8,8 +8,6 @@ O motivo da escolha do banco PostgreSQL é por ser um banco relacional, que se e
 
 Foi adotada uma abordagem code-first, mapeando as entidades e delegando para o Entity Framework Core a criação das tabelas, definição de campos e relacionamentos.
 
-A Primary Key das tabelas foi definida como um identificador UUID v7. Assim, temos os beníficios de um UUID como unicidade global e geração na aplicação, mas com boa performance para escrita no banco de dados, já que ele reserva seus primeiros 48 bits para um timestamp, tornando-o naturalmente ordenado.
-
 ## Entidades
 
 ### Módulo Cadastros

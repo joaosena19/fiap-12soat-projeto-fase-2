@@ -1,4 +1,4 @@
-# 11. Qualidade e Segurança
+# 12. Qualidade e Segurança
 
 Foram utilizadas as ferramentas SonarCloud e OWASP ZAP para testar a aplicação em relação à qualidade do código e segurança.
 
@@ -16,7 +16,7 @@ Disponível completo em: [Sonarcloud.io](https://sonarcloud.io/summary/overall?i
 
 ## Relatório OWASP ZAP
 
-Disponível completo em: [Relatório OWASP ZAP](attachments/relatorio_owasp_zap.html)
+Disponível completo em: [Relatório OWASP ZAP](attachments/relatorio_owasp_zap.html) (necessário fazer o download do arquivo).
 
 **Observação:** 2 alertas foram marcados como falso positivos, relacionados à SQL Injection. No caso, a aplicação aceita receber um possível SQL Injection na requisição, porém isso é tratado a nível de banco de dados.
 
@@ -25,4 +25,4 @@ Disponível completo em: [Relatório OWASP ZAP](attachments/relatorio_owasp_zap.
 ![alt text](attachments/relatorio_owasp_zap_resumo.png)
 
 ---
-Anterior: [Testes](10_testes.md)  
+Anterior: [Testes](11_testes.md)  

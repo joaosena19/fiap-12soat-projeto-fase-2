@@ -39,7 +39,8 @@ A aplicação segue os princípios da **Clean Architecture** e **Domain-Driven D
 - **Localização**: `src/Shared/`
 - **Responsabilidades**:
   - Exceptions customizadas
+  - Atributos de marcação
 
 ---
 Anterior: [Banco de Dados](7_banco_dados.md)  
-Próximo: [API](9_api.md)
+Próximo: [Particularidades](9_particularidades.md)
