@@ -12,7 +12,7 @@ Disponível completo em: [Sonarcloud.io](https://sonarcloud.io/summary/overall?i
 
 **Resumo:**
 
-![Relatório Sonarcloud](attachments/relatorio_sonarcloud_resumo.png)
+![Relatório Sonarcloud - resumo](attachments/relatorio_sonarcloud_resumo.png)
 
 ## Relatório OWASP ZAP
 
@@ -22,7 +22,7 @@ Disponível completo em: [Relatório OWASP ZAP](attachments/relatorio_owasp_zap.
 
 **Resumo:**
 
-![alt text](attachments/relatorio_owasp_zap_resumo.png)
+![Relatório Sonarcloud - resumo](attachments/relatorio_owasp_zap_resumo.png)
 
 ---
 Anterior: [Testes](11_testes.md)  

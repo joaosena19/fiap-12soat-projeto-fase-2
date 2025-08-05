@@ -63,7 +63,7 @@ public static Codigo GerarNovo()
 }
 ```
 
-A change de repetição de código é mínima, mas ainda assim, a criação da Ordem de Serviço usa uma lógica de repetição para validar se o código já está sendo usado.
+A chance de repetição de código é mínima, mas ainda assim, a criação da Ordem de Serviço usa uma lógica de repetição para validar se o código já está sendo usado.
 
 ```csharp
 // extraído de src/Application/OrdemServico/Services/OrdemServicoService.cs
@@ -81,7 +81,7 @@ do
 
 Utilizamos `enums` para representar valores bem definidos no domínio, como `TipoDocumentoEnum` e `TipoVeiculoEnum`. Isso garante que apenas valores válidos sejam utilizados na lógica de negócio.
 
-Normalmente, `enums` seriam salvos no banco de dados com seu valor númerico, mas isso gera um acoplamento, pois os valores no banco de dados só tem significado com a aplicação, já que `1` ou `2` não significa nada por si só. Para que o banco de dados seja expressivo, o EF Core é configurado para salvar os `enums` como strings em vez de seus valores numéricos.
+Normalmente, `enums` seriam salvos no banco de dados com seu valor númerico, mas isso gera um acoplamento, pois os valores no banco de dados só tem significado com a aplicação, já que `1` ou `2` não significam nada por si só. Para que o banco de dados seja expressivo, o EF Core é configurado para salvar os `enums` como strings em vez de seus valores numéricos.
 
 ```csharp
 // extraído de src/Infrastructure/Database/Configurations/ClienteConfiguration.cs
@@ -306,7 +306,7 @@ Essa prática serve como uma forma de documentação viva no código, alinhando 
 
 ## 9. Uso Exclusivo de Value Objects em Aggregates
 
-Na camada de Domain, todos os Aggregates utilizam exclusivamente Value Objects para suas propriedades (com excessão do Id), evitando o uso de tipos como `string` ou `int`. Essa abordagem garante maior consistência e validação automática dos dados.
+Na camada de Domain, todos os Aggregates utilizam exclusivamente Value Objects para suas propriedades (com exceção do Id), evitando o uso de tipos como `string` ou `int`. Essa abordagem garante maior consistência e validação automática dos dados.
 
 Por exemplo, o agregado `Cliente` utiliza os Value Objects `NomeCliente` e `DocumentoIdentificador` para representar suas propriedades de nome e documento, respectivamente. Isso assegura que os dados estejam sempre em um estado válido.
 
