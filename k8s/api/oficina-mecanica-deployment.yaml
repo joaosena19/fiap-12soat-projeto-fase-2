@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oficina-mecanica-deployment
+spec:
+  replicas: 1 # Iniciará com 1 Pod. Para alta-disponibilidade usuaríamos mais, mas como é um projeto acadêmico, 1 já é suficiente.
+  selector:
+    matchLabels:
+      app: oficina-mecanica-pod
+  template:
+    metadata:
+      labels:
+        app: oficina-mecanica-pod
+    spec:
+      containers:
+      - name: container-oficina-mecanica-api
+        image: joaodainese/fiap-12-soat-projeto-fase2:latest # Imagem do Docker Hub
+        envFrom:
+          - configMapRef:
+              name: oficina-mecanica-config
+          - secretRef:
+              name: oficina-mecanica-secret
+        resources: # Valores bem baixos pois como é um projeto acadêmico, terá poucos acessos simultâneos
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"

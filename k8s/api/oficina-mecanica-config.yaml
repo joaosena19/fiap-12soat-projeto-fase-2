@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oficina-mecanica-config
+data: # Variáveis de ambiente não sensíveis.
+
+  DB_NAME: "oficina_mecanica_db"
+  DB_USER: "oficina_user"
+
+  Jwt__Issuer: "OficinaMecanicaApi"
+  Jwt__Audience: "AuthorizedServices"
+  
+  API_CLIENT_ID: "admin"
