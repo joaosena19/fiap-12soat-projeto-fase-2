@@ -3,18 +3,18 @@ kind: Deployment
 metadata:
   name: postgres-deployment
 spec:
-  replicas: 1 # Para um banco de dados simples, SEMPRE use apenas 1 réplica.
+  replicas: 1 # 1 replica pois é um banco de dados (stateful) sem configuração para múltiplas instâncias
   selector:
     matchLabels:
-      app: postgres # Um seletor para encontrar os pods deste deployment
+      app: postgres
   template:
     metadata:
       labels:
-        app: postgres # A label que o seletor acima e o Service usarão
+        app: postgres
     spec:
       containers:
       - name: postgres
-        image: postgres:16-alpine # Usando a mesma imagem do seu docker-compose
+        image: postgres:16-alpine
         ports:
         - containerPort: 5432 # Porta padrão do PostgreSQL
         resources: # Para evitar competição de recursos do banco de dados com os Pods da API
@@ -25,28 +25,28 @@ spec:
             cpu: "500m"
             memory: "1Gi"
         env:
-          # AQUI A MÁGICA ACONTECE!
-          # Reutilizamos as configurações do ConfigMap e Secret da nossa API
-          # para garantir que as credenciais sejam sempre as mesmas.
           - name: POSTGRES_DB
             valueFrom:
               configMapKeyRef:
-                name: oficina-mecanica-config # Nome do ConfigMap da API
+                name: oficina-mecanica-config
                 key: DatabaseConnection__DatabaseName
           - name: POSTGRES_USER
             valueFrom:
               configMapKeyRef:
-                name: oficina-mecanica-config # Nome do ConfigMap da API
+                name: oficina-mecanica-config
                 key: DatabaseConnection__User
           - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: oficina-mecanica-secret # Nome do Secret da API
+                name: oficina-mecanica-secret 
                 key: DatabaseConnection__Password
         volumeMounts:
-          - name: postgres-storage # Nome do volume que definimos abaixo
-            # O diretório DENTRO do contêiner onde o Postgres guarda os dados
+          - name: postgres-storage
             mountPath: /var/lib/postgresql/data
+        volumes:
+        - name: postgres-storage 
+          persistentVolumeClaim:
+            claimName: postgres-pvc
         # Health Probes para monitoramento da saúde do PostgreSQL
         # Todas as Probes usam o comando pg_isready, mas o tempos e failureThreshold variam, o que muda o uso de cada Probe.
         livenessProbe:
@@ -80,7 +80,6 @@ spec:
           timeoutSeconds: 3
           failureThreshold: 12
       volumes:
-        - name: postgres-storage # Define um volume para o Pod
+        - name: postgres-storage 
           persistentVolumeClaim:
-            # Conecta este volume ao PVC que criamos no primeiro arquivo
             claimName: postgres-pvc

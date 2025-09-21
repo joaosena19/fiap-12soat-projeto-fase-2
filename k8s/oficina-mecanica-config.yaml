@@ -2,20 +2,16 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: oficina-mecanica-config
-data:
-  # Database Configuration (non-sensitive) - using nested structure
+data: # Dados não sensíveis
   DatabaseConnection__Host: "postgres-service"
   DatabaseConnection__Port: "5432"
   DatabaseConnection__DatabaseName: "oficina_mecanica_db"
   DatabaseConnection__User: "oficina_user"
   
-  # Application Configuration
   ASPNETCORE_ENVIRONMENT: "Development"
   ASPNETCORE_URLS: "http://+:8080"
   
-  # JWT Configuration (non-sensitive)
   Jwt__Issuer: "OficinaMecanicaApi"
   Jwt__Audience: "AuthorizedServices"
   
-  # API Configuration
   ApiCredentials__ClientId: "admin"

@@ -9,13 +9,12 @@ spec:
     name: oficina-mecanica-deployment
   minReplicas: 1 # Mesmo valor do Deployment
   maxReplicas: 10
-  metrics:
-  - type: Resource # Estamos usando métricas de recursos padrão (CPU/Memória).
+  metrics: # Escala baseado em CPU e Memória
+  - type: Resource 
     resource:
       name: cpu
       target:
-        type: Utilization # Queremos mirar em um percentual de utilização.
-        # Escala se a média de uso de CPU entre todos os pods passar de 70%.
+        type: Utilization
         averageUtilization: 70
         
   - type: Resource
@@ -23,5 +22,4 @@ spec:
       name: memory
       target:
         type: Utilization
-        # Escala se a média de uso de Memória entre todos os pods passar de 70%.
         averageUtilization: 70

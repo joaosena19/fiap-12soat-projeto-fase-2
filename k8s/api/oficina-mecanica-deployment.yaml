@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: oficina-mecanica-deployment
 spec:
-  replicas: 1 # Iniciará com 1 Pod. Para alta-disponibilidade usuaríamos mais, mas como é um projeto acadêmico, 1 já é suficiente.
+  replicas: 1 # Iniciará com 1 Pod. Para alta-disponibilidade usaríamos mais, mas como é um projeto acadêmico, 1 já é suficiente.
   selector:
     matchLabels:
       app: oficina-mecanica-pod
