@@ -9,11 +9,19 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      # Lê do .ENV e passa como variáveis de ambiente (substituindo o appSettings.json)
-      - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
-      - Jwt__Key=${JWT_KEY}
-      - ApiCredentials__ClientId=${API_CLIENT_ID}
-      - ApiCredentials__ClientSecret=${API_CLIENT_SECRET}
+      # Database Configuration using new nested structure
+      - DatabaseConnection__Host=${DatabaseConnection__Host}
+      - DatabaseConnection__Port=${DatabaseConnection__Port}
+      - DatabaseConnection__DatabaseName=${DatabaseConnection__DatabaseName}
+      - DatabaseConnection__User=${DatabaseConnection__User}
+      - DatabaseConnection__Password=${DatabaseConnection__Password}
+      # JWT Configuration
+      - Jwt__Key=${Jwt__Key}
+      - Jwt__Issuer=${Jwt__Issuer}
+      - Jwt__Audience=${Jwt__Audience}
+      # API Credentials
+      - ApiCredentials__ClientId=${ApiCredentials__ClientId}
+      - ApiCredentials__ClientSecret=${ApiCredentials__ClientSecret}
     depends_on:
       postgres_db:
         condition: service_healthy
@@ -22,17 +30,17 @@ services:
     image: postgres:16-alpine
     container_name: oficina_mecanica_postgres_db
     environment:
-      # Lê do .ENV e passa direto pra imagem do Postgres
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      # Uses variables from .env file for PostgreSQL configuration
+      POSTGRES_DB: ${DatabaseConnection__DatabaseName}
+      POSTGRES_USER: ${DatabaseConnection__User}
+      POSTGRES_PASSWORD: ${DatabaseConnection__Password}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      # Usa as variáveis também no healthcheck para manter a consistência
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      # Uses variables from .env file for consistency
+      test: ["CMD-SHELL", "pg_isready -U ${DatabaseConnection__User} -d ${DatabaseConnection__DatabaseName}"]
       interval: 10s
       timeout: 5s
       retries: 5

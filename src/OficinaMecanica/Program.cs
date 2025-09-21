@@ -9,10 +9,8 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddAutoMapper();
 builder.Services.AddApplicationServices();
+builder.Services.AddHealthChecks();
 
-// Add health checks
-builder.Services.AddHealthChecks()
-    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
 var app = builder.Build();
 
@@ -22,18 +20,9 @@ app.UseHttpsRedirection();
 app.UseSecurityHeadersConfiguration();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseHealthCheckEndpoints();
 app.MapControllers();
 
-// Map health check endpoints
-app.MapHealthChecks("/health");
-app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-{
-    Predicate = check => check.Tags.Contains("ready")
-});
-app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-{
-    Predicate = _ => false
-});
 
 // Popula dados mock se estiver em ambiente de desenvolvimento
 DevelopmentDataSeeder.SeedIfDevelopment(app);

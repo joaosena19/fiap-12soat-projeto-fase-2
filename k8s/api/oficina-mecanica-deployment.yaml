@@ -15,6 +15,9 @@ spec:
       containers:
       - name: container-oficina-mecanica-api
         image: joaodainese/fiap-12-soat-projeto-fase2:latest # Imagem do Docker Hub
+        ports:
+        - containerPort: 8080 # Port exposta no Dockerfile
+          name: http
         envFrom:
           - configMapRef:
               name: oficina-mecanica-config
@@ -27,3 +30,28 @@ spec:
           limits:
             cpu: "250m"
             memory: "256Mi"
+        # Health Probes para monitoramento da aplicação .NET
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health/startup
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 12
