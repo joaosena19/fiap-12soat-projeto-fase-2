@@ -1,0 +1,38 @@
+# Nome do workflow que aparecerá na aba "Actions" do GitHub
+name: Validar Pull Request (Build e Teste)
+
+# Gatilho: acionado em todo pull request para a branch 'main'
+on:
+  pull_request:
+    branches: [ "main" ] # Se sua branch principal for 'master', troque aqui
+
+jobs:
+  # O nome do nosso job. É este nome que usaremos na regra de proteção.
+  build-and-test:
+    # O workflow rodará em uma máquina virtual Linux (Ubuntu)
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Clona o código do seu repositório para a máquina virtual
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente .NET (ajuste a versão se seu projeto for diferente)
+      - name: Configurar .NET 9.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      # 3. Restaura as dependências NuGet do projeto
+      - name: Restaurar dependências
+        run: dotnet restore
+
+      # 4. Builda a solução em modo Release para garantir que compila
+      # O --no-restore acelera o processo, pois já restauramos no passo anterior.
+      - name: Buildar a aplicação
+        run: dotnet build --no-restore --configuration Release
+
+      # 5. Roda todos os projetos de teste da solução
+      # O --no-build acelera o processo, pois já buildamos no passo anterior.
+      - name: Rodar testes unitários
+        run: dotnet test --no-build --verbosity normal
