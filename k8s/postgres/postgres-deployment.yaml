@@ -43,10 +43,6 @@ spec:
         volumeMounts:
           - name: postgres-storage
             mountPath: /var/lib/postgresql/data
-        volumes:
-        - name: postgres-storage 
-          persistentVolumeClaim:
-            claimName: postgres-pvc
         # Health Probes para monitoramento da saúde do PostgreSQL
         # Todas as Probes usam o comando pg_isready, mas o tempos e failureThreshold variam, o que muda o uso de cada Probe.
         livenessProbe:
