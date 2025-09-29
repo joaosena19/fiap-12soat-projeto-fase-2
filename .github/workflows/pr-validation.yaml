@@ -1,10 +1,10 @@
 # Nome do workflow que aparecerá na aba "Actions" do GitHub
-name: Validar Pull Request
+name: Validar Pull Request (Build e Teste)
 
 # Gatilho: acionado em todo pull request para a branch 'main'
 on:
   pull_request:
-    branches: [ "main" ] # Se sua branch principal for 'master', troque aqui
+    branches: [ "main" ]
 
 jobs:
   # O nome do nosso job. É este nome que usaremos na regra de proteção.
@@ -23,20 +23,22 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      # 3. Restaura as dependências NuGet do projeto
+      # 3. Encontra o arquivo da Solution (.sln) dinamicamente
+      - name: Encontrar arquivo da Solution (.sln)
+        id: find_sln
+        # Procura pelo primeiro arquivo .sln no repositório e armazena o caminho
+        run: echo "sln_path=$(find . -name '*.sln' -print -quit)" >> $GITHUB_OUTPUT
+        
+      # 4. Restaura as dependências NuGet da solução
       - name: Restaurar dependências
-        # CORREÇÃO: Executa o comando na pasta 'src', onde o arquivo .sln provavelmente está.
-        # O 'dotnet restore' encontrará e restaurará todos os projetos da solução.
-        run: dotnet restore
-        working-directory: ./src
+        # Usa o caminho da solution encontrado no passo anterior
+        run: dotnet restore ${{ steps.find_sln.outputs.sln_path }}
 
-      # 4. Builda a solução em modo Release para garantir que compila
+      # 5. Builda a solução em modo Release para garantir que compila
       - name: Buildar a aplicação
-        run: dotnet build --no-restore --configuration Release
-        working-directory: ./src # CORREÇÃO: Executa o build na solução inteira
+        run: dotnet build ${{ steps.find_sln.outputs.sln_path }} --no-restore --configuration Release
 
-      # 5. Roda todos os projetos de teste da solução
+      # 6. Roda todos os projetos de teste da solução
       - name: Rodar testes unitários
-        run: dotnet test --no-build --verbosity normal
-        working-directory: ./src # CORREÇÃO: Executa os testes na solução inteira
+        run: dotnet test ${{ steps.find_sln.outputs.sln_path }} --no-build --verbosity normal
 
