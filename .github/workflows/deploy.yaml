@@ -1,0 +1,134 @@
+# =====================================================
+# WORKFLOW DE CI/CD - OFICINA MECÂNICA API
+# =====================================================
+# Este workflow automatiza o processo completo de:
+# 1. Build e testes da aplicação .NET
+# 2. Criação e publicação da imagem Docker
+# 3. Deploy da aplicação no cluster EKS (Kubernetes)
+#
+# Executado automaticamente a cada push na branch 'main'
+# =====================================================
+
+name: Deploy Completo para Kubernetes (EKS)
+
+# =====================================================
+# TRIGGER: Quando executar este workflow
+# =====================================================
+on:
+  push:
+    branches: [ "main" ]  # Executa apenas quando há push na branch main
+
+# =====================================================
+# JOBS: Etapas do pipeline de CI/CD
+# =====================================================
+jobs:
+  # ===================================================
+  # JOB 1: BUILD E TESTES
+  # ===================================================
+  # Verifica se o código compila e passa nos testes
+  # antes de prosseguir com a publicação
+  build-and-test:
+    name: 1. Build e Teste
+    runs-on: ubuntu-latest  # Usa uma máquina virtual Ubuntu
+    steps:
+    # Faz download do código fonte do repositório
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    # Instala e configura o .NET 9.0 na máquina virtual
+    - name: Configurar .NET 9.0
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'  # Instala a versão mais recente do .NET 9.0
+        
+    # Baixa e instala todas as dependências NuGet do projeto
+    - name: Restaurar dependências
+      run: dotnet restore
+      working-directory: ./src/OficinaMecanica  # Executa o comando onde está o .sln
+      
+    # Compila a aplicação em modo Release (otimizado para produção)
+    - name: Buildar a aplicação
+      run: dotnet build --no-restore --configuration Release
+      working-directory: ./src/OficinaMecanica  # --no-restore evita restaurar novamente
+      
+    # Executa todos os testes unitários para garantir qualidade
+    - name: Rodar testes unitários
+      run: dotnet test --no-build --verbosity normal
+      working-directory: ./src/OficinaMecanica  # --no-build usa o build já feito acima
+
+  # ===================================================
+  # JOB 2: PUBLICAÇÃO DA IMAGEM DOCKER
+  # ===================================================
+  # Cria a imagem Docker da aplicação e envia para o Docker Hub
+  # Só executa se o job anterior (build-and-test) for bem-sucedido
+  publish-docker-image:
+    name: 2. Publicar Imagem Docker
+    runs-on: ubuntu-latest
+    needs: build-and-test  # Aguarda o job anterior terminar com sucesso
+    steps:
+    # Faz download do código fonte (necessário para acessar o Dockerfile)
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    # Autentica no Docker Hub usando credenciais armazenadas nos secrets
+    - name: Login no Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}  # Usuário do Docker Hub
+        password: ${{ secrets.DOCKERHUB_TOKEN }}     # Token de acesso do Docker Hub
+
+    # Constrói a imagem Docker e envia para o Docker Hub
+    - name: Buildar e enviar imagem Docker
+      uses: docker/build-push-action@v5
+      with:
+        context: ./src           # Pasta onde está o Dockerfile
+        push: true              # Envia a imagem para o Docker Hub após o build
+        tags: |                 # Cria duas tags para a mesma imagem:
+          joaodainese/fiap-12-soat-projeto-fase2:latest           # Tag 'latest' (mais recente)
+          joaodainese/fiap-12-soat-projeto-fase2:${{ github.sha }} # Tag com hash do commit (rastreabilidade)
+
+  # ===================================================
+  # JOB 3: DEPLOY NO KUBERNETES (EKS)
+  # ===================================================
+  # Faz o deploy da aplicação no cluster Kubernetes da AWS
+  # Só executa após a imagem Docker ser publicada com sucesso
+  deploy-to-kubernetes:
+    name: 3. Deploy no Kubernetes (EKS)
+    runs-on: ubuntu-latest
+    needs: publish-docker-image  # Aguarda a publicação da imagem Docker
+    steps:
+    # Faz download do código fonte (necessário para acessar os manifestos k8s)
+    - name: Checkout do código
+      uses: actions/checkout@v4
+      
+    # Configura as credenciais da AWS para acessar o cluster EKS
+    - name: Configurar credenciais da AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}         # Chave de acesso da AWS
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Chave secreta da AWS
+        aws-region: ${{ secrets.AWS_REGION }}                       # Região onde está o cluster
+
+    # Configura o kubectl para acessar o cluster EKS específico
+    - name: Configurar acesso ao cluster EKS
+      run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
+
+    # Aplica as configurações compartilhadas (variáveis de ambiente e secrets)
+    # Estes recursos são usados tanto pela API quanto pelo PostgreSQL
+    - name: Aplicar configurações compartilhadas (ConfigMap e Secret)
+      run: kubectl apply -f k8s/oficina-mecanica-config.yaml -f k8s/oficina-mecanica-secret.yaml
+
+    # Aplica todos os manifestos do banco de dados PostgreSQL
+    # Inclui: deployment, service e persistent volume claim
+    - name: Aplicar manifestos do banco de dados
+      run: kubectl apply -f k8s/postgres/
+
+    # Aplica todos os manifestos da API da oficina mecânica
+    # Inclui: deployment, service e horizontal pod autoscaler
+    - name: Aplicar manifestos da API
+      run: kubectl apply -f k8s/api/
+      
+    # Verifica se o deploy da API foi concluído com sucesso
+    # Aguarda até 120 segundos para o deployment estar disponível
+    - name: Verificar o status do deploy
+      run: kubectl rollout status deployment/oficina-mecanica-deployment --timeout=120s

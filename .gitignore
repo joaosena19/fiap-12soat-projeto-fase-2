@@ -55,6 +55,15 @@ nunit-*.xml
 
 # Adicionados manualmente
 .vs
-.env
 *.csproj.user
 CoverageReport
+
+## Variáveis de ambiente
+.env
+appsettings.Development.json
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars

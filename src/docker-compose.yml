@@ -2,32 +2,45 @@ services:
   minha-api:
     container_name: oficina_api_service
     build:
-      context: .  # O contexto é a pasta raiz onde está este arquivo.
-      dockerfile: ./Dockerfile # O caminho para o Dockerfile a partir da raiz.
+      context: .
+      dockerfile: ./Dockerfile
     ports:
-      # Vamos expor apenas a porta HTTP para facilitar os testes
       - "5001:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Host=postgres_db;Port=5432;Database=oficina_mecanica_db;Username=oficina_user;Password=1234
+      # Database Configuration using new nested structure
+      - DatabaseConnection__Host=${DatabaseConnection__Host}
+      - DatabaseConnection__Port=${DatabaseConnection__Port}
+      - DatabaseConnection__DatabaseName=${DatabaseConnection__DatabaseName}
+      - DatabaseConnection__User=${DatabaseConnection__User}
+      - DatabaseConnection__Password=${DatabaseConnection__Password}
+      # JWT Configuration
+      - Jwt__Key=${Jwt__Key}
+      - Jwt__Issuer=${Jwt__Issuer}
+      - Jwt__Audience=${Jwt__Audience}
+      # API Credentials
+      - ApiCredentials__ClientId=${ApiCredentials__ClientId}
+      - ApiCredentials__ClientSecret=${ApiCredentials__ClientSecret}
     depends_on:
       postgres_db:
-        condition: service_healthy # Adicionado para garantir que o banco esteja pronto
+        condition: service_healthy
 
   postgres_db:
     image: postgres:16-alpine
     container_name: oficina_mecanica_postgres_db
     environment:
-      POSTGRES_DB: oficina_mecanica_db
-      POSTGRES_USER: oficina_user
-      POSTGRES_PASSWORD: 1234
+      # Uses variables from .env file for PostgreSQL configuration
+      POSTGRES_DB: ${DatabaseConnection__DatabaseName}
+      POSTGRES_USER: ${DatabaseConnection__User}
+      POSTGRES_PASSWORD: ${DatabaseConnection__Password}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U oficina_user -d oficina_mecanica_db"]
+      # Uses variables from .env file for consistency
+      test: ["CMD-SHELL", "pg_isready -U ${DatabaseConnection__User} -d ${DatabaseConnection__DatabaseName}"]
       interval: 10s
       timeout: 5s
       retries: 5
