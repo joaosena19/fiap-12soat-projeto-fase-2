@@ -17,7 +17,7 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      # 2. Configura o ambiente .NET (ajuste a versão se seu projeto for diferente)
+      # 2. Configura o ambiente .NET
       - name: Configurar .NET 9.0
         uses: actions/setup-dotnet@v4
         with:
@@ -26,19 +26,18 @@ jobs:
       # 3. Encontra o arquivo da Solution (.sln) dinamicamente
       - name: Encontrar arquivo da Solution (.sln)
         id: find_sln
-        # Procura pelo primeiro arquivo .sln no repositório e armazena o caminho
         run: echo "sln_path=$(find . -name '*.sln' -print -quit)" >> $GITHUB_OUTPUT
         
       # 4. Restaura as dependências NuGet da solução
       - name: Restaurar dependências
-        # Usa o caminho da solution encontrado no passo anterior
         run: dotnet restore ${{ steps.find_sln.outputs.sln_path }}
 
-      # 5. Builda a solução em modo Release para garantir que compila
+      # 5. Builda a solução em modo Release
       - name: Buildar a aplicação
         run: dotnet build ${{ steps.find_sln.outputs.sln_path }} --no-restore --configuration Release
 
       # 6. Roda todos os projetos de teste da solução
       - name: Rodar testes unitários
-        run: dotnet test ${{ steps.find_sln.outputs.sln_path }} --no-build --verbosity normal
+        # CORREÇÃO: Adicionamos --configuration Release para corresponder ao passo de build
+        run: dotnet test ${{ steps.find_sln.outputs.sln_path }} --no-build --configuration Release --verbosity normal
 
