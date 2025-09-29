@@ -41,24 +41,20 @@ jobs:
       with:
         dotnet-version: '9.0.x'  # Instala a versão mais recente do .NET 9.0
         
-    # Navega para o diretório onde estão os arquivos .NET
-    - name: Ir para diretório src
-      run: cd src
-      
     # Baixa e instala todas as dependências NuGet do projeto
     - name: Restaurar dependências
       run: dotnet restore
-      working-directory: ./src  # Executa o comando dentro da pasta src
+      working-directory: ./src/OficinaMecanica  # Executa o comando onde está o .sln
       
     # Compila a aplicação em modo Release (otimizado para produção)
     - name: Buildar a aplicação
       run: dotnet build --no-restore --configuration Release
-      working-directory: ./src  # --no-restore evita restaurar novamente
+      working-directory: ./src/OficinaMecanica  # --no-restore evita restaurar novamente
       
     # Executa todos os testes unitários para garantir qualidade
     - name: Rodar testes unitários
       run: dotnet test --no-build --verbosity normal
-      working-directory: ./src  # --no-build usa o build já feito acima
+      working-directory: ./src/OficinaMecanica  # --no-build usa o build já feito acima
 
   # ===================================================
   # JOB 2: PUBLICAÇÃO DA IMAGEM DOCKER
