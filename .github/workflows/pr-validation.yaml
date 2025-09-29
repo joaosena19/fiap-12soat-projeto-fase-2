@@ -1,5 +1,5 @@
 # Nome do workflow que aparecerá na aba "Actions" do GitHub
-name: Validar Pull Request (Build e Teste)
+name: Validar Pull Request
 
 # Gatilho: acionado em todo pull request para a branch 'main'
 on:
@@ -25,17 +25,18 @@ jobs:
 
       # 3. Restaura as dependências NuGet do projeto
       - name: Restaurar dependências
+        # CORREÇÃO: Executa o comando na pasta 'src', onde o arquivo .sln provavelmente está.
+        # O 'dotnet restore' encontrará e restaurará todos os projetos da solução.
         run: dotnet restore
-        working-directory: ./src/OficinaMecanica
+        working-directory: ./src
 
       # 4. Builda a solução em modo Release para garantir que compila
-      # O --no-restore acelera o processo, pois já restauramos no passo anterior.
       - name: Buildar a aplicação
         run: dotnet build --no-restore --configuration Release
-        working-directory: ./src/OficinaMecanica
+        working-directory: ./src # CORREÇÃO: Executa o build na solução inteira
 
       # 5. Roda todos os projetos de teste da solução
-      # O --no-build acelera o processo, pois já buildamos no passo anterior.
       - name: Rodar testes unitários
         run: dotnet test --no-build --verbosity normal
-        working-directory: ./src/OficinaMecanica
+        working-directory: ./src # CORREÇÃO: Executa os testes na solução inteira
+
