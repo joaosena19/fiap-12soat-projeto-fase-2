@@ -1,7 +1,7 @@
 # Nome do workflow que aparecerá na aba "Actions" do GitHub
-name: Validar Pull Request (Build e Teste)
+name: Validar Pull Request
 
-# Gatilho: acionado em todo pull request para a branch 'main'
+# Trigger: acionado em todo pull request para a branch 'main'
 on:
   pull_request:
     branches: [ "main" ]
@@ -9,78 +9,54 @@ on:
 jobs:
   # O nome do nosso job. É este nome que usaremos na regra de proteção.
   build-and-test:
-    # O workflow rodará em uma máquina virtual Linux (Ubuntu)
     runs-on: ubuntu-latest
 
-    # --- CORREÇÃO: Adiciona permissões para o job ---
-    # Concede permissão para a action de relatório de testes escrever o status do check no PR.
+    # Necessário write para publicar o relatório de testes
     permissions:
       checks: write
 
     steps:
-      # 1. Clona o código do seu repositório para a máquina virtual
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      # 2. Configura o ambiente .NET
       - name: Configurar .NET 9.0
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
 
-      # 3. Encontra o arquivo da Solution (.sln) dinamicamente
       - name: Encontrar arquivo da Solution (.sln)
         id: find_sln
         run: echo "sln_path=$(find . -name '*.sln' -print -quit)" >> $GITHUB_OUTPUT
         
-      # 4. Restaura as dependências NuGet da solução
       - name: Restaurar dependências
         run: dotnet restore ${{ steps.find_sln.outputs.sln_path }}
 
-      # 5. Builda a solução em modo Release
-      - name: Buildar a aplicação
+      - name: Buildar a aplicação (Release)
         run: dotnet build ${{ steps.find_sln.outputs.sln_path }} --no-restore --configuration Release
 
-      # 6. Configura a localidade (locale) para UTF-8 para caracteres portugueses
-      - name: Configurar localidade (locale) para UTF-8
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y language-pack-pt-base
-          sudo locale-gen pt_BR.UTF-8
-          sudo update-locale
-
-      # 7. Roda todos os projetos de teste da solução
-      - name: Rodar testes unitários
+      - name: Rodar testes unitários (Release)
         run: dotnet test ${{ steps.find_sln.outputs.sln_path }} --no-build --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx"
         # Permite que o workflow continue mesmo se os testes falharem, para que o relatório possa ser gerado.
         continue-on-error: true
         env:
-          # Injeta valores de configuração dummy para que os testes de validação passem.
-          # O .NET mapeia estas variáveis de ambiente para a configuração da aplicação,
-          # sobrepondo os valores vazios do appsettings.json.
-          
-          # Dummy data para a Conexão com o Banco de Dados
+          # Valores dummy para o appsettings necessários para os testes
           DatabaseConnection__Host: "localhost"
           DatabaseConnection__Port: "5432"
-          DatabaseConnection__DatabaseName: "oficina_mecanica_db_test"
+          DatabaseConnection__DatabaseName: "db_test"
           DatabaseConnection__User: "test_user"
           DatabaseConnection__Password: "test_password"
-
-          # Dummy data para JWT e API Credentials
           Jwt__Key: "dummy-super-secret-key-for-testing-purposes-only"
           ApiCredentials__ClientId: "test-client"
           ApiCredentials__ClientSecret: "test-secret"
-          # Adicione outras variáveis de ambiente necessárias para seus testes aqui
 
-      # 8. Publica o relatório de testes de forma visual
       - name: Publicar relatório de testes
         uses: dorny/test-reporter@v1
         # Garante que este passo sempre rode, para que possamos ver o relatório mesmo em caso de falha
         if: always()
         with:
           name: Relatório de Testes .NET
-          path: "**/test-results.trx" # CORREÇÃO: Procura pelo arquivo em qualquer subpasta
-          reporter: dotnet-trx       # O formato do relatório
+          path: "**/test-results.trx"
+          reporter: dotnet-trx
           # Falha o job se algum teste tiver falhado, garantindo que o PR seja bloqueado
           fail-on-error: true
 
