@@ -71,7 +71,7 @@ jobs:
         if: always()
         with:
           name: Relatório de Testes .NET
-          path: test-results.trx    # Caminho para o arquivo de resultados gerado no passo anterior
+          path: "**/test-results.trx" # CORREÇÃO: Procura pelo arquivo em qualquer subpasta
           reporter: dotnet-trx       # O formato do relatório
           # Falha o job se algum teste tiver falhado, garantindo que o PR seja bloqueado
           fail-on-error: true
