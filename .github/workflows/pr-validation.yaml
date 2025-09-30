@@ -38,7 +38,9 @@ jobs:
 
       # 6. Roda todos os projetos de teste da solução
       - name: Rodar testes unitários
-        run: dotnet test ${{ steps.find_sln.outputs.sln_path }} --no-build --configuration Release --verbosity normal
+        run: dotnet test ${{ steps.find_sln.outputs.sln_path }} --no-build --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx"
+        # Permite que o workflow continue mesmo se os testes falharem, para que o relatório possa ser gerado.
+        continue-on-error: true
         env:
           # Força a localidade para pt_BR.UTF-8 para garantir a codificação correta dos caracteres
           LANG: pt_BR.UTF-8
@@ -48,8 +50,29 @@ jobs:
           # Injeta valores de configuração dummy para que os testes de validação passem.
           # O .NET mapeia estas variáveis de ambiente para a configuração da aplicação,
           # sobrepondo os valores vazios do appsettings.json.
+          
+          # Dummy data para a Conexão com o Banco de Dados
+          DatabaseConnection__Host: "localhost"
+          DatabaseConnection__Port: "5432"
+          DatabaseConnection__DatabaseName: "oficina_mecanica_db_test"
+          DatabaseConnection__User: "test_user"
+          DatabaseConnection__Password: "test_password"
+
+          # Dummy data para JWT e API Credentials
           Jwt__Key: "dummy-super-secret-key-for-testing-purposes-only"
           ApiCredentials__ClientId: "test-client"
           ApiCredentials__ClientSecret: "test-secret"
           # Adicione outras variáveis de ambiente necessárias para seus testes aqui
+
+      # 7. Publica o relatório de testes de forma visual
+      - name: Publicar relatório de testes
+        uses: dorny/test-reporter@v1
+        # Garante que este passo sempre rode, para que possamos ver o relatório mesmo em caso de falha
+        if: always()
+        with:
+          name: Relatório de Testes .NET
+          path: test-results.trx    # Caminho para o arquivo de resultados gerado no passo anterior
+          reporter: dotnet-trx       # O formato do relatório
+          # Falha o job se algum teste tiver falhado, garantindo que o PR seja bloqueado
+          fail-on-error: true
 
