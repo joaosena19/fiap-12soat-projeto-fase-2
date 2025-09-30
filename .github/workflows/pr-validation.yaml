@@ -38,6 +38,13 @@ jobs:
 
       # 6. Roda todos os projetos de teste da solução
       - name: Rodar testes unitários
-        # CORREÇÃO: Adicionamos --configuration Release para corresponder ao passo de build
         run: dotnet test ${{ steps.find_sln.outputs.sln_path }} --no-build --configuration Release --verbosity normal
+        env:
+          # Injeta valores de configuração dummy para que os testes de validação passem.
+          # O .NET mapeia estas variáveis de ambiente para a configuração da aplicação,
+          # sobrepondo os valores vazios do appsettings.json.
+          Jwt__Key: "dummy-super-secret-key-for-testing-purposes-only"
+          ApiCredentials__ClientId: "test-client"
+          ApiCredentials__ClientSecret: "test-secret"
+          # Adicione outras variáveis de ambiente necessárias para seus testes aqui
 
