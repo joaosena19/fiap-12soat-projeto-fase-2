@@ -65,7 +65,7 @@ jobs:
       - name: Buildar e enviar imagem Docker
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./src
           file: ./src/Dockerfile
           push: true
           tags: |
@@ -76,26 +76,12 @@ jobs:
     name: 3. Aplicar Infraestrutura (Terraform)
     runs-on: ubuntu-latest
     needs: build-and-test # Executa em paralelo com o Docker pois só precisa do build-and-test
-    # Define um output para que outros jobs saibam se ele rodou
-    outputs:
-      infra_changed: ${{ steps.changes.outputs.infra_changed }}
+
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Necessário para comparar com o commit anterior
-
-      - name: Verificar mudanças na pasta infra
-        id: changes
-        run: |
-          if git diff --name-only HEAD~1..HEAD | grep -q '^infra/'; then
-            echo "infra_changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "infra_changed=false" >> $GITHUB_OUTPUT
-          fi
 
       - name: Configurar credenciais da AWS
-        if: steps.changes.outputs.infra_changed == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -103,21 +89,17 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Configurar Terraform
-        if: steps.changes.outputs.infra_changed == 'true'
         uses: hashicorp/setup-terraform@v3
 
       - name: Inicializar Terraform
-        if: steps.changes.outputs.infra_changed == 'true'
         run: terraform init
         working-directory: ./infra
 
       - name: Validar configuração do Terraform
-        if: steps.changes.outputs.infra_changed == 'true'
         run: terraform validate
         working-directory: ./infra
 
       - name: Aplicar alterações do Terraform
-        if: steps.changes.outputs.infra_changed == 'true'
         env:
           TF_VAR_bucket_name: ${{ secrets.TF_VAR_BUCKET_NAME }}
           TF_VAR_eks_iam_user_name: ${{ secrets.TF_VAR_EKS_IAM_USER_NAME }}
@@ -127,21 +109,17 @@ jobs:
           TF_VAR_eks_cluster_name: ${{ secrets.TF_VAR_EKS_CLUSTER_NAME }}
         run: terraform apply -auto-approve
         working-directory: ./infra
+
         
       - name: Resumo da infraestrutura
-        if: steps.changes.outputs.infra_changed == 'true'
-        run: echo "Alterações na infraestrutura aplicadas com sucesso."
-        
-      - name: Nenhuma mudança na infraestrutura
-        if: steps.changes.outputs.infra_changed == 'false'
-        run: echo "Sem alterações detectadas na pasta infra/ - pulando aplicação do Terraform."
+        run: echo "Infraestrutura aplicada com sucesso."
 
   deploy-to-kubernetes:
     name: 4. Deploy no Kubernetes (EKS)
     runs-on: ubuntu-latest
     needs: [publish-docker-image, apply-infrastructure] # Depende do Docker e do Terraform
-    # Executa se o docker foi bem-sucedido E (a infra foi bem-sucedida ou a infra foi pulada)
-    if: needs.publish-docker-image.result == 'success' && (needs.apply-infrastructure.outputs.infra_changed == 'true' && needs.apply-infrastructure.result == 'success' || needs.apply-infrastructure.outputs.infra_changed == 'false')
+    # Executa se ambos os jobs anteriores foram bem-sucedidos
+    if: needs.publish-docker-image.result == 'success' && needs.apply-infrastructure.result == 'success'
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
