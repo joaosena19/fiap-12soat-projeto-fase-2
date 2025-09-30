@@ -1,30 +1,11 @@
-# =====================================================
-# WORKFLOW DE CD - OFICINA MECÂNICA API
-# =====================================================
-# Este workflow automatiza o processo completo de deploy
-# para a branch 'main'.
-# 1. Valida a qualidade do código (build e testes)
-# 2. Publica a imagem Docker (em paralelo com Terraform)
-# 3. Aplica mudanças na infraestrutura (se houver)
-# 4. Faz o deploy no cluster Kubernetes (EKS)
-# =====================================================
-
 name: Deploy Completo para Kubernetes (EKS)
 
-# =====================================================
-# TRIGGER
-# =====================================================
+# Trigger: acionado em todo push para a branch 'main'
 on:
   push:
     branches: [ "main" ]
 
-# =====================================================
-# JOBS
-# =====================================================
 jobs:
-  # ===================================================
-  # JOB 1: BUILD E TESTES (VERIFICAÇÃO FINAL)
-  # ===================================================
   build-and-test:
     name: 1. Build e Teste
     runs-on: ubuntu-latest
@@ -49,14 +30,21 @@ jobs:
 
       - name: Rodar testes unitários (Release)
         run: dotnet test ${{ steps.find_sln.outputs.sln_path }} --no-build --configuration Release --verbosity normal
+        env:
+          # Valores dummy para o appsettings necessários para os testes
+          DatabaseConnection__Host: "localhost"
+          DatabaseConnection__Port: "5432"
+          DatabaseConnection__DatabaseName: "db_test"
+          DatabaseConnection__User: "test_user"
+          DatabaseConnection__Password: "test_password"
+          Jwt__Key: "dummy-super-secret-key-for-testing-purposes-only"
+          ApiCredentials__ClientId: "test-client"
+          ApiCredentials__ClientSecret: "test-secret"
 
-  # ===================================================
-  # JOB 2: PUBLICAÇÃO DA IMAGEM DOCKER
-  # ===================================================
   publish-docker-image:
     name: 2. Publicar Imagem Docker
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: build-and-test # Executa em paralelo com o Terraform pois só precisa do build-and-test
     outputs:
       version_tag: ${{ steps.version.outputs.VERSION }}
     steps:
@@ -84,13 +72,10 @@ jobs:
             joaodainese/fiap-12-soat-projeto-fase2:latest
             joaodainese/fiap-12-soat-projeto-fase2:${{ steps.version.outputs.VERSION }}
             
-  # ===================================================
-  # JOB 3: APLICAR INFRAESTRUTURA (TERRAFORM)
-  # ===================================================
   apply-infrastructure:
     name: 3. Aplicar Infraestrutura (Terraform)
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: build-and-test # Executa em paralelo com o Docker pois só precisa do build-and-test
     # Define um output para que outros jobs saibam se ele rodou
     outputs:
       infra_changed: ${{ steps.changes.outputs.infra_changed }}
@@ -151,13 +136,10 @@ jobs:
         if: steps.changes.outputs.infra_changed == 'false'
         run: echo "Sem alterações detectadas na pasta infra/ - pulando aplicação do Terraform."
 
-  # ===================================================
-  # JOB 4: DEPLOY NO KUBERNETES (EKS)
-  # ===================================================
   deploy-to-kubernetes:
     name: 4. Deploy no Kubernetes (EKS)
     runs-on: ubuntu-latest
-    needs: [publish-docker-image, apply-infrastructure]
+    needs: [publish-docker-image, apply-infrastructure] # Depende do Docker e do Terraform
     # Executa se o docker foi bem-sucedido E (a infra foi bem-sucedida ou a infra foi pulada)
     if: needs.publish-docker-image.result == 'success' && (needs.apply-infrastructure.outputs.infra_changed == 'true' && needs.apply-infrastructure.result == 'success' || needs.apply-infrastructure.outputs.infra_changed == 'false')
     steps:
