@@ -1,134 +1,192 @@
 # =====================================================
-# WORKFLOW DE CI/CD - OFICINA MECÂNICA API
+# WORKFLOW DE CD - OFICINA MECÂNICA API
 # =====================================================
-# Este workflow automatiza o processo completo de:
-# 1. Build e testes da aplicação .NET
-# 2. Criação e publicação da imagem Docker
-# 3. Deploy da aplicação no cluster EKS (Kubernetes)
-#
-# Executado automaticamente a cada push na branch 'main'
+# Este workflow automatiza o processo completo de deploy
+# para a branch 'main'.
+# 1. Valida a qualidade do código (build e testes)
+# 2. Publica a imagem Docker (em paralelo com Terraform)
+# 3. Aplica mudanças na infraestrutura (se houver)
+# 4. Faz o deploy no cluster Kubernetes (EKS)
 # =====================================================
 
 name: Deploy Completo para Kubernetes (EKS)
 
 # =====================================================
-# TRIGGER: Quando executar este workflow
+# TRIGGER
 # =====================================================
 on:
   push:
-    branches: [ "main" ]  # Executa apenas quando há push na branch main
+    branches: [ "main" ]
 
 # =====================================================
-# JOBS: Etapas do pipeline de CI/CD
+# JOBS
 # =====================================================
 jobs:
   # ===================================================
-  # JOB 1: BUILD E TESTES
+  # JOB 1: BUILD E TESTES (VERIFICAÇÃO FINAL)
   # ===================================================
-  # Verifica se o código compila e passa nos testes
-  # antes de prosseguir com a publicação
   build-and-test:
     name: 1. Build e Teste
-    runs-on: ubuntu-latest  # Usa uma máquina virtual Ubuntu
+    runs-on: ubuntu-latest
     steps:
-    # Faz download do código fonte do repositório
-    - name: Checkout do código
-      uses: actions/checkout@v4
+      - name: Checkout do código
+        uses: actions/checkout@v4
 
-    # Instala e configura o .NET 9.0 na máquina virtual
-    - name: Configurar .NET 9.0
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.0.x'  # Instala a versão mais recente do .NET 9.0
+      - name: Configurar .NET 9.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+          
+      - name: Encontrar arquivo da Solution (.sln)
+        id: find_sln
+        run: echo "sln_path=$(find . -name '*.sln' -print -quit)" >> $GITHUB_OUTPUT
         
-    # Baixa e instala todas as dependências NuGet do projeto
-    - name: Restaurar dependências
-      run: dotnet restore
-      working-directory: ./src/OficinaMecanica  # Executa o comando onde está o .sln
-      
-    # Compila a aplicação em modo Release (otimizado para produção)
-    - name: Buildar a aplicação
-      run: dotnet build --no-restore --configuration Release
-      working-directory: ./src/OficinaMecanica  # --no-restore evita restaurar novamente
-      
-    # Executa todos os testes unitários para garantir qualidade
-    - name: Rodar testes unitários
-      run: dotnet test --no-build --verbosity normal
-      working-directory: ./src/OficinaMecanica  # --no-build usa o build já feito acima
+      - name: Restaurar dependências
+        run: dotnet restore ${{ steps.find_sln.outputs.sln_path }}
+
+      - name: Buildar a aplicação (Release)
+        run: dotnet build ${{ steps.find_sln.outputs.sln_path }} --no-restore --configuration Release
+
+      - name: Rodar testes unitários (Release)
+        run: dotnet test ${{ steps.find_sln.outputs.sln_path }} --no-build --configuration Release --verbosity normal
 
   # ===================================================
   # JOB 2: PUBLICAÇÃO DA IMAGEM DOCKER
   # ===================================================
-  # Cria a imagem Docker da aplicação e envia para o Docker Hub
-  # Só executa se o job anterior (build-and-test) for bem-sucedido
   publish-docker-image:
     name: 2. Publicar Imagem Docker
     runs-on: ubuntu-latest
-    needs: build-and-test  # Aguarda o job anterior terminar com sucesso
+    needs: build-and-test
+    outputs:
+      version_tag: ${{ steps.version.outputs.VERSION }}
     steps:
-    # Faz download do código fonte (necessário para acessar o Dockerfile)
-    - name: Checkout do código
-      uses: actions/checkout@v4
+      - name: Checkout do código
+        uses: actions/checkout@v4
 
-    # Autentica no Docker Hub usando credenciais armazenadas nos secrets
-    - name: Login no Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}  # Usuário do Docker Hub
-        password: ${{ secrets.DOCKERHUB_TOKEN }}     # Token de acesso do Docker Hub
+      - name: Gerar tag de versão
+        id: version
+        run: |
+          echo "VERSION=v$(date +%Y%m%d-%H%M%S)-${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
 
-    # Constrói a imagem Docker e envia para o Docker Hub
-    - name: Buildar e enviar imagem Docker
-      uses: docker/build-push-action@v5
-      with:
-        context: ./src           # Pasta onde está o Dockerfile
-        push: true              # Envia a imagem para o Docker Hub após o build
-        tags: |                 # Cria duas tags para a mesma imagem:
-          joaodainese/fiap-12-soat-projeto-fase2:latest           # Tag 'latest' (mais recente)
-          joaodainese/fiap-12-soat-projeto-fase2:${{ github.sha }} # Tag com hash do commit (rastreabilidade)
+      - name: Login no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Buildar e enviar imagem Docker
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./src/Dockerfile
+          push: true
+          tags: |
+            joaodainese/fiap-12-soat-projeto-fase2:latest
+            joaodainese/fiap-12-soat-projeto-fase2:${{ steps.version.outputs.VERSION }}
+            
   # ===================================================
-  # JOB 3: DEPLOY NO KUBERNETES (EKS)
+  # JOB 3: APLICAR INFRAESTRUTURA (TERRAFORM)
   # ===================================================
-  # Faz o deploy da aplicação no cluster Kubernetes da AWS
-  # Só executa após a imagem Docker ser publicada com sucesso
-  deploy-to-kubernetes:
-    name: 3. Deploy no Kubernetes (EKS)
+  apply-infrastructure:
+    name: 3. Aplicar Infraestrutura (Terraform)
     runs-on: ubuntu-latest
-    needs: publish-docker-image  # Aguarda a publicação da imagem Docker
+    needs: build-and-test
+    # Define um output para que outros jobs saibam se ele rodou
+    outputs:
+      infra_changed: ${{ steps.changes.outputs.infra_changed }}
     steps:
-    # Faz download do código fonte (necessário para acessar os manifestos k8s)
-    - name: Checkout do código
-      uses: actions/checkout@v4
-      
-    # Configura as credenciais da AWS para acessar o cluster EKS
-    - name: Configurar credenciais da AWS
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}         # Chave de acesso da AWS
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Chave secreta da AWS
-        aws-region: ${{ secrets.AWS_REGION }}                       # Região onde está o cluster
+      - name: Checkout do código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Necessário para comparar com o commit anterior
 
-    # Configura o kubectl para acessar o cluster EKS específico
-    - name: Configurar acesso ao cluster EKS
-      run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
+      - name: Verificar mudanças na pasta infra
+        id: changes
+        run: |
+          if git diff --name-only HEAD~1..HEAD | grep -q '^infra/'; then
+            echo "infra_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "infra_changed=false" >> $GITHUB_OUTPUT
+          fi
 
-    # Aplica as configurações compartilhadas (variáveis de ambiente e secrets)
-    # Estes recursos são usados tanto pela API quanto pelo PostgreSQL
-    - name: Aplicar configurações compartilhadas (ConfigMap e Secret)
-      run: kubectl apply -f k8s/oficina-mecanica-config.yaml -f k8s/oficina-mecanica-secret.yaml
+      - name: Configurar credenciais da AWS
+        if: steps.changes.outputs.infra_changed == 'true'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-    # Aplica todos os manifestos do banco de dados PostgreSQL
-    # Inclui: deployment, service e persistent volume claim
-    - name: Aplicar manifestos do banco de dados
-      run: kubectl apply -f k8s/postgres/
+      - name: Configurar Terraform
+        if: steps.changes.outputs.infra_changed == 'true'
+        uses: hashicorp/setup-terraform@v3
 
-    # Aplica todos os manifestos da API da oficina mecânica
-    # Inclui: deployment, service e horizontal pod autoscaler
-    - name: Aplicar manifestos da API
-      run: kubectl apply -f k8s/api/
-      
-    # Verifica se o deploy da API foi concluído com sucesso
-    # Aguarda até 120 segundos para o deployment estar disponível
-    - name: Verificar o status do deploy
-      run: kubectl rollout status deployment/oficina-mecanica-deployment --timeout=120s
+      - name: Inicializar Terraform
+        if: steps.changes.outputs.infra_changed == 'true'
+        run: terraform init
+        working-directory: ./infra
+
+      - name: Validar configuração do Terraform
+        if: steps.changes.outputs.infra_changed == 'true'
+        run: terraform validate
+        working-directory: ./infra
+
+      - name: Aplicar alterações do Terraform
+        if: steps.changes.outputs.infra_changed == 'true'
+        env:
+          TF_VAR_bucket_name: ${{ secrets.TF_VAR_BUCKET_NAME }}
+          TF_VAR_eks_iam_user_name: ${{ secrets.TF_VAR_EKS_IAM_USER_NAME }}
+          TF_VAR_eks_node_scaling_desired_size: ${{ secrets.TF_VAR_EKS_NODE_SCALING_DESIRED_SIZE }}
+          TF_VAR_eks_node_scaling_max_size: ${{ secrets.TF_VAR_EKS_NODE_SCALING_MAX_SIZE }}
+          TF_VAR_eks_node_scaling_min_size: ${{ secrets.TF_VAR_EKS_NODE_SCALING_MIN_SIZE }}
+        run: terraform apply -auto-approve
+        working-directory: ./infra
+        
+      - name: Resumo da infraestrutura
+        if: steps.changes.outputs.infra_changed == 'true'
+        run: echo "Alterações na infraestrutura aplicadas com sucesso."
+        
+      - name: Nenhuma mudança na infraestrutura
+        if: steps.changes.outputs.infra_changed == 'false'
+        run: echo "Sem alterações detectadas na pasta infra/ - pulando aplicação do Terraform."
+
+  # ===================================================
+  # JOB 4: DEPLOY NO KUBERNETES (EKS)
+  # ===================================================
+  deploy-to-kubernetes:
+    name: 4. Deploy no Kubernetes (EKS)
+    runs-on: ubuntu-latest
+    needs: [publish-docker-image, apply-infrastructure]
+    # Executa se o docker foi bem-sucedido E (a infra foi bem-sucedida ou a infra foi pulada)
+    if: needs.publish-docker-image.result == 'success' && (needs.apply-infrastructure.outputs.infra_changed == 'true' && needs.apply-infrastructure.result == 'success' || needs.apply-infrastructure.outputs.infra_changed == 'false')
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+        
+      - name: Configurar credenciais da AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Configurar acesso ao cluster EKS
+        run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
+
+      - name: Atualizar tag da imagem no manifesto k8s
+        run: |
+          # Usa o output do job 'publish-docker-image' para garantir consistência
+          sed -i "s|image:.*|image: joaodainese/fiap-12-soat-projeto-fase2:${{ needs.publish-docker-image.outputs.version_tag }}|g" k8s/api/oficina-mecanica-deployment.yaml
+
+      - name: Aplicar configurações gerais
+        run: kubectl apply -f k8s/
+
+      - name: Aplicar manifestos do banco de dados
+        run: kubectl apply -f k8s/postgres/
+
+      - name: Aplicar manifestos da API
+        run: kubectl apply -f k8s/api/
+        
+      - name: Verificar o status do deploy
+        run: kubectl rollout status deployment/oficina-mecanica-deployment --timeout=120s
+
