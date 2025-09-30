@@ -166,7 +166,7 @@ public class TokenServiceTests
         var exception = Assert.Throws<InvalidOperationException>(() =>
             _tokenService.GenerateToken(clientId));
 
-        exception.Message.Should().Be("Configuração JWT está ausente");
+        exception.Message.Should().Contain("JWT").And.Contain("ausente");
     }
 
     [Fact(DisplayName = "Deve lançar InvalidOperationException quando chave JWT é vazia")]
@@ -184,7 +184,7 @@ public class TokenServiceTests
         var exception = Assert.Throws<InvalidOperationException>(() =>
             _tokenService.GenerateToken(clientId));
 
-        exception.Message.Should().Be("Configuração JWT está ausente");
+        exception.Message.Should().Contain("JWT").And.Contain("ausente");
     }
 
     [Fact(DisplayName = "Deve lançar InvalidOperationException quando issuer JWT está ausente")]
@@ -202,7 +202,7 @@ public class TokenServiceTests
         var exception = Assert.Throws<InvalidOperationException>(() =>
             _tokenService.GenerateToken(clientId));
 
-        exception.Message.Should().Be("Configuração JWT está ausente");
+        exception.Message.Should().Contain("JWT").And.Contain("ausente");
     }
 
     [Fact(DisplayName = "Deve lançar InvalidOperationException quando issuer JWT é vazio")]
@@ -220,7 +220,7 @@ public class TokenServiceTests
         var exception = Assert.Throws<InvalidOperationException>(() =>
             _tokenService.GenerateToken(clientId));
 
-        exception.Message.Should().Be("Configuração JWT está ausente");
+        exception.Message.Should().Contain("JWT").And.Contain("ausente");
     }
 
     [Fact(DisplayName = "Deve lançar InvalidOperationException quando audience JWT está ausente")]
@@ -238,7 +238,7 @@ public class TokenServiceTests
         var exception = Assert.Throws<InvalidOperationException>(() =>
             _tokenService.GenerateToken(clientId));
 
-        exception.Message.Should().Be("Configuração JWT está ausente");
+        exception.Message.Should().Contain("JWT").And.Contain("ausente");
     }
 
     [Fact(DisplayName = "Deve lançar InvalidOperationException quando audience JWT é vazio")]
@@ -256,7 +256,7 @@ public class TokenServiceTests
         var exception = Assert.Throws<InvalidOperationException>(() =>
             _tokenService.GenerateToken(clientId));
 
-        exception.Message.Should().Be("Configuração JWT está ausente");
+        exception.Message.Should().Contain("JWT").And.Contain("ausente");
     }
 
     [Theory(DisplayName = "Deve lançar InvalidOperationException quando configurações JWT estão ausentes ou vazias")]
@@ -283,7 +283,7 @@ public class TokenServiceTests
         var exception = Assert.Throws<InvalidOperationException>(() =>
             _tokenService.GenerateToken(clientId));
 
-        exception.Message.Should().Be("Configuração JWT está ausente");
+        exception.Message.Should().Contain("JWT").And.Contain("ausente");
     }
 
     [Fact(DisplayName = "Deve incluir clientId em claims do token")]

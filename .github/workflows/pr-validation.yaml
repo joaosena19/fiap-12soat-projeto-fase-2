@@ -55,11 +55,6 @@ jobs:
         # Permite que o workflow continue mesmo se os testes falharem, para que o relatório possa ser gerado.
         continue-on-error: true
         env:
-          # Força a localidade para pt_BR.UTF-8 para garantir a codificação correta dos caracteres
-          LANG: pt_BR.UTF-8
-          LC_ALL: pt_BR.UTF-8
-          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: false
-
           # Injeta valores de configuração dummy para que os testes de validação passem.
           # O .NET mapeia estas variáveis de ambiente para a configuração da aplicação,
           # sobrepondo os valores vazios do appsettings.json.
