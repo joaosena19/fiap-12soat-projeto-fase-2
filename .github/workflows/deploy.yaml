@@ -139,6 +139,7 @@ jobs:
           TF_VAR_eks_node_scaling_desired_size: ${{ secrets.TF_VAR_EKS_NODE_SCALING_DESIRED_SIZE }}
           TF_VAR_eks_node_scaling_max_size: ${{ secrets.TF_VAR_EKS_NODE_SCALING_MAX_SIZE }}
           TF_VAR_eks_node_scaling_min_size: ${{ secrets.TF_VAR_EKS_NODE_SCALING_MIN_SIZE }}
+          TF_VAR_eks_cluster_name: ${{ secrets.TF_VAR_EKS_CLUSTER_NAME }}
         run: terraform apply -auto-approve
         working-directory: ./infra
         
@@ -171,7 +172,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Configurar acesso ao cluster EKS
-        run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
+        run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.TF_VAR_EKS_CLUSTER_NAME }}
 
       - name: Atualizar tag da imagem no manifesto k8s
         run: |

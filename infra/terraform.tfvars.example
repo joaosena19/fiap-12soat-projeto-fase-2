@@ -1,6 +1,7 @@
 # Variáveis Obrigatórias
 bucket_name = "coloque-seu-bucket-aqui"
 eks_iam_user_name = "seu-usuario-admin-eks"
+eks_cluster_name = "eks-cluster-fiap-12soat-fase2-joaodainese"
 
 # Variáveis Opcionais
 # aws_region   = "us-east-1"

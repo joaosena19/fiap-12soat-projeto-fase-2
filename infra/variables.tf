@@ -9,6 +9,11 @@ variable "eks_iam_user_name" {
   type        = string
 }
 
+variable "eks_cluster_name" {
+  description = "Nome do cluster EKS. Exemplo: fiap-12soat-fase2-joaodainese"
+  type        = string
+}
+
 # Opcionais
 variable "aws_region" {
   description = "A região da AWS onde os recursos serão criados."

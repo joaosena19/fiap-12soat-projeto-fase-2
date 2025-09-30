@@ -1,6 +1,6 @@
 # resource "aws_eks_cluster" "eks_cluster" {
-#   version  = 1.33
-#   name     = "eks-cluster-${var.project_identifier}"
+#   version  = "1.33"
+#   name     = var.eks_cluster_name
 #   role_arn = aws_iam_role.eks_cluster_role.arn
 
 #   access_config {
