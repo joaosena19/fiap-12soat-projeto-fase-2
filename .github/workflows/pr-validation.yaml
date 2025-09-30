@@ -1,41 +1,62 @@
 # Nome do workflow que aparecerá na aba "Actions" do GitHub
-name: Validar Pull Request (Build e Teste)
+name: Validar Pull Request
 
-# Gatilho: acionado em todo pull request para a branch 'main'
+# Trigger: acionado em todo pull request para a branch 'main'
 on:
   pull_request:
-    branches: [ "main" ] # Se sua branch principal for 'master', troque aqui
+    branches: [ "main" ]
 
 jobs:
   # O nome do nosso job. É este nome que usaremos na regra de proteção.
   build-and-test:
-    # O workflow rodará em uma máquina virtual Linux (Ubuntu)
     runs-on: ubuntu-latest
 
+    # Necessário write para publicar o relatório de testes
+    permissions:
+      checks: write
+
     steps:
-      # 1. Clona o código do seu repositório para a máquina virtual
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      # 2. Configura o ambiente .NET (ajuste a versão se seu projeto for diferente)
       - name: Configurar .NET 9.0
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
 
-      # 3. Restaura as dependências NuGet do projeto
+      - name: Encontrar arquivo da Solution (.sln)
+        id: find_sln
+        run: echo "sln_path=$(find . -name '*.sln' -print -quit)" >> $GITHUB_OUTPUT
+        
       - name: Restaurar dependências
-        run: dotnet restore
-        working-directory: ./src/OficinaMecanica
+        run: dotnet restore ${{ steps.find_sln.outputs.sln_path }}
 
-      # 4. Builda a solução em modo Release para garantir que compila
-      # O --no-restore acelera o processo, pois já restauramos no passo anterior.
-      - name: Buildar a aplicação
-        run: dotnet build --no-restore --configuration Release
-        working-directory: ./src/OficinaMecanica
+      - name: Buildar a aplicação (Release)
+        run: dotnet build ${{ steps.find_sln.outputs.sln_path }} --no-restore --configuration Release
 
-      # 5. Roda todos os projetos de teste da solução
-      # O --no-build acelera o processo, pois já buildamos no passo anterior.
-      - name: Rodar testes unitários
-        run: dotnet test --no-build --verbosity normal
-        working-directory: ./src/OficinaMecanica
+      - name: Rodar testes unitários (Release)
+        run: dotnet test ${{ steps.find_sln.outputs.sln_path }} --no-build --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx"
+        # Permite que o workflow continue mesmo se os testes falharem, para que o relatório possa ser gerado.
+        continue-on-error: true
+        env:
+          # Valores dummy para o appsettings necessários para os testes
+          DatabaseConnection__Host: "localhost"
+          DatabaseConnection__Port: "5432"
+          DatabaseConnection__DatabaseName: "db_test"
+          DatabaseConnection__User: "test_user"
+          DatabaseConnection__Password: "test_password"
+          Jwt__Key: "dummy-super-secret-key-for-testing-purposes-only"
+          ApiCredentials__ClientId: "test-client"
+          ApiCredentials__ClientSecret: "test-secret"
+
+      - name: Publicar relatório de testes
+        uses: dorny/test-reporter@v1
+        # Garante que este passo sempre rode, para que possamos ver o relatório mesmo em caso de falha
+        if: always()
+        with:
+          name: Relatório de Testes .NET
+          path: "**/test-results.trx"
+          reporter: dotnet-trx
+          # Falha o job se algum teste tiver falhado, garantindo que o PR seja bloqueado
+          fail-on-error: true
+

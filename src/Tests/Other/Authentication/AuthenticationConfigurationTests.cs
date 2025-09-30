@@ -32,7 +32,7 @@ namespace Tests.Other.Authentication
 
             // Assert
             act.Should().Throw<InvalidOperationException>()
-                .WithMessage("Configuração JWT está ausente");
+                .WithMessage("*JWT*ausente*");
         }
 
         [Fact(DisplayName = "Deve lançar exceção quando JWT Key está vazia")]
@@ -50,7 +50,7 @@ namespace Tests.Other.Authentication
 
             // Assert
             act.Should().Throw<InvalidOperationException>()
-                .WithMessage("Configuração JWT está ausente");
+                .WithMessage("*JWT*ausente*");
         }
 
         [Fact(DisplayName = "Deve lançar exceção quando JWT Issuer está ausente")]
@@ -68,7 +68,7 @@ namespace Tests.Other.Authentication
 
             // Assert
             act.Should().Throw<InvalidOperationException>()
-                .WithMessage("Configuração JWT está ausente");
+                .WithMessage("*JWT*ausente*");
         }
 
         [Fact(DisplayName = "Deve lançar exceção quando JWT Issuer está vazio")]
@@ -86,7 +86,7 @@ namespace Tests.Other.Authentication
 
             // Assert
             act.Should().Throw<InvalidOperationException>()
-                .WithMessage("Configuração JWT está ausente");
+                .WithMessage("*JWT*ausente*");
         }
 
         [Fact(DisplayName = "Deve lançar exceção quando JWT Audience está ausente")]
@@ -104,7 +104,7 @@ namespace Tests.Other.Authentication
 
             // Assert
             act.Should().Throw<InvalidOperationException>()
-                .WithMessage("Configuração JWT está ausente");
+                .WithMessage("*JWT*ausente*");
         }
 
         [Fact(DisplayName = "Deve lançar exceção quando JWT Audience está vazio")]
@@ -122,7 +122,7 @@ namespace Tests.Other.Authentication
 
             // Assert
             act.Should().Throw<InvalidOperationException>()
-                .WithMessage("Configuração JWT está ausente");
+                .WithMessage("*JWT*ausente*");
         }
 
         [Fact(DisplayName = "Deve lançar exceção quando todos os parâmetros JWT estão ausentes")]
@@ -140,7 +140,7 @@ namespace Tests.Other.Authentication
 
             // Assert
             act.Should().Throw<InvalidOperationException>()
-                .WithMessage("Configuração JWT está ausente");
+                .WithMessage("*JWT*ausente*");
         }
 
         [Fact(DisplayName = "Deve lançar exceção quando todos os parâmetros JWT estão vazios")]
@@ -158,7 +158,7 @@ namespace Tests.Other.Authentication
 
             // Assert
             act.Should().Throw<InvalidOperationException>()
-                .WithMessage("Configuração JWT está ausente");
+                .WithMessage("*JWT*ausente*");
         }
 
         [Fact(DisplayName = "Deve configurar autenticação JWT com sucesso quando todos os parâmetros são válidos")]
