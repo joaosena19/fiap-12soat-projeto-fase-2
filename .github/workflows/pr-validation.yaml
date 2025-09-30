@@ -54,7 +54,7 @@ jobs:
         # Garante que este passo sempre rode, para que possamos ver o relatório mesmo em caso de falha
         if: always()
         with:
-          name: Relatório de Testes .NET
+          name: test-report
           path: "**/test-results.trx"
           reporter: dotnet-trx
           # Falha o job se algum teste tiver falhado, garantindo que o PR seja bloqueado
