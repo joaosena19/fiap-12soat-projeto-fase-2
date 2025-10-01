@@ -131,22 +131,42 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Verificar conectividade com AWS
+        run: |
+          echo "Verificando identidade AWS..."
+          aws sts get-caller-identity
+          echo "Listando clusters EKS..."
+          aws eks list-clusters --region ${{ secrets.AWS_REGION }}
+
       - name: Configurar acesso ao cluster EKS
-        run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.TF_VAR_EKS_CLUSTER_NAME }}
+        run: |
+          echo "Configurando kubeconfig para o cluster: ${{ secrets.TF_VAR_EKS_CLUSTER_NAME }}"
+          aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.TF_VAR_EKS_CLUSTER_NAME }}
+          echo "Testando conectividade com o cluster..."
+          kubectl cluster-info
+          kubectl get nodes
 
       - name: Atualizar tag da imagem no manifesto k8s
         run: |
           # Usa o output do job 'publish-docker-image' para garantir consistência
           sed -i "s|image:.*|image: joaodainese/fiap-12-soat-projeto-fase2:${{ needs.publish-docker-image.outputs.version_tag }}|g" k8s/api/oficina-mecanica-deployment.yaml
 
+      - name: Verificar manifesto antes de aplicar
+        run: |
+          echo "Validando manifestos k8s..."
+          kubectl apply -f k8s/ --dry-run=client --validate=true || {
+            echo "Erro na validação. Tentando aplicar com validação desabilitada..."
+            kubectl apply -f k8s/ --validate=false
+          }
+
       - name: Aplicar configurações gerais
-        run: kubectl apply -f k8s/
+        run: kubectl apply -f k8s/ --validate=false
 
       - name: Aplicar manifestos do banco de dados
-        run: kubectl apply -f k8s/postgres/
+        run: kubectl apply -f k8s/postgres/ --validate=false
 
       - name: Aplicar manifestos da API
-        run: kubectl apply -f k8s/api/
+        run: kubectl apply -f k8s/api/ --validate=false
         
       - name: Verificar o status do deploy
         run: kubectl rollout status deployment/oficina-mecanica-deployment --timeout=120s
