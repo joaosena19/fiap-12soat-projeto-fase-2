@@ -54,7 +54,7 @@ variable "availability_zones" {
 variable "eks_node_instance_types" {
   description = "Lista de tipos de instância para os nós do EKS."
   type        = list(string)
-  default     = ["t3.micro"] 
+  default     = ["t3.micro"]
 }
 
 variable "eks_node_disk_size" {
