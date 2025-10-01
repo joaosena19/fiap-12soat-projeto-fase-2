@@ -18,7 +18,7 @@ output "subnet_publica_ids" {
   value       = aws_subnet.subnet_publica[*].id
 }
 
-output "eks_cluster_name" {
-  description = "Nome do cluster EKS"
-  value       = aws_eks_cluster.eks_cluster.name
-}
+# output "eks_cluster_name" {
+#   description = "Nome do cluster EKS"
+#   value       = aws_eks_cluster.eks_cluster.name
+# }

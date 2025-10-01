@@ -8,7 +8,7 @@ spec:
     kind: Deployment
     name: oficina-mecanica-deployment
   minReplicas: 1 # Mesmo valor do Deployment
-  maxReplicas: 10
+  maxReplicas: 5 
   metrics: # Escala baseado em CPU e Memória
   - type: Resource 
     resource:
