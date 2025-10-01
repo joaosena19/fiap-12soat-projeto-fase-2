@@ -17,13 +17,13 @@ spec:
         image: postgres:16-alpine
         ports:
         - containerPort: 5432 # Porta padrão do PostgreSQL
-        resources: # Para evitar competição de recursos do banco de dados com os Pods da API
+        resources: 
           requests:
-            cpu: "250m"
-            memory: "512Mi"
+            cpu: "100m"
+            memory: "256Mi"
           limits:
-            cpu: "500m"
-            memory: "1Gi"
+            cpu: "300m"
+            memory: "384Mi"
         env:
           - name: POSTGRES_DB
             valueFrom:
@@ -77,5 +77,4 @@ spec:
           failureThreshold: 12
       volumes:
         - name: postgres-storage 
-          persistentVolumeClaim:
-            claimName: postgres-pvc
+          emptyDir: {} # Usar emptyDir para desenvolvimento local com Minikube
