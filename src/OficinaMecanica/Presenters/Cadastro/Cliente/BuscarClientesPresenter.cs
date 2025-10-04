@@ -1,20 +1,19 @@
 using Application.Cadastros.Dtos;
 using Application.Contracts.Presenters;
-using Domain.Cadastros.Aggregates;
 
-namespace API.Presenters.Cadastro
+namespace API.Presenters.Cadastro.Cliente
 {
-    public class BuscarClientePorIdPresenter : BasePresenter, IBuscarClientePorIdPresenter
+    public class BuscarClientesPresenter : BasePresenter, IBuscarClientesPresenter
     {
-        public void ApresentarSucesso(Cliente cliente)
+        public void ApresentarSucesso(IEnumerable<Domain.Cadastros.Aggregates.Cliente> clientes)
         {
-            var dto = new RetornoClienteDto
+            var dto = clientes.Select(cliente => new RetornoClienteDto
             {
                 Id = cliente.Id,
                 Nome = cliente.Nome.Valor,
                 DocumentoIdentificador = cliente.DocumentoIdentificador.Valor,
                 TipoDocumentoIdentificador = cliente.DocumentoIdentificador.TipoDocumento.ToString()
-            };
+            });
             
             DefinirSucesso(dto);
         }

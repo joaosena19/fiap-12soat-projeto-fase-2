@@ -1,8 +1,8 @@
 using Domain.Cadastros.Aggregates;
 
-namespace Application.Cadastros.Interfaces
+namespace Application.Contracts.Gateways
 {
-    public interface IVeiculoRepository
+    public interface IVeiculoGateway
     {
         Task<Veiculo> SalvarAsync(Veiculo veiculo);
         Task<Veiculo?> ObterPorPlacaAsync(string placa);

@@ -1,12 +1,11 @@
 using Application.Cadastros.Dtos;
 using Application.Contracts.Presenters;
-using Domain.Cadastros.Aggregates;
 
-namespace API.Presenters.Cadastro
+namespace API.Presenters.Cadastro.Cliente
 {
-    public class CriarClientePresenter : BasePresenter, ICriarClientePresenter
+    public class BuscarClientePorIdPresenter : BasePresenter, IBuscarClientePorIdPresenter
     {
-        public void ApresentarSucesso(Cliente cliente)
+        public void ApresentarSucesso(Domain.Cadastros.Aggregates.Cliente cliente)
         {
             var dto = new RetornoClienteDto
             {
@@ -16,7 +15,7 @@ namespace API.Presenters.Cadastro
                 TipoDocumentoIdentificador = cliente.DocumentoIdentificador.TipoDocumento.ToString()
             };
             
-            DefinirSucessoComLocalizacao("GetById", "Cliente", new { id = cliente.Id }, dto);
+            DefinirSucesso(dto);
         }
     }
 }

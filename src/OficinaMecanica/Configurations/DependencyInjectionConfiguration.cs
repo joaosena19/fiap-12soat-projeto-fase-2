@@ -34,7 +34,6 @@ namespace API.Configurations
 
             // Serviços de cadastros (apenas os que ainda não foram refatorados)
             services.AddScoped<IServicoService, ServicoService>();
-            services.AddScoped<IVeiculoService, VeiculoService>();
 
             // Serviços de estoque
             services.AddScoped<IItemEstoqueService, ItemEstoqueService>();
@@ -44,8 +43,8 @@ namespace API.Configurations
 
             // Gateways de cadastros 
             services.AddScoped<IClienteGateway, ClienteRepository>();
+            services.AddScoped<IVeiculoGateway, VeiculoRepository>();
             services.AddScoped<IServicoRepository, ServicoRepository>();
-            services.AddScoped<IVeiculoRepository, VeiculoRepository>();
 
             // Repositórios de estoque
             services.AddScoped<IItemEstoqueRepository, ItemEstoqueRepository>();

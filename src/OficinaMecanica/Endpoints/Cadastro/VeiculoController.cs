@@ -1,6 +1,9 @@
 using API.Dtos;
+using API.Presenters.Cadastro;
 using Application.Cadastros.Dtos;
-using Application.Cadastros.Interfaces;
+using Infrastructure.Database;
+using Infrastructure.Handlers.Cadastros;
+using Infrastructure.Repositories.Cadastros;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.Cadastro
@@ -13,11 +16,11 @@ namespace API.Endpoints.Cadastro
     [Produces("application/json")]
     public class VeiculoController : ControllerBase
     {
-        private readonly IVeiculoService _veiculoService;
+        private readonly AppDbContext _context;
 
-        public VeiculoController(IVeiculoService veiculoService)
+        public VeiculoController(AppDbContext context)
         {
-            _veiculoService = veiculoService;
+            _context = context;
         }
 
         /// <summary>
@@ -31,8 +34,12 @@ namespace API.Endpoints.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var result = await _veiculoService.Buscar();
-            return Ok(result);
+            var veiculoGateway = new VeiculoRepository(_context);
+            var presenter = new BuscarVeiculosPresenter();
+            var handler = new VeiculoHandler();
+            
+            await handler.BuscarVeiculosAsync(veiculoGateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -49,8 +56,12 @@ namespace API.Endpoints.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = await _veiculoService.BuscarPorId(id);
-            return Ok(result);
+            var veiculoGateway = new VeiculoRepository(_context);
+            var presenter = new BuscarVeiculoPorIdPresenter();
+            var handler = new VeiculoHandler();
+            
+            await handler.BuscarVeiculoPorIdAsync(id, veiculoGateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -67,8 +78,12 @@ namespace API.Endpoints.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByPlaca(string placa)
         {
-            var result = await _veiculoService.BuscarPorPlaca(placa);
-            return Ok(result);
+            var veiculoGateway = new VeiculoRepository(_context);
+            var presenter = new BuscarVeiculoPorPlacaPresenter();
+            var handler = new VeiculoHandler();
+            
+            await handler.BuscarVeiculoPorPlacaAsync(placa, veiculoGateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -85,8 +100,13 @@ namespace API.Endpoints.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByClienteId(Guid clienteId)
         {
-            var result = await _veiculoService.BuscarPorClienteId(clienteId);
-            return Ok(result);
+            var veiculoGateway = new VeiculoRepository(_context);
+            var clienteGateway = new ClienteRepository(_context);
+            var presenter = new BuscarVeiculosPorClientePresenter();
+            var handler = new VeiculoHandler();
+            
+            await handler.BuscarVeiculosPorClienteAsync(clienteId, veiculoGateway, clienteGateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -105,8 +125,13 @@ namespace API.Endpoints.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CriarVeiculoDto dto)
         {
-            var result = await _veiculoService.CriarVeiculo(dto.ClienteId, dto.Placa, dto.Modelo, dto.Marca, dto.Cor, dto.Ano, dto.TipoVeiculo);
-            return Created($"/api/cadastros/veiculos/{result.Id}", result);
+            var veiculoGateway = new VeiculoRepository(_context);
+            var clienteGateway = new ClienteRepository(_context);
+            var presenter = new CriarVeiculoPresenter();
+            var handler = new VeiculoHandler();
+            
+            await handler.CriarVeiculoAsync(dto.ClienteId, dto.Placa, dto.Modelo, dto.Marca, dto.Cor, dto.Ano, dto.TipoVeiculo, veiculoGateway, clienteGateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -126,8 +151,12 @@ namespace API.Endpoints.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarVeiculoDto dto)
         {
-            var result = await _veiculoService.AtualizarVeiculo(id, dto.Modelo, dto.Marca, dto.Cor, dto.Ano, dto.TipoVeiculo);
-            return Ok(result);
+            var veiculoGateway = new VeiculoRepository(_context);
+            var presenter = new AtualizarVeiculoPresenter();
+            var handler = new VeiculoHandler();
+            
+            await handler.AtualizarVeiculoAsync(id, dto.Modelo, dto.Marca, dto.Cor, dto.Ano, dto.TipoVeiculo, veiculoGateway, presenter);
+            return presenter.ObterResultado();
         }
     }
 }
