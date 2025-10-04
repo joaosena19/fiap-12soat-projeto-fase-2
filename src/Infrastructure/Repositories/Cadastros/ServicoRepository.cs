@@ -1,11 +1,11 @@
-﻿using Application.Cadastros.Interfaces;
+﻿using Application.Contracts.Gateways;
 using Domain.Cadastros.Aggregates;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.Cadastros
 {
-    public class ServicoRepository : IServicoRepository
+    public class ServicoRepository : IServicoGateway
     {
         private readonly AppDbContext _context;
 

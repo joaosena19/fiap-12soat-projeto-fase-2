@@ -1,6 +1,9 @@
 using API.Dtos;
+using API.Presenters.Cadastro.Servico;
 using Application.Cadastros.Dtos;
-using Application.Cadastros.Interfaces;
+using Infrastructure.Database;
+using Infrastructure.Handlers.Cadastros;
+using Infrastructure.Repositories.Cadastros;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.Cadastro
@@ -13,11 +16,11 @@ namespace API.Endpoints.Cadastro
     [Produces("application/json")]
     public class ServicoController : ControllerBase
     {
-        private readonly IServicoService _servicoService;
+        private readonly AppDbContext _context;
 
-        public ServicoController(IServicoService servicoService)
+        public ServicoController(AppDbContext context)
         {
-            _servicoService = servicoService;
+            _context = context;
         }
 
         /// <summary>
@@ -31,8 +34,12 @@ namespace API.Endpoints.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var result = await _servicoService.Buscar();
-            return Ok(result);
+            var servicoGateway = new ServicoRepository(_context);
+            var presenter = new BuscarServicosPresenter();
+            var handler = new ServicoHandler();
+            
+            await handler.BuscarServicosAsync(servicoGateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -49,8 +56,12 @@ namespace API.Endpoints.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = await _servicoService.BuscarPorId(id);
-            return Ok(result);
+            var servicoGateway = new ServicoRepository(_context);
+            var presenter = new BuscarServicoPorIdPresenter();
+            var handler = new ServicoHandler();
+            
+            await handler.BuscarServicoPorIdAsync(id, servicoGateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -69,8 +80,12 @@ namespace API.Endpoints.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CriarServicoDto dto)
         {
-            var result = await _servicoService.CriarServico(dto.Nome, dto.Preco);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            var servicoGateway = new ServicoRepository(_context);
+            var presenter = new CriarServicoPresenter();
+            var handler = new ServicoHandler();
+            
+            await handler.CriarServicoAsync(dto.Nome, dto.Preco, servicoGateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -90,8 +105,12 @@ namespace API.Endpoints.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarServicoDto dto)
         {
-            var result = await _servicoService.AtualizarServico(id, dto.Nome, dto.Preco);
-            return Ok(result);
+            var servicoGateway = new ServicoRepository(_context);
+            var presenter = new AtualizarServicoPresenter();
+            var handler = new ServicoHandler();
+            
+            await handler.AtualizarServicoAsync(id, dto.Nome, dto.Preco, servicoGateway, presenter);
+            return presenter.ObterResultado();
         }
     }
 }

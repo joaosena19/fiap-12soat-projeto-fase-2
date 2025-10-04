@@ -1,8 +1,8 @@
-﻿using Domain.Cadastros.Aggregates;
+using Domain.Cadastros.Aggregates;
 
-namespace Application.Cadastros.Interfaces
+namespace Application.Contracts.Gateways
 {
-    public interface IServicoRepository
+    public interface IServicoGateway
     {
         Task<Servico> SalvarAsync(Servico servico);
         Task<Servico?> ObterPorIdAsync(Guid id);

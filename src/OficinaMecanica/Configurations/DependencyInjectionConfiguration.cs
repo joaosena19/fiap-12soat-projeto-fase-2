@@ -1,7 +1,6 @@
 using Application.Authentication.Interfaces;
 using Application.Authentication.Services;
-using Application.Cadastros.Interfaces;
-using Application.Cadastros.Services;
+// Imports removidos pois não há mais Services e Interfaces de Cadastros
 using Application.Contracts.Gateways;
 using Application.Estoque.Interfaces;
 using Application.Estoque.Services;
@@ -33,7 +32,7 @@ namespace API.Configurations
             services.AddScoped<ITokenService, TokenService>();
 
             // Serviços de cadastros (apenas os que ainda não foram refatorados)
-            services.AddScoped<IServicoService, ServicoService>();
+            // Todos os serviços de cadastros já foram refatorados para Clean Architecture
 
             // Serviços de estoque
             services.AddScoped<IItemEstoqueService, ItemEstoqueService>();
@@ -44,7 +43,7 @@ namespace API.Configurations
             // Gateways de cadastros 
             services.AddScoped<IClienteGateway, ClienteRepository>();
             services.AddScoped<IVeiculoGateway, VeiculoRepository>();
-            services.AddScoped<IServicoRepository, ServicoRepository>();
+            services.AddScoped<IServicoGateway, ServicoRepository>();
 
             // Repositórios de estoque
             services.AddScoped<IItemEstoqueRepository, ItemEstoqueRepository>();

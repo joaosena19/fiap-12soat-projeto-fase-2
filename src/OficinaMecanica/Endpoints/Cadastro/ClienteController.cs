@@ -1,5 +1,5 @@
 using API.Dtos;
-using API.Presenters.Cadastro;
+using API.Presenters.Cadastro.Cliente;
 using Application.Cadastros.Dtos;
 using Infrastructure.Database;
 using Infrastructure.Handlers.Cadastros;
