@@ -1,12 +1,12 @@
 using Application.Cadastros.Dtos;
 using Application.Contracts.Presenters;
-using Domain.Cadastros.Aggregates;
+using VeiculoAggregate = Domain.Cadastros.Aggregates.Veiculo;
 
 namespace API.Presenters.Cadastro.Veiculo
 {
     public class AtualizarVeiculoPresenter : BasePresenter, IAtualizarVeiculoPresenter
     {
-        public void ApresentarSucesso(Veiculo veiculo)
+        public void ApresentarSucesso(VeiculoAggregate veiculo)
         {
             var dto = new RetornoVeiculoDto
             {
