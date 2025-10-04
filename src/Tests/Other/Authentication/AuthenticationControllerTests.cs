@@ -1,4 +1,4 @@
-using API.Controllers.Authentication;
+using API.Endpoints.Authentication;
 using Application.Authentication.Dtos;
 using Application.Authentication.Interfaces;
 using FluentAssertions;

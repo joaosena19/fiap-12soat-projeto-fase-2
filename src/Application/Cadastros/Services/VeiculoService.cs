@@ -1,5 +1,6 @@
 using Application.Cadastros.Dtos;
 using Application.Cadastros.Interfaces;
+using Application.Contracts.Gateways;
 using AutoMapper;
 using Domain.Cadastros.Aggregates;
 using Domain.Cadastros.Enums;
@@ -11,13 +12,13 @@ namespace Application.Cadastros.Services
     public class VeiculoService : IVeiculoService
     {
         private readonly IVeiculoRepository _veiculoRepository;
-        private readonly IClienteRepository _clienteRepository;
+        private readonly IClienteGateway _clienteGateway;
         private readonly IMapper _mapper;
 
-        public VeiculoService(IVeiculoRepository veiculoRepository, IClienteRepository clienteRepository, IMapper mapper)
+        public VeiculoService(IVeiculoRepository veiculoRepository, IClienteGateway clienteGateway, IMapper mapper)
         {
             _veiculoRepository = veiculoRepository;
-            _clienteRepository = clienteRepository;
+            _clienteGateway = clienteGateway;
             _mapper = mapper;
         }
 
@@ -27,7 +28,7 @@ namespace Application.Cadastros.Services
             if (veiculoExistente != null)
                 throw new DomainException("Já existe um veículo cadastrado com esta placa.", ErrorType.Conflict);
 
-            var cliente = await _clienteRepository.ObterPorIdAsync(clienteId);
+            var cliente = await _clienteGateway.ObterPorIdAsync(clienteId);
             if (cliente == null)
                 throw new DomainException("Cliente não encontrado para realizar associação com o veículo.", ErrorType.ReferenceNotFound);
 
@@ -75,7 +76,7 @@ namespace Application.Cadastros.Services
 
         public async Task<IEnumerable<RetornoVeiculoDto>> BuscarPorClienteId(Guid clienteId)
         {
-            var cliente = await _clienteRepository.ObterPorIdAsync(clienteId);
+            var cliente = await _clienteGateway.ObterPorIdAsync(clienteId);
             if (cliente == null)
                 throw new DomainException("Cliente não encontrado.", ErrorType.ReferenceNotFound);
 

@@ -4,7 +4,7 @@ using Application.OrdemServico.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers.OrdemServico
+namespace API.Endpoints.OrdemServico
 {
     /// <summary>
     /// Controller para gerenciamento de ordens de serviço

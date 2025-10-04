@@ -3,7 +3,7 @@ using Application.Cadastros.Dtos;
 using Application.Cadastros.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers.Cadastro
+namespace API.Endpoints.Cadastro
 {
     /// <summary>
     /// Controller para gerenciamento de cadastro de serviços

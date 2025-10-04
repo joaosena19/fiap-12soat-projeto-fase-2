@@ -2,6 +2,7 @@ using Application.Authentication.Interfaces;
 using Application.Authentication.Services;
 using Application.Cadastros.Interfaces;
 using Application.Cadastros.Services;
+using Application.Contracts.Gateways;
 using Application.Estoque.Interfaces;
 using Application.Estoque.Services;
 using Application.OrdemServico.Interfaces;
@@ -31,8 +32,7 @@ namespace API.Configurations
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ITokenService, TokenService>();
 
-            // Serviços de cadastros
-            services.AddScoped<IClienteService, ClienteService>();
+            // Serviços de cadastros (apenas os que ainda não foram refatorados)
             services.AddScoped<IServicoService, ServicoService>();
             services.AddScoped<IVeiculoService, VeiculoService>();
 
@@ -42,8 +42,8 @@ namespace API.Configurations
             // Serviços de ordem de serviço
             services.AddScoped<IOrdemServicoService, OrdemServicoService>();
 
-            // Repositórios de cadastros
-            services.AddScoped<IClienteRepository, ClienteRepository>();
+            // Gateways de cadastros 
+            services.AddScoped<IClienteGateway, ClienteRepository>();
             services.AddScoped<IServicoRepository, ServicoRepository>();
             services.AddScoped<IVeiculoRepository, VeiculoRepository>();
 

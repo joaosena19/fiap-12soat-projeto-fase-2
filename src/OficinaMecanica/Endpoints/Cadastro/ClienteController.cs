@@ -1,9 +1,12 @@
 using API.Dtos;
+using API.Presenters.Cadastro;
 using Application.Cadastros.Dtos;
-using Application.Cadastros.Interfaces;
+using Infrastructure.Database;
+using Infrastructure.Handlers.Cadastros;
+using Infrastructure.Repositories.Cadastros;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers.Cadastro
+namespace API.Endpoints.Cadastro
 {
     /// <summary>
     /// Controller para gerenciamento de cadastro de clientes
@@ -13,11 +16,11 @@ namespace API.Controllers.Cadastro
     [Produces("application/json")]
     public class ClienteController : ControllerBase
     {
-        private readonly IClienteService _clienteService;
+        private readonly AppDbContext _context;
 
-        public ClienteController(IClienteService clienteService)
+        public ClienteController(AppDbContext context)
         {
-            _clienteService = clienteService;
+            _context = context;
         }
 
         /// <summary>
@@ -31,8 +34,12 @@ namespace API.Controllers.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var result = await _clienteService.Buscar();
-            return Ok(result);
+            var gateway = new ClienteRepository(_context);
+            var presenter = new BuscarClientesPresenter();
+            var handler = new ClienteHandler();
+            
+            await handler.BuscarClientesAsync(gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -49,8 +56,12 @@ namespace API.Controllers.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = await _clienteService.BuscarPorId(id);
-            return Ok(result);
+            var gateway = new ClienteRepository(_context);
+            var presenter = new BuscarClientePorIdPresenter();
+            var handler = new ClienteHandler();
+            
+            await handler.BuscarClientePorIdAsync(id, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -70,8 +81,12 @@ namespace API.Controllers.Cadastro
             //Necessário pois CNPJ tem / , então se mandarem com formatação, vai encodar
             var documentoUnencoded = Uri.UnescapeDataString(documento);
 
-            var result = await _clienteService.BuscarPorDocumento(documentoUnencoded);
-            return Ok(result);
+            var gateway = new ClienteRepository(_context);
+            var presenter = new BuscarClientePorDocumentoPresenter();
+            var handler = new ClienteHandler();
+            
+            await handler.BuscarClientePorDocumentoAsync(documentoUnencoded, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -90,8 +105,12 @@ namespace API.Controllers.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CriarClienteDto dto)
         {
-            var result = await _clienteService.CriarCliente(dto.Nome, dto.DocumentoIdentificador);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            var gateway = new ClienteRepository(_context);
+            var presenter = new CriarClientePresenter();
+            var handler = new ClienteHandler();
+            
+            await handler.CriarClienteAsync(dto.Nome, dto.DocumentoIdentificador, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -111,8 +130,12 @@ namespace API.Controllers.Cadastro
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarClienteDto dto)
         {
-            var result = await _clienteService.AtualizarCliente(id, dto.Nome);
-            return Ok(result);
+            var gateway = new ClienteRepository(_context);
+            var presenter = new AtualizarClientePresenter();
+            var handler = new ClienteHandler();
+            
+            await handler.AtualizarClienteAsync(id, dto.Nome, gateway, presenter);
+            return presenter.ObterResultado();
         }
     }
 }

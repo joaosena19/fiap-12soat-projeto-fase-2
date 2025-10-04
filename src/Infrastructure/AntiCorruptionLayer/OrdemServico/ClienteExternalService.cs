@@ -1,4 +1,5 @@
 using Application.Cadastros.Interfaces;
+using Application.Contracts.Gateways;
 using Application.OrdemServico.Dtos.External;
 using Application.OrdemServico.Interfaces.External;
 
@@ -10,12 +11,12 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
     public class ClienteExternalService : IClienteExternalService
     {
         private readonly IVeiculoRepository _veiculoRepository;
-        private readonly IClienteRepository _clienteRepository;
+        private readonly IClienteGateway _clienteGateway;
 
-        public ClienteExternalService(IVeiculoRepository veiculoRepository, IClienteRepository clienteRepository)
+        public ClienteExternalService(IVeiculoRepository veiculoRepository, IClienteGateway clienteGateway)
         {
             _veiculoRepository = veiculoRepository;
-            _clienteRepository = clienteRepository;
+            _clienteGateway = clienteGateway;
         }
 
         public async Task<ClienteExternalDto?> ObterClientePorVeiculoIdAsync(Guid veiculoId)
@@ -24,7 +25,7 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
             if (veiculo == null)
                 return null;
 
-            var cliente = await _clienteRepository.ObterPorIdAsync(veiculo.ClienteId);
+            var cliente = await _clienteGateway.ObterPorIdAsync(veiculo.ClienteId);
             if (cliente == null)
                 return null;
 

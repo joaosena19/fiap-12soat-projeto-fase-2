@@ -1,8 +1,8 @@
-﻿using Domain.Cadastros.Aggregates;
+using Domain.Cadastros.Aggregates;
 
-namespace Application.Cadastros.Interfaces
+namespace Application.Contracts.Gateways
 {
-    public interface IClienteRepository
+    public interface IClienteGateway
     {
         Task<Cliente> SalvarAsync(Cliente cliente);
         Task<Cliente?> ObterPorDocumentoAsync(string documento);

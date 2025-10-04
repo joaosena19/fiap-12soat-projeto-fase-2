@@ -4,7 +4,7 @@ using Application.Authentication.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers.Authentication;
+namespace API.Endpoints.Authentication;
 
 [ApiController]
 [Route("api/authentication")]
