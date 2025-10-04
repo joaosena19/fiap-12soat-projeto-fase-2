@@ -1,6 +1,9 @@
 using API.Dtos;
+using API.Presenters.Estoque;
 using Application.Estoque.Dtos;
-using Application.Estoque.Interfaces;
+using Infrastructure.Database;
+using Infrastructure.Handlers.Estoque;
+using Infrastructure.Repositories.Estoque;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.Estoque
@@ -13,11 +16,11 @@ namespace API.Endpoints.Estoque
     [Produces("application/json")]
     public class EstoqueItemController : ControllerBase
     {
-        private readonly IItemEstoqueService _itemEstoqueService;
+        private readonly AppDbContext _context;
 
-        public EstoqueItemController(IItemEstoqueService itemEstoqueService)
+        public EstoqueItemController(AppDbContext context)
         {
-            _itemEstoqueService = itemEstoqueService;
+            _context = context;
         }
 
         /// <summary>
@@ -31,8 +34,12 @@ namespace API.Endpoints.Estoque
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var result = await _itemEstoqueService.Buscar();
-            return Ok(result);
+            var gateway = new ItemEstoqueRepository(_context);
+            var presenter = new BuscarTodosItensEstoquePresenter();
+            var handler = new ItemEstoqueHandler();
+            
+            await handler.BuscarTodosItensEstoqueAsync(gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -49,8 +56,12 @@ namespace API.Endpoints.Estoque
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = await _itemEstoqueService.BuscarPorId(id);
-            return Ok(result);
+            var gateway = new ItemEstoqueRepository(_context);
+            var presenter = new BuscarItemEstoquePorIdPresenter();
+            var handler = new ItemEstoqueHandler();
+            
+            await handler.BuscarItemEstoquePorIdAsync(id, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -67,8 +78,12 @@ namespace API.Endpoints.Estoque
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CriarItemEstoqueDto dto)
         {
-            var result = await _itemEstoqueService.CriarItemEstoque(dto);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            var gateway = new ItemEstoqueRepository(_context);
+            var presenter = new CriarItemEstoquePresenter();
+            var handler = new ItemEstoqueHandler();
+            
+            await handler.CriarItemEstoqueAsync(dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -88,8 +103,12 @@ namespace API.Endpoints.Estoque
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(Guid id, [FromBody] AtualizarItemEstoqueDto dto)
         {
-            var result = await _itemEstoqueService.AtualizarItemEstoque(id, dto);
-            return Ok(result);
+            var gateway = new ItemEstoqueRepository(_context);
+            var presenter = new AtualizarItemEstoquePresenter();
+            var handler = new ItemEstoqueHandler();
+            
+            await handler.AtualizarItemEstoqueAsync(id, dto.Nome, dto.Quantidade, dto.TipoItemEstoque, dto.Preco, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -109,8 +128,12 @@ namespace API.Endpoints.Estoque
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateQuantidade(Guid id, [FromBody] AtualizarQuantidadeDto dto)
         {
-            var result = await _itemEstoqueService.AtualizarQuantidade(id, dto);
-            return Ok(result);
+            var gateway = new ItemEstoqueRepository(_context);
+            var presenter = new AtualizarQuantidadePresenter();
+            var handler = new ItemEstoqueHandler();
+            
+            await handler.AtualizarQuantidadeAsync(id, dto.Quantidade, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -130,8 +153,12 @@ namespace API.Endpoints.Estoque
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> VerificarDisponibilidade(Guid id, int quantidadeRequisitada)
         {
-            var result = await _itemEstoqueService.VerificarDisponibilidade(id, quantidadeRequisitada);
-            return Ok(result);
+            var gateway = new ItemEstoqueRepository(_context);
+            var presenter = new VerificarDisponibilidadePresenter();
+            var handler = new ItemEstoqueHandler();
+            
+            await handler.VerificarDisponibilidadeAsync(id, quantidadeRequisitada, gateway, presenter);
+            return presenter.ObterResultado();
         }
     }
 }
