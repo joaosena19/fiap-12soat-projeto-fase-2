@@ -1,6 +1,5 @@
 using API.Dtos;
-using Application.Authentication.Dtos;
-using Application.Authentication.Interfaces;
+using Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +9,11 @@ namespace API.Endpoints.Authentication;
 [Route("api/authentication")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly IAuthenticationService _authService;
+    private readonly IConfiguration _configuration;
 
-    public AuthenticationController(IAuthenticationService authService)
+    public AuthenticationController(IConfiguration configuration)
     {
-        _authService = authService;
+        _configuration = configuration;
     }
 
     /// <summary>
@@ -32,7 +31,10 @@ public class AuthenticationController : ControllerBase
     [AllowAnonymous]
     public ActionResult<TokenResponseDto> GetToken([FromBody] TokenRequestDto request)
     {
-        var tokenResponse = _authService.ValidateCredentialsAndGenerateToken(request);
+        var tokenService = new TokenService(_configuration);
+        var authService = new AuthenticationService(_configuration, tokenService);   
+        var tokenResponse = authService.ValidateCredentialsAndGenerateToken(request);
+
         return Ok(tokenResponse);
     }
 }
