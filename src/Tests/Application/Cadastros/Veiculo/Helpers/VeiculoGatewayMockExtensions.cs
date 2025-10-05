@@ -15,17 +15,9 @@ namespace Tests.Application.Cadastros.Veiculo.Helpers
             _id = id;
         }
 
-        public void Retorna(VeiculoAggregate veiculo)
-        {
-            _mock.Setup(g => g.ObterPorIdAsync(_id))
-                .ReturnsAsync(veiculo);
-        }
+        public void Retorna(VeiculoAggregate veiculo) => _mock.Setup(g => g.ObterPorIdAsync(_id)).ReturnsAsync(veiculo);
 
-        public void NaoRetornaNada()
-        {
-            _mock.Setup(g => g.ObterPorIdAsync(_id))
-                .ReturnsAsync((VeiculoAggregate?)null);
-        }
+        public void NaoRetornaNada() => _mock.Setup(g => g.ObterPorIdAsync(_id)).ReturnsAsync((VeiculoAggregate?)null);
     }
 
     public class VeiculoGatewayObterPorPlacaSetupBuilder
@@ -39,23 +31,11 @@ namespace Tests.Application.Cadastros.Veiculo.Helpers
             _placa = placa;
         }
 
-        public void Retorna(VeiculoAggregate veiculo)
-        {
-            _mock.Setup(g => g.ObterPorPlacaAsync(_placa))
-                .ReturnsAsync(veiculo);
-        }
+        public void Retorna(VeiculoAggregate veiculo) => _mock.Setup(g => g.ObterPorPlacaAsync(_placa)).ReturnsAsync(veiculo);
 
-        public void NaoRetornaNada()
-        {
-            _mock.Setup(g => g.ObterPorPlacaAsync(_placa))
-                .ReturnsAsync((VeiculoAggregate?)null);
-        }
+        public void NaoRetornaNada() => _mock.Setup(g => g.ObterPorPlacaAsync(_placa)).ReturnsAsync((VeiculoAggregate?)null);
 
-        public void LancaExcecao(Exception excecao)
-        {
-            _mock.Setup(g => g.ObterPorPlacaAsync(_placa))
-                .ThrowsAsync(excecao);
-        }
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.ObterPorPlacaAsync(_placa)).ThrowsAsync(excecao);
     }
 
     public class VeiculoGatewayObterPorClienteIdSetupBuilder
@@ -69,17 +49,9 @@ namespace Tests.Application.Cadastros.Veiculo.Helpers
             _clienteId = clienteId;
         }
 
-        public void Retorna(IEnumerable<VeiculoAggregate> veiculos)
-        {
-            _mock.Setup(g => g.ObterPorClienteIdAsync(_clienteId))
-                .ReturnsAsync(veiculos);
-        }
+        public void Retorna(IEnumerable<VeiculoAggregate> veiculos) => _mock.Setup(g => g.ObterPorClienteIdAsync(_clienteId)).ReturnsAsync(veiculos);
 
-        public void LancaExcecao(Exception excecao)
-        {
-            _mock.Setup(g => g.ObterPorClienteIdAsync(_clienteId))
-                .ThrowsAsync(excecao);
-        }
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.ObterPorClienteIdAsync(_clienteId)).ThrowsAsync(excecao);
     }
 
     public class VeiculoGatewayAtualizarSetupBuilder
@@ -91,23 +63,11 @@ namespace Tests.Application.Cadastros.Veiculo.Helpers
             _mock = mock;
         }
 
-        public void Retorna(Func<VeiculoAggregate, VeiculoAggregate> func)
-        {
-            _mock.Setup(g => g.AtualizarAsync(It.IsAny<VeiculoAggregate>()))
-                .ReturnsAsync(func);
-        }
+        public void Retorna(Func<VeiculoAggregate, VeiculoAggregate> func) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<VeiculoAggregate>())).ReturnsAsync(func);
 
-        public void RetornaOMesmoVeiculo()
-        {
-            _mock.Setup(g => g.AtualizarAsync(It.IsAny<VeiculoAggregate>()))
-                .ReturnsAsync((VeiculoAggregate veiculo) => veiculo);
-        }
+        public void RetornaOMesmoVeiculo() => _mock.Setup(g => g.AtualizarAsync(It.IsAny<VeiculoAggregate>())).ReturnsAsync((VeiculoAggregate veiculo) => veiculo);
 
-        public void LancaExcecao(Exception excecao)
-        {
-            _mock.Setup(g => g.AtualizarAsync(It.IsAny<VeiculoAggregate>()))
-                .ThrowsAsync(excecao);
-        }
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<VeiculoAggregate>())).ThrowsAsync(excecao);
 
         public void ComCallback(Action<VeiculoAggregate> callback)
         {
@@ -126,17 +86,9 @@ namespace Tests.Application.Cadastros.Veiculo.Helpers
             _mock = mock;
         }
 
-        public void Retorna(VeiculoAggregate veiculo)
-        {
-            _mock.Setup(g => g.SalvarAsync(It.IsAny<VeiculoAggregate>()))
-                .ReturnsAsync(veiculo);
-        }
+        public void Retorna(VeiculoAggregate veiculo) => _mock.Setup(g => g.SalvarAsync(It.IsAny<VeiculoAggregate>())).ReturnsAsync(veiculo);
 
-        public void LancaExcecao(Exception excecao)
-        {
-            _mock.Setup(g => g.SalvarAsync(It.IsAny<VeiculoAggregate>()))
-                .ThrowsAsync(excecao);
-        }
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.SalvarAsync(It.IsAny<VeiculoAggregate>())).ThrowsAsync(excecao);
     }
 
     public class VeiculoGatewayObterTodosSetupBuilder
@@ -148,49 +100,23 @@ namespace Tests.Application.Cadastros.Veiculo.Helpers
             _mock = mock;
         }
 
-        public void Retorna(IEnumerable<VeiculoAggregate> veiculos)
-        {
-            _mock.Setup(g => g.ObterTodosAsync())
-                .ReturnsAsync(veiculos);
-        }
+        public void Retorna(IEnumerable<VeiculoAggregate> veiculos) => _mock.Setup(g => g.ObterTodosAsync()).ReturnsAsync(veiculos);
 
-        public void LancaExcecao(Exception excecao)
-        {
-            _mock.Setup(g => g.ObterTodosAsync())
-                .ThrowsAsync(excecao);
-        }
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.ObterTodosAsync()).ThrowsAsync(excecao);
     }
 
     public static class VeiculoGatewayMockExtensions
     {
-        public static VeiculoGatewayObterPorIdSetupBuilder AoObterPorId(this Mock<IVeiculoGateway> mock, Guid id)
-        {
-            return new VeiculoGatewayObterPorIdSetupBuilder(mock, id);
-        }
+        public static VeiculoGatewayObterPorIdSetupBuilder AoObterPorId(this Mock<IVeiculoGateway> mock, Guid id) => new VeiculoGatewayObterPorIdSetupBuilder(mock, id);
 
-        public static VeiculoGatewayObterPorPlacaSetupBuilder AoObterPorPlaca(this Mock<IVeiculoGateway> mock, string placa)
-        {
-            return new VeiculoGatewayObterPorPlacaSetupBuilder(mock, placa);
-        }
+        public static VeiculoGatewayObterPorPlacaSetupBuilder AoObterPorPlaca(this Mock<IVeiculoGateway> mock, string placa) => new VeiculoGatewayObterPorPlacaSetupBuilder(mock, placa);
 
-        public static VeiculoGatewayObterPorClienteIdSetupBuilder AoObterPorClienteId(this Mock<IVeiculoGateway> mock, Guid clienteId)
-        {
-            return new VeiculoGatewayObterPorClienteIdSetupBuilder(mock, clienteId);
-        }
+        public static VeiculoGatewayObterPorClienteIdSetupBuilder AoObterPorClienteId(this Mock<IVeiculoGateway> mock, Guid clienteId) => new VeiculoGatewayObterPorClienteIdSetupBuilder(mock, clienteId);
 
-        public static VeiculoGatewayAtualizarSetupBuilder AoAtualizar(this Mock<IVeiculoGateway> mock)
-        {
-            return new VeiculoGatewayAtualizarSetupBuilder(mock);
-        }
+        public static VeiculoGatewayAtualizarSetupBuilder AoAtualizar(this Mock<IVeiculoGateway> mock) => new VeiculoGatewayAtualizarSetupBuilder(mock);
 
-        public static VeiculoGatewaySalvarSetupBuilder AoSalvar(this Mock<IVeiculoGateway> mock)
-        {
-            return new VeiculoGatewaySalvarSetupBuilder(mock);
-        }
+        public static VeiculoGatewaySalvarSetupBuilder AoSalvar(this Mock<IVeiculoGateway> mock) => new VeiculoGatewaySalvarSetupBuilder(mock);
 
-        public static VeiculoGatewayObterTodosSetupBuilder AoObterTodos(this Mock<IVeiculoGateway> mock)
-        {
-            return new VeiculoGatewayObterTodosSetupBuilder(mock);
-        }
+        public static VeiculoGatewayObterTodosSetupBuilder AoObterTodos(this Mock<IVeiculoGateway> mock) => new VeiculoGatewayObterTodosSetupBuilder(mock);
     }
 }

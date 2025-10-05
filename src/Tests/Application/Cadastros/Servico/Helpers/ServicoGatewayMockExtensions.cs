@@ -15,17 +15,9 @@ namespace Tests.Application.Cadastros.Servico.Helpers
             _id = id;
         }
 
-        public void Retorna(ServicoAggregate servico)
-        {
-            _mock.Setup(g => g.ObterPorIdAsync(_id))
-                .ReturnsAsync(servico);
-        }
+        public void Retorna(ServicoAggregate servico) => _mock.Setup(g => g.ObterPorIdAsync(_id)).ReturnsAsync(servico);
 
-        public void NaoRetornaNada()
-        {
-            _mock.Setup(g => g.ObterPorIdAsync(_id))
-                .ReturnsAsync((ServicoAggregate?)null);
-        }
+        public void NaoRetornaNada() => _mock.Setup(g => g.ObterPorIdAsync(_id)).ReturnsAsync((ServicoAggregate?)null);
     }
 
     public class ServicoGatewayAtualizarSetupBuilder
@@ -37,23 +29,11 @@ namespace Tests.Application.Cadastros.Servico.Helpers
             _mock = mock;
         }
 
-        public void Retorna(Func<ServicoAggregate, ServicoAggregate> func)
-        {
-            _mock.Setup(g => g.AtualizarAsync(It.IsAny<ServicoAggregate>()))
-                .ReturnsAsync(func);
-        }
+        public void Retorna(Func<ServicoAggregate, ServicoAggregate> func) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<ServicoAggregate>())).ReturnsAsync(func);
 
-        public void RetornaOMesmoServico()
-        {
-            _mock.Setup(g => g.AtualizarAsync(It.IsAny<ServicoAggregate>()))
-                .ReturnsAsync((ServicoAggregate servico) => servico);
-        }
+        public void RetornaOMesmoServico() => _mock.Setup(g => g.AtualizarAsync(It.IsAny<ServicoAggregate>())).ReturnsAsync((ServicoAggregate servico) => servico);
 
-        public void LancaExcecao(Exception excecao)
-        {
-            _mock.Setup(g => g.AtualizarAsync(It.IsAny<ServicoAggregate>()))
-                .ThrowsAsync(excecao);
-        }
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<ServicoAggregate>())).ThrowsAsync(excecao);
 
         public void ComCallback(Action<ServicoAggregate> callback)
         {
@@ -72,24 +52,11 @@ namespace Tests.Application.Cadastros.Servico.Helpers
             _mock = mock;
         }
 
-        public void Retorna(ServicoAggregate servico)
-        {
-            _mock.Setup(g => g.SalvarAsync(It.IsAny<ServicoAggregate>()))
-                .ReturnsAsync(servico);
-        }
+        public void Retorna(ServicoAggregate servico) => _mock.Setup(g => g.SalvarAsync(It.IsAny<ServicoAggregate>())).ReturnsAsync(servico);
 
-        public void ComCallback(Action<ServicoAggregate> callback)
-        {
-            _mock.Setup(g => g.SalvarAsync(It.IsAny<ServicoAggregate>()))
-                .Callback<ServicoAggregate>(callback)
-                .ReturnsAsync((ServicoAggregate servico) => servico);
-        }
+        public void ComCallback(Action<ServicoAggregate> callback) => _mock.Setup(g => g.SalvarAsync(It.IsAny<ServicoAggregate>())).Callback<ServicoAggregate>(callback).ReturnsAsync((ServicoAggregate servico) => servico);
 
-        public void LancaExcecao(Exception excecao)
-        {
-            _mock.Setup(g => g.SalvarAsync(It.IsAny<ServicoAggregate>()))
-                .ThrowsAsync(excecao);
-        }
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.SalvarAsync(It.IsAny<ServicoAggregate>())).ThrowsAsync(excecao);
     }
 
     public class ServicoGatewayObterPorNomeSetupBuilder
@@ -103,17 +70,9 @@ namespace Tests.Application.Cadastros.Servico.Helpers
             _nome = nome;
         }
 
-        public void Retorna(ServicoAggregate servico)
-        {
-            _mock.Setup(g => g.ObterPorNomeAsync(_nome))
-                .ReturnsAsync(servico);
-        }
+        public void Retorna(ServicoAggregate servico) => _mock.Setup(g => g.ObterPorNomeAsync(_nome)).ReturnsAsync(servico);
 
-        public void NaoRetornaNada()
-        {
-            _mock.Setup(g => g.ObterPorNomeAsync(_nome))
-                .ReturnsAsync((ServicoAggregate?)null);
-        }
+        public void NaoRetornaNada() => _mock.Setup(g => g.ObterPorNomeAsync(_nome)).ReturnsAsync((ServicoAggregate?)null);
     }
 
     public class ServicoGatewayObterTodosSetupBuilder
@@ -125,44 +84,21 @@ namespace Tests.Application.Cadastros.Servico.Helpers
             _mock = mock;
         }
 
-        public void Retorna(IEnumerable<ServicoAggregate> servicos)
-        {
-            _mock.Setup(g => g.ObterTodosAsync())
-                .ReturnsAsync(servicos);
-        }
+        public void Retorna(IEnumerable<ServicoAggregate> servicos) => _mock.Setup(g => g.ObterTodosAsync()).ReturnsAsync(servicos);
 
-        public void LancaExcecao(Exception excecao)
-        {
-            _mock.Setup(g => g.ObterTodosAsync())
-                .ThrowsAsync(excecao);
-        }
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.ObterTodosAsync()).ThrowsAsync(excecao);
     }
 
     public static class ServicoGatewayMockExtensions
     {
-        public static ServicoGatewayObterPorIdSetupBuilder AoObterPorId(this Mock<IServicoGateway> mock, Guid id)
-        {
-            return new ServicoGatewayObterPorIdSetupBuilder(mock, id);
-        }
+        public static ServicoGatewayObterPorIdSetupBuilder AoObterPorId(this Mock<IServicoGateway> mock, Guid id) => new ServicoGatewayObterPorIdSetupBuilder(mock, id);
 
-        public static ServicoGatewayObterPorNomeSetupBuilder AoObterPorNome(this Mock<IServicoGateway> mock, string nome)
-        {
-            return new ServicoGatewayObterPorNomeSetupBuilder(mock, nome);
-        }
+        public static ServicoGatewayObterPorNomeSetupBuilder AoObterPorNome(this Mock<IServicoGateway> mock, string nome) => new ServicoGatewayObterPorNomeSetupBuilder(mock, nome);
 
-        public static ServicoGatewayAtualizarSetupBuilder AoAtualizar(this Mock<IServicoGateway> mock)
-        {
-            return new ServicoGatewayAtualizarSetupBuilder(mock);
-        }
+        public static ServicoGatewayAtualizarSetupBuilder AoAtualizar(this Mock<IServicoGateway> mock) => new ServicoGatewayAtualizarSetupBuilder(mock);
 
-        public static ServicoGatewaySalvarSetupBuilder AoSalvar(this Mock<IServicoGateway> mock)
-        {
-            return new ServicoGatewaySalvarSetupBuilder(mock);
-        }
+        public static ServicoGatewaySalvarSetupBuilder AoSalvar(this Mock<IServicoGateway> mock) => new ServicoGatewaySalvarSetupBuilder(mock);
 
-        public static ServicoGatewayObterTodosSetupBuilder AoObterTodos(this Mock<IServicoGateway> mock)
-        {
-            return new ServicoGatewayObterTodosSetupBuilder(mock);
-        }
+        public static ServicoGatewayObterTodosSetupBuilder AoObterTodos(this Mock<IServicoGateway> mock) => new ServicoGatewayObterTodosSetupBuilder(mock);
     }
 }
