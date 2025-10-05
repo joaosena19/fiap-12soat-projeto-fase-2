@@ -74,6 +74,22 @@ namespace Tests.Application.OrdemServico.Helpers
         public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<OrdemServicoAggregate>())).ThrowsAsync(excecao);
     }
 
+    public class OrdemServicoGatewaySalvarSetupBuilder
+    {
+        private readonly Mock<IOrdemServicoGateway> _mock;
+
+        public OrdemServicoGatewaySalvarSetupBuilder(Mock<IOrdemServicoGateway> mock)
+        {
+            _mock = mock;
+        }
+
+        public void Retorna(OrdemServicoAggregate ordemServico) => _mock.Setup(g => g.SalvarAsync(It.IsAny<OrdemServicoAggregate>())).ReturnsAsync(ordemServico);
+
+        public void ComCallback(Action<OrdemServicoAggregate> callback) => _mock.Setup(g => g.SalvarAsync(It.IsAny<OrdemServicoAggregate>())).Callback<OrdemServicoAggregate>(callback).ReturnsAsync((OrdemServicoAggregate os) => os);
+
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.SalvarAsync(It.IsAny<OrdemServicoAggregate>())).ThrowsAsync(excecao);
+    }
+
     public class EstoqueExternalServiceObterItemEstoquePorIdSetupBuilder
     {
         private readonly Mock<IEstoqueExternalService> _mock;
@@ -174,6 +190,8 @@ namespace Tests.Application.OrdemServico.Helpers
 
         public static OrdemServicoGatewayAtualizarSetupBuilder AoAtualizar(this Mock<IOrdemServicoGateway> mock) => new OrdemServicoGatewayAtualizarSetupBuilder(mock);
 
+        public static OrdemServicoGatewaySalvarSetupBuilder AoSalvar(this Mock<IOrdemServicoGateway> mock) => new OrdemServicoGatewaySalvarSetupBuilder(mock);
+
         public static OrdemServicoGatewayObterEntreguesUltimosDiasSetupBuilder AoObterEntreguesUltimosDias(this Mock<IOrdemServicoGateway> mock, int quantidadeDias) => new OrdemServicoGatewayObterEntreguesUltimosDiasSetupBuilder(mock, quantidadeDias);
 
         public static EstoqueExternalServiceObterItemEstoquePorIdSetupBuilder AoObterItemEstoquePorId(this Mock<IEstoqueExternalService> mock, Guid itemId) => new EstoqueExternalServiceObterItemEstoquePorIdSetupBuilder(mock, itemId);
@@ -211,5 +229,26 @@ namespace Tests.Application.OrdemServico.Helpers
     public static class ClienteExternalServiceMockExtensions
     {
         public static ClienteExternalServiceObterClientePorVeiculoIdSetupBuilder AoObterClientePorVeiculoId(this Mock<IClienteExternalService> mock, Guid veiculoId) => new ClienteExternalServiceObterClientePorVeiculoIdSetupBuilder(mock, veiculoId);
+    }
+
+    public class VeiculoExternalServiceVerificarExistenciaVeiculoSetupBuilder
+    {
+        private readonly Mock<IVeiculoExternalService> _mock;
+        private readonly Guid _veiculoId;
+
+        public VeiculoExternalServiceVerificarExistenciaVeiculoSetupBuilder(Mock<IVeiculoExternalService> mock, Guid veiculoId)
+        {
+            _mock = mock;
+            _veiculoId = veiculoId;
+        }
+
+        public void Retorna(bool existe) => _mock.Setup(s => s.VerificarExistenciaVeiculo(_veiculoId)).ReturnsAsync(existe);
+
+        public void LancaExcecao(Exception excecao) => _mock.Setup(s => s.VerificarExistenciaVeiculo(_veiculoId)).ThrowsAsync(excecao);
+    }
+
+    public static class VeiculoExternalServiceMockExtensions
+    {
+        public static VeiculoExternalServiceVerificarExistenciaVeiculoSetupBuilder AoVerificarExistenciaVeiculo(this Mock<IVeiculoExternalService> mock, Guid veiculoId) => new VeiculoExternalServiceVerificarExistenciaVeiculoSetupBuilder(mock, veiculoId);
     }
 }

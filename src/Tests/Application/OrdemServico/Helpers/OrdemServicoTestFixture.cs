@@ -21,6 +21,8 @@ namespace Tests.Application.OrdemServico.Helpers
         public Mock<IBuscarOrdemServicoPorIdPresenter> BuscarOrdemServicoPorIdPresenterMock { get; }
         public Mock<IBuscarOrdensServicoPresenter> BuscarOrdensServicoPresenterMock { get; }
         public Mock<IObterTempoMedioPresenter> ObterTempoMedioPresenterMock { get; }
+        public Mock<IVeiculoExternalService> VeiculoExternalServiceMock { get; }
+        public Mock<ICriarOrdemServicoPresenter> CriarOrdemServicoPresenterMock { get; }
 
         public AdicionarItemUseCase AdicionarItemUseCase { get; }
         public AdicionarServicosUseCase AdicionarServicosUseCase { get; }
@@ -38,6 +40,7 @@ namespace Tests.Application.OrdemServico.Helpers
         public RemoverServicoUseCase RemoverServicoUseCase { get; }
         public RemoverItemUseCase RemoverItemUseCase { get; }
         public ObterTempoMedioUseCase ObterTempoMedioUseCase { get; }
+        public CriarOrdemServicoUseCase CriarOrdemServicoUseCase { get; }
 
         public OrdemServicoTestFixture()
         {
@@ -54,6 +57,8 @@ namespace Tests.Application.OrdemServico.Helpers
             BuscarOrdemServicoPorIdPresenterMock = new Mock<IBuscarOrdemServicoPorIdPresenter>();
             BuscarOrdensServicoPresenterMock = new Mock<IBuscarOrdensServicoPresenter>();
             ObterTempoMedioPresenterMock = new Mock<IObterTempoMedioPresenter>();
+            VeiculoExternalServiceMock = new Mock<IVeiculoExternalService>();
+            CriarOrdemServicoPresenterMock = new Mock<ICriarOrdemServicoPresenter>();
 
             AdicionarItemUseCase = new AdicionarItemUseCase();
             AdicionarServicosUseCase = new AdicionarServicosUseCase();
@@ -71,6 +76,7 @@ namespace Tests.Application.OrdemServico.Helpers
             RemoverServicoUseCase = new RemoverServicoUseCase();
             RemoverItemUseCase = new RemoverItemUseCase();
             ObterTempoMedioUseCase = new ObterTempoMedioUseCase();
+            CriarOrdemServicoUseCase = new CriarOrdemServicoUseCase();
         }
     }
 }
