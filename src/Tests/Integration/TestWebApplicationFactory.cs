@@ -1,5 +1,3 @@
-using Application;
-using AutoMapper;
 using Infrastructure.Database;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -43,10 +41,7 @@ namespace Tests.Integration
                     options.UseInMemoryDatabase(_databaseName);
                 });
 
-                // Configure AutoMapper for integration tests
-                var mapperConfig = AutoMapperConfig.GetConfiguration();
-                services.AddSingleton(mapperConfig);
-                services.AddSingleton<IMapper>(provider => provider.GetRequiredService<MapperConfiguration>().CreateMapper());
+
             });
 
             base.ConfigureWebHost(builder);
