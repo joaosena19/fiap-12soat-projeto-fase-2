@@ -68,6 +68,12 @@ namespace Tests.Application
                 $"Era esperado que o método ApresentarErro fosse chamado exatamente uma vez com a mensagem '{mensagem}' e tipo '{errorType}'.");
         }
 
+        public static void DeveTerApresentadoErroComTipo(this Mock<IOperacaoOrdemServicoPresenter> mock, ErrorType errorType)
+        {
+            mock.Verify(p => p.ApresentarErro(It.IsAny<string>(), errorType), Times.Once,
+                $"Era esperado que o método ApresentarErro fosse chamado exatamente uma vez com qualquer mensagem e tipo '{errorType}'.");
+        }
+
         public static void NaoDeveTerApresentadoErro(this Mock<IOperacaoOrdemServicoPresenter> mock)
         {
             mock.Verify(p => p.ApresentarErro(It.IsAny<string>(), It.IsAny<ErrorType>()), Times.Never,

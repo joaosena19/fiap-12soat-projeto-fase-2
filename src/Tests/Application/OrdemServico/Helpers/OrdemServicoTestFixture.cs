@@ -15,6 +15,7 @@ namespace Tests.Application.OrdemServico.Helpers
         public Mock<IAdicionarItemPresenter> AdicionarItemPresenterMock { get; }
         public Mock<IAdicionarServicosPresenter> AdicionarServicosPresenterMock { get; }
         public Mock<IOperacaoOrdemServicoPresenter> OperacaoOrdemServicoPresenterMock { get; }
+        public Mock<IGerarOrcamentoPresenter> GerarOrcamentoPresenterMock { get; }
         public Mock<IBuscaPublicaOrdemServicoPresenter> BuscaPublicaOrdemServicoPresenterMock { get; }
         public Mock<IBuscarOrdemServicoPorCodigoPresenter> BuscarOrdemServicoPorCodigoPresenterMock { get; }
         public Mock<IBuscarOrdemServicoPorIdPresenter> BuscarOrdemServicoPorIdPresenterMock { get; }
@@ -27,6 +28,14 @@ namespace Tests.Application.OrdemServico.Helpers
         public BuscarOrdemServicoPorCodigoUseCase BuscarOrdemServicoPorCodigoUseCase { get; }
         public BuscarOrdemServicoPorIdUseCase BuscarOrdemServicoPorIdUseCase { get; }
         public BuscarOrdensServicoUseCase BuscarOrdensServicoUseCase { get; }
+        public CancelarOrdemServicoUseCase CancelarOrdemServicoUseCase { get; }
+        public DesaprovarOrcamentoUseCase DesaprovarOrcamentoUseCase { get; }
+        public EntregarOrdemServicoUseCase EntregarOrdemServicoUseCase { get; }
+        public FinalizarExecucaoUseCase FinalizarExecucaoUseCase { get; }
+        public GerarOrcamentoUseCase GerarOrcamentoUseCase { get; }
+        public IniciarDiagnosticoUseCase IniciarDiagnosticoUseCase { get; }
+        public RemoverServicoUseCase RemoverServicoUseCase { get; }
+        public RemoverItemUseCase RemoverItemUseCase { get; }
 
         public OrdemServicoTestFixture()
         {
@@ -37,6 +46,7 @@ namespace Tests.Application.OrdemServico.Helpers
             AdicionarItemPresenterMock = new Mock<IAdicionarItemPresenter>();
             AdicionarServicosPresenterMock = new Mock<IAdicionarServicosPresenter>();
             OperacaoOrdemServicoPresenterMock = new Mock<IOperacaoOrdemServicoPresenter>();
+            GerarOrcamentoPresenterMock = new Mock<IGerarOrcamentoPresenter>();
             BuscaPublicaOrdemServicoPresenterMock = new Mock<IBuscaPublicaOrdemServicoPresenter>();
             BuscarOrdemServicoPorCodigoPresenterMock = new Mock<IBuscarOrdemServicoPorCodigoPresenter>();
             BuscarOrdemServicoPorIdPresenterMock = new Mock<IBuscarOrdemServicoPorIdPresenter>();
@@ -49,6 +59,14 @@ namespace Tests.Application.OrdemServico.Helpers
             BuscarOrdemServicoPorCodigoUseCase = new BuscarOrdemServicoPorCodigoUseCase();
             BuscarOrdemServicoPorIdUseCase = new BuscarOrdemServicoPorIdUseCase();
             BuscarOrdensServicoUseCase = new BuscarOrdensServicoUseCase();
+            CancelarOrdemServicoUseCase = new CancelarOrdemServicoUseCase();
+            DesaprovarOrcamentoUseCase = new DesaprovarOrcamentoUseCase();
+            EntregarOrdemServicoUseCase = new EntregarOrdemServicoUseCase();
+            FinalizarExecucaoUseCase = new FinalizarExecucaoUseCase();
+            GerarOrcamentoUseCase = new GerarOrcamentoUseCase();
+            IniciarDiagnosticoUseCase = new IniciarDiagnosticoUseCase();
+            RemoverServicoUseCase = new RemoverServicoUseCase();
+            RemoverItemUseCase = new RemoverItemUseCase();
         }
     }
 }
