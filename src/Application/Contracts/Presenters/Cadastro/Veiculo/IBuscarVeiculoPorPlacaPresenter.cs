@@ -3,9 +3,5 @@ using Shared.Enums;
 
 namespace Application.Contracts.Presenters
 {
-    public interface IBuscarVeiculoPorPlacaPresenter
-    {
-        void ApresentarSucesso(Veiculo veiculo);
-        void ApresentarErro(string mensagem, ErrorType errorType);
-    }
+    public interface IBuscarVeiculoPorPlacaPresenter : IBasePresenter<Veiculo> { }
 }

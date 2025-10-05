@@ -3,9 +3,5 @@ using Shared.Enums;
 
 namespace Application.Contracts.Presenters
 {
-    public interface IAtualizarVeiculoPresenter
-    {
-        void ApresentarSucesso(Veiculo veiculo);
-        void ApresentarErro(string mensagem, ErrorType errorType);
-    }
+    public interface IAtualizarVeiculoPresenter : IBasePresenter<Veiculo> { }
 }
