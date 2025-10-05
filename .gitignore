@@ -67,3 +67,6 @@ appsettings.Development.json
 *.tfstate
 *.tfstate.*
 *.tfvars
+
+# Testes
+*/Tests/Report/*
