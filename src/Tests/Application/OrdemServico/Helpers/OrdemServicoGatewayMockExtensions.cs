@@ -58,6 +58,42 @@ namespace Tests.Application.OrdemServico.Helpers
         public void LancaExcecao(Exception excecao) => _mock.Setup(s => s.ObterItemEstoquePorIdAsync(_itemId)).ThrowsAsync(excecao);
     }
 
+    public class EstoqueExternalServiceVerificarDisponibilidadeSetupBuilder
+    {
+        private readonly Mock<IEstoqueExternalService> _mock;
+        private readonly Guid _itemId;
+        private readonly int _quantidade;
+
+        public EstoqueExternalServiceVerificarDisponibilidadeSetupBuilder(Mock<IEstoqueExternalService> mock, Guid itemId, int quantidade)
+        {
+            _mock = mock;
+            _itemId = itemId;
+            _quantidade = quantidade;
+        }
+
+        public void Retorna(bool disponivel) => _mock.Setup(s => s.VerificarDisponibilidadeAsync(_itemId, _quantidade)).ReturnsAsync(disponivel);
+
+        public void LancaExcecao(Exception excecao) => _mock.Setup(s => s.VerificarDisponibilidadeAsync(_itemId, _quantidade)).ThrowsAsync(excecao);
+    }
+
+    public class EstoqueExternalServiceAtualizarQuantidadeSetupBuilder
+    {
+        private readonly Mock<IEstoqueExternalService> _mock;
+        private readonly Guid _itemId;
+        private readonly int _novaQuantidade;
+
+        public EstoqueExternalServiceAtualizarQuantidadeSetupBuilder(Mock<IEstoqueExternalService> mock, Guid itemId, int novaQuantidade)
+        {
+            _mock = mock;
+            _itemId = itemId;
+            _novaQuantidade = novaQuantidade;
+        }
+
+        public void Completa() => _mock.Setup(s => s.AtualizarQuantidadeEstoqueAsync(_itemId, _novaQuantidade)).Returns(Task.CompletedTask);
+
+        public void LancaExcecao(Exception excecao) => _mock.Setup(s => s.AtualizarQuantidadeEstoqueAsync(_itemId, _novaQuantidade)).ThrowsAsync(excecao);
+    }
+
     public class ServicoExternalServiceObterServicoPorIdSetupBuilder
     {
         private readonly Mock<IServicoExternalService> _mock;
@@ -84,6 +120,15 @@ namespace Tests.Application.OrdemServico.Helpers
 
         public static EstoqueExternalServiceObterItemEstoquePorIdSetupBuilder AoObterItemEstoquePorId(this Mock<IEstoqueExternalService> mock, Guid itemId) => new EstoqueExternalServiceObterItemEstoquePorIdSetupBuilder(mock, itemId);
 
+        public static EstoqueExternalServiceVerificarDisponibilidadeSetupBuilder AoVerificarDisponibilidade(this Mock<IEstoqueExternalService> mock, Guid itemId, int quantidade) => new EstoqueExternalServiceVerificarDisponibilidadeSetupBuilder(mock, itemId, quantidade);
+
+        public static EstoqueExternalServiceAtualizarQuantidadeSetupBuilder AoAtualizarQuantidade(this Mock<IEstoqueExternalService> mock, Guid itemId, int novaQuantidade) => new EstoqueExternalServiceAtualizarQuantidadeSetupBuilder(mock, itemId, novaQuantidade);
+
         public static ServicoExternalServiceObterServicoPorIdSetupBuilder AoObterServicoPorId(this Mock<IServicoExternalService> mock, Guid servicoId) => new ServicoExternalServiceObterServicoPorIdSetupBuilder(mock, servicoId);
+
+        public static void DeveTerAtualizadoQuantidade(this Mock<IEstoqueExternalService> mock, Guid itemId, int novaQuantidade)
+        {
+            mock.Verify(s => s.AtualizarQuantidadeEstoqueAsync(itemId, novaQuantidade), Times.Once);
+        }
     }
 }

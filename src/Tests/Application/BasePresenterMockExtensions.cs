@@ -20,6 +20,7 @@ namespace Tests.Application
                 "Era esperado que o método ApresentarSucesso fosse chamado exatamente uma vez com o objeto fornecido.");
         }
 
+        // Override para lista
         public static void DeveTerApresentadoSucesso<TPresenter, TSucesso>(this Mock<TPresenter> mock, IEnumerable<TSucesso> colecaoEsperada)
             where TPresenter : class, IBasePresenter<IEnumerable<TSucesso>>
         {
@@ -43,6 +44,31 @@ namespace Tests.Application
 
         public static void NaoDeveTerApresentadoErro<TPresenter, TSucesso>(this Mock<TPresenter> mock)
             where TPresenter : class, IBasePresenter<TSucesso>
+        {
+            mock.Verify(p => p.ApresentarErro(It.IsAny<string>(), It.IsAny<ErrorType>()), Times.Never,
+                "O método ApresentarErro não deveria ter sido chamado.");
+        }
+
+        // Overrides para IOperacaoOrdemServicoPresenter (não tem objeto, apenas presenter)
+        public static void DeveTerApresentadoSucesso(this Mock<IOperacaoOrdemServicoPresenter> mock)
+        {
+            mock.Verify(p => p.ApresentarSucesso(), Times.Once,
+                "Era esperado que o método ApresentarSucesso fosse chamado exatamente uma vez.");
+        }
+
+        public static void NaoDeveTerApresentadoSucesso(this Mock<IOperacaoOrdemServicoPresenter> mock)
+        {
+            mock.Verify(p => p.ApresentarSucesso(), Times.Never,
+                "O método ApresentarSucesso não deveria ter sido chamado.");
+        }
+
+        public static void DeveTerApresentadoErro(this Mock<IOperacaoOrdemServicoPresenter> mock, string mensagem, ErrorType errorType)
+        {
+            mock.Verify(p => p.ApresentarErro(mensagem, errorType), Times.Once,
+                $"Era esperado que o método ApresentarErro fosse chamado exatamente uma vez com a mensagem '{mensagem}' e tipo '{errorType}'.");
+        }
+
+        public static void NaoDeveTerApresentadoErro(this Mock<IOperacaoOrdemServicoPresenter> mock)
         {
             mock.Verify(p => p.ApresentarErro(It.IsAny<string>(), It.IsAny<ErrorType>()), Times.Never,
                 "O método ApresentarErro não deveria ter sido chamado.");
