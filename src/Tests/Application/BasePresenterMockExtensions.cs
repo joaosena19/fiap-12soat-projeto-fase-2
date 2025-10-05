@@ -20,6 +20,13 @@ namespace Tests.Application
                 "Era esperado que o método ApresentarSucesso fosse chamado exatamente uma vez com o objeto fornecido.");
         }
 
+        public static void DeveTerApresentadoSucesso<TPresenter, TSucesso>(this Mock<TPresenter> mock, IEnumerable<TSucesso> colecaoEsperada)
+            where TPresenter : class, IBasePresenter<IEnumerable<TSucesso>>
+        {
+            mock.Verify(p => p.ApresentarSucesso(It.Is<IEnumerable<TSucesso>>(colecaoReal => colecaoReal != null && colecaoReal.SequenceEqual(colecaoEsperada))), Times.Once,
+                "Era esperado que o método ApresentarSucesso fosse chamado exatamente uma vez com a coleção fornecida.");
+        }
+
         public static void DeveTerApresentadoErro<TPresenter, TSucesso>(this Mock<TPresenter> mock, string mensagem, ErrorType errorType)
             where TPresenter : class, IBasePresenter<TSucesso>
         {

@@ -3,8 +3,6 @@ using Shared.Enums;
 
 namespace Application.Contracts.Presenters;
 
-public interface ICriarItemEstoquePresenter
+public interface ICriarItemEstoquePresenter : IBasePresenter<ItemEstoque>
 {
-    void ApresentarSucesso(ItemEstoque itemEstoque);
-    void ApresentarErro(string mensagem, ErrorType errorType);
 }

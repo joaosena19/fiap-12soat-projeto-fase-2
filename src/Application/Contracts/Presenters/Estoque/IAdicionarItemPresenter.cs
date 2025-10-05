@@ -3,8 +3,6 @@ using Shared.Enums;
 
 namespace Application.Contracts.Presenters;
 
-public interface IAdicionarItemPresenter
+public interface IAdicionarItemPresenter : IBasePresenter<OrdemServicoAggregate>
 {
-    void ApresentarSucesso(OrdemServicoAggregate ordemServico);
-    void ApresentarErro(string mensagem, ErrorType errorType);
 }
