@@ -43,5 +43,20 @@ namespace Tests.Application.Cadastros.Cliente
             _fixture.BuscarClientePorIdPresenterMock.DeveTerApresentadoErro<IBuscarClientePorIdPresenter, ClienteAggregate>("Cliente não encontrado.", ErrorType.ResourceNotFound);
             _fixture.BuscarClientePorIdPresenterMock.NaoDeveTerApresentadoSucesso<IBuscarClientePorIdPresenter, ClienteAggregate>();
         }
+
+        [Fact(DisplayName = "Deve apresentar erro interno quando ocorrer exceção genérica")]
+        public async Task ExecutarAsync_DeveApresentarErroInterno_QuandoOcorrerExcecaoGenerica()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            _fixture.ClienteGatewayMock.AoObterPorId(id).LancaExcecao(new Exception("Falha inesperada"));
+
+            // Act
+            await _fixture.BuscarClientePorIdUseCase.ExecutarAsync(id, _fixture.ClienteGatewayMock.Object, _fixture.BuscarClientePorIdPresenterMock.Object);
+
+            // Assert
+            _fixture.BuscarClientePorIdPresenterMock.DeveTerApresentadoErro<IBuscarClientePorIdPresenter, ClienteAggregate>("Erro interno do servidor.", ErrorType.UnexpectedError);
+            _fixture.BuscarClientePorIdPresenterMock.NaoDeveTerApresentadoSucesso<IBuscarClientePorIdPresenter, ClienteAggregate>();
+        }
     }
 }

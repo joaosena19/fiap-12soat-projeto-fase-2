@@ -46,5 +46,21 @@ namespace Tests.Application.Cadastros.Servico
             _fixture.BuscarServicoPorIdPresenterMock.DeveTerApresentadoErro<IBuscarServicoPorIdPresenter, ServicoAggregate>("Serviço não encontrado.", ErrorType.ResourceNotFound);
             _fixture.BuscarServicoPorIdPresenterMock.NaoDeveTerApresentadoSucesso<IBuscarServicoPorIdPresenter, ServicoAggregate>();
         }
+
+        [Fact(DisplayName = "Deve apresentar erro interno quando ocorrer exceção genérica")]
+        [Trait("UseCase", "BuscarServicoPorId")]
+        public async Task ExecutarAsync_DeveApresentarErroInterno_QuandoOcorrerExcecaoGenerica()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            _fixture.ServicoGatewayMock.AoObterPorId(id).LancaExcecao(new Exception("Falha inesperada"));
+
+            // Act
+            await _fixture.BuscarServicoPorIdUseCase.ExecutarAsync(id, _fixture.ServicoGatewayMock.Object, _fixture.BuscarServicoPorIdPresenterMock.Object);
+
+            // Assert
+            _fixture.BuscarServicoPorIdPresenterMock.DeveTerApresentadoErro<IBuscarServicoPorIdPresenter, ServicoAggregate>("Erro interno do servidor.", ErrorType.UnexpectedError);
+            _fixture.BuscarServicoPorIdPresenterMock.NaoDeveTerApresentadoSucesso<IBuscarServicoPorIdPresenter, ServicoAggregate>();
+        }
     }
 }

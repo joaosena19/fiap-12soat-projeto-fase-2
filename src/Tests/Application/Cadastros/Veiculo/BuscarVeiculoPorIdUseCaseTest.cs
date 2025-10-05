@@ -45,5 +45,21 @@ namespace Tests.Application.Cadastros.Veiculo
             _fixture.BuscarVeiculoPorIdPresenterMock.DeveTerApresentadoErro<IBuscarVeiculoPorIdPresenter, VeiculoAggregate>("Veículo não encontrado.", ErrorType.ResourceNotFound);
             _fixture.BuscarVeiculoPorIdPresenterMock.NaoDeveTerApresentadoSucesso<IBuscarVeiculoPorIdPresenter, VeiculoAggregate>();
         }
+
+        [Fact(DisplayName = "Deve apresentar erro interno quando ocorrer exceção genérica")]
+        [Trait("UseCase", "BuscarVeiculoPorId")]
+        public async Task ExecutarAsync_DeveApresentarErroInterno_QuandoOcorrerExcecaoGenerica()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            _fixture.VeiculoGatewayMock.AoObterPorId(id).LancaExcecao(new Exception("Falha inesperada"));
+
+            // Act
+            await _fixture.BuscarVeiculoPorIdUseCase.ExecutarAsync(id, _fixture.VeiculoGatewayMock.Object, _fixture.BuscarVeiculoPorIdPresenterMock.Object);
+
+            // Assert
+            _fixture.BuscarVeiculoPorIdPresenterMock.DeveTerApresentadoErro<IBuscarVeiculoPorIdPresenter, VeiculoAggregate>("Erro interno do servidor.", ErrorType.UnexpectedError);
+            _fixture.BuscarVeiculoPorIdPresenterMock.NaoDeveTerApresentadoSucesso<IBuscarVeiculoPorIdPresenter, VeiculoAggregate>();
+        }
     }
 }

@@ -44,5 +44,20 @@ namespace Tests.Application.Cadastros.Servico
             _fixture.BuscarServicosPresenterMock.DeveTerApresentadoSucesso<IBuscarServicosPresenter, IEnumerable<ServicoAggregate>>(listaVazia);
             _fixture.BuscarServicosPresenterMock.NaoDeveTerApresentadoErro<IBuscarServicosPresenter, IEnumerable<ServicoAggregate>>();
         }
+
+        [Fact(DisplayName = "Deve apresentar erro interno quando ocorrer exceção genérica")]
+        [Trait("UseCase", "BuscarServicos")]
+        public async Task ExecutarAsync_DeveApresentarErroInterno_QuandoOcorrerExcecaoGenerica()
+        {
+            // Arrange
+            _fixture.ServicoGatewayMock.AoObterTodos().LancaExcecao(new Exception("Falha inesperada"));
+
+            // Act
+            await _fixture.BuscarServicosUseCase.ExecutarAsync(_fixture.ServicoGatewayMock.Object, _fixture.BuscarServicosPresenterMock.Object);
+
+            // Assert
+            _fixture.BuscarServicosPresenterMock.DeveTerApresentadoErro<IBuscarServicosPresenter, IEnumerable<ServicoAggregate>>("Erro interno do servidor.", Shared.Enums.ErrorType.UnexpectedError);
+            _fixture.BuscarServicosPresenterMock.NaoDeveTerApresentadoSucesso<IBuscarServicosPresenter, IEnumerable<ServicoAggregate>>();
+        }
     }
 }

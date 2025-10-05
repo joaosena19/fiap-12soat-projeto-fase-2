@@ -18,6 +18,8 @@ namespace Tests.Application.Cadastros.Servico.Helpers
         public void Retorna(ServicoAggregate servico) => _mock.Setup(g => g.ObterPorIdAsync(_id)).ReturnsAsync(servico);
 
         public void NaoRetornaNada() => _mock.Setup(g => g.ObterPorIdAsync(_id)).ReturnsAsync((ServicoAggregate?)null);
+
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.ObterPorIdAsync(_id)).ThrowsAsync(excecao);
     }
 
     public class ServicoGatewayAtualizarSetupBuilder

@@ -42,5 +42,19 @@ namespace Tests.Application.Cadastros.Cliente
             _fixture.BuscarClientesPresenterMock.DeveTerApresentadoSucesso<IBuscarClientesPresenter, IEnumerable<ClienteAggregate>>(listaVazia);
             _fixture.BuscarClientesPresenterMock.NaoDeveTerApresentadoErro<IBuscarClientesPresenter, IEnumerable<ClienteAggregate>>();
         }
+
+        [Fact(DisplayName = "Deve apresentar erro interno quando ocorrer exceção genérica")]
+        public async Task ExecutarAsync_DeveApresentarErroInterno_QuandoOcorrerExcecaoGenerica()
+        {
+            // Arrange
+            _fixture.ClienteGatewayMock.AoObterTodos().LancaExcecao(new Exception("Falha inesperada"));
+
+            // Act
+            await _fixture.BuscarClientesUseCase.ExecutarAsync(_fixture.ClienteGatewayMock.Object, _fixture.BuscarClientesPresenterMock.Object);
+
+            // Assert
+            _fixture.BuscarClientesPresenterMock.DeveTerApresentadoErro<IBuscarClientesPresenter, IEnumerable<ClienteAggregate>>("Erro interno do servidor.", Shared.Enums.ErrorType.UnexpectedError);
+            _fixture.BuscarClientesPresenterMock.NaoDeveTerApresentadoSucesso<IBuscarClientesPresenter, IEnumerable<ClienteAggregate>>();
+        }
     }
 }

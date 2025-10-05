@@ -18,6 +18,8 @@ namespace Tests.Application.Cadastros.Veiculo.Helpers
         public void Retorna(VeiculoAggregate veiculo) => _mock.Setup(g => g.ObterPorIdAsync(_id)).ReturnsAsync(veiculo);
 
         public void NaoRetornaNada() => _mock.Setup(g => g.ObterPorIdAsync(_id)).ReturnsAsync((VeiculoAggregate?)null);
+
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.ObterPorIdAsync(_id)).ThrowsAsync(excecao);
     }
 
     public class VeiculoGatewayObterPorPlacaSetupBuilder

@@ -1,4 +1,5 @@
 using Application.Contracts.Presenters;
+using Domain.Cadastros.Enums;
 using Shared.Enums;
 using Tests.Application.Cadastros.Cliente.Helpers;
 using Tests.Application.Cadastros.Veiculo.Helpers;
@@ -73,6 +74,49 @@ namespace Tests.Application.Cadastros.Veiculo
 
             // Assert
             _fixture.CriarVeiculoPresenterMock.DeveTerApresentadoErro<ICriarVeiculoPresenter, VeiculoAggregate>("Já existe um veículo cadastrado com esta placa.", ErrorType.Conflict);
+            _fixture.CriarVeiculoPresenterMock.NaoDeveTerApresentadoSucesso<ICriarVeiculoPresenter, VeiculoAggregate>();
+        }
+
+        [Fact(DisplayName = "Deve apresentar erro de domínio quando ocorrer DomainException")]
+        [Trait("UseCase", "CriarVeiculo")]
+        public async Task ExecutarAsync_DeveApresentarErroDominio_QuandoOcorrerDomainException()
+        {
+            // Arrange
+            var cliente = new ClienteBuilder().Build();
+            var placaInvalida = "";
+
+            _fixture.ClienteGatewayMock.AoObterPorId(cliente.Id).Retorna(cliente);
+            _fixture.VeiculoGatewayMock.AoObterPorPlaca(placaInvalida).NaoRetornaNada();
+
+            // Act
+            await _fixture.CriarVeiculoUseCase.ExecutarAsync(
+                cliente.Id, placaInvalida, "Modelo", "Marca", "Cor", 2023, TipoVeiculoEnum.Carro,
+                _fixture.VeiculoGatewayMock.Object, _fixture.ClienteGatewayMock.Object, _fixture.CriarVeiculoPresenterMock.Object);
+
+            // Assert
+            _fixture.CriarVeiculoPresenterMock.DeveTerApresentadoErro<ICriarVeiculoPresenter, VeiculoAggregate>("Placa não pode ser vazia", ErrorType.InvalidInput);
+            _fixture.CriarVeiculoPresenterMock.NaoDeveTerApresentadoSucesso<ICriarVeiculoPresenter, VeiculoAggregate>();
+        }
+
+        [Fact(DisplayName = "Deve apresentar erro interno quando ocorrer exceção genérica")]
+        [Trait("UseCase", "CriarVeiculo")]
+        public async Task ExecutarAsync_DeveApresentarErroInterno_QuandoOcorrerExcecaoGenerica()
+        {
+            // Arrange
+            var cliente = new ClienteBuilder().Build();
+            var veiculo = new VeiculoBuilder().ComClienteId(cliente.Id).Build();
+
+            _fixture.ClienteGatewayMock.AoObterPorId(cliente.Id).Retorna(cliente);
+            _fixture.VeiculoGatewayMock.AoObterPorPlaca(veiculo.Placa.Valor).NaoRetornaNada();
+            _fixture.VeiculoGatewayMock.AoSalvar().LancaExcecao(new Exception("Falha inesperada"));
+
+            // Act
+            await _fixture.CriarVeiculoUseCase.ExecutarAsync(
+                cliente.Id, veiculo.Placa.Valor, veiculo.Modelo.Valor, veiculo.Marca.Valor, veiculo.Cor.Valor, veiculo.Ano.Valor, veiculo.TipoVeiculo.Valor,
+                _fixture.VeiculoGatewayMock.Object, _fixture.ClienteGatewayMock.Object, _fixture.CriarVeiculoPresenterMock.Object);
+
+            // Assert
+            _fixture.CriarVeiculoPresenterMock.DeveTerApresentadoErro<ICriarVeiculoPresenter, VeiculoAggregate>("Erro interno do servidor.", ErrorType.UnexpectedError);
             _fixture.CriarVeiculoPresenterMock.NaoDeveTerApresentadoSucesso<ICriarVeiculoPresenter, VeiculoAggregate>();
         }
     }
