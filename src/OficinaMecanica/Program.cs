@@ -8,7 +8,6 @@ builder.Services.AddSwaggerDocumentation();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddAutoMapper();
-builder.Services.AddApplicationServices();
 builder.Services.AddHealthChecks();
 
 
