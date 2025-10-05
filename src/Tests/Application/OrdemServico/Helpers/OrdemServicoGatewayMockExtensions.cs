@@ -146,6 +146,24 @@ namespace Tests.Application.OrdemServico.Helpers
         public void LancaExcecao(Exception excecao) => _mock.Setup(s => s.ObterServicoPorIdAsync(_servicoId)).ThrowsAsync(excecao);
     }
 
+    public class OrdemServicoGatewayObterEntreguesUltimosDiasSetupBuilder
+    {
+        private readonly Mock<IOrdemServicoGateway> _mock;
+        private readonly int _quantidadeDias;
+
+        public OrdemServicoGatewayObterEntreguesUltimosDiasSetupBuilder(Mock<IOrdemServicoGateway> mock, int quantidadeDias)
+        {
+            _mock = mock;
+            _quantidadeDias = quantidadeDias;
+        }
+
+        public void Retorna(IEnumerable<OrdemServicoAggregate> ordensEntregues) => _mock.Setup(g => g.ObterEntreguesUltimosDiasAsync(_quantidadeDias)).ReturnsAsync(ordensEntregues);
+
+        public void RetornaListaVazia() => _mock.Setup(g => g.ObterEntreguesUltimosDiasAsync(_quantidadeDias)).ReturnsAsync(new List<OrdemServicoAggregate>());
+
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.ObterEntreguesUltimosDiasAsync(_quantidadeDias)).ThrowsAsync(excecao);
+    }
+
     public static class OrdemServicoGatewayMockExtensions
     {
         public static OrdemServicoGatewayObterPorIdSetupBuilder AoObterPorId(this Mock<IOrdemServicoGateway> mock, Guid id) => new OrdemServicoGatewayObterPorIdSetupBuilder(mock, id);
@@ -155,6 +173,8 @@ namespace Tests.Application.OrdemServico.Helpers
         public static OrdemServicoGatewayObterTodosSetupBuilder AoObterTodos(this Mock<IOrdemServicoGateway> mock) => new OrdemServicoGatewayObterTodosSetupBuilder(mock);
 
         public static OrdemServicoGatewayAtualizarSetupBuilder AoAtualizar(this Mock<IOrdemServicoGateway> mock) => new OrdemServicoGatewayAtualizarSetupBuilder(mock);
+
+        public static OrdemServicoGatewayObterEntreguesUltimosDiasSetupBuilder AoObterEntreguesUltimosDias(this Mock<IOrdemServicoGateway> mock, int quantidadeDias) => new OrdemServicoGatewayObterEntreguesUltimosDiasSetupBuilder(mock, quantidadeDias);
 
         public static EstoqueExternalServiceObterItemEstoquePorIdSetupBuilder AoObterItemEstoquePorId(this Mock<IEstoqueExternalService> mock, Guid itemId) => new EstoqueExternalServiceObterItemEstoquePorIdSetupBuilder(mock, itemId);
 

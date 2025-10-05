@@ -69,6 +69,17 @@ namespace Tests.Application.OrdemServico.Helpers
             return this;
         }
 
+        public OrdemServicoBuilder Entregue()
+        {
+            if (_itens.Count == 0)
+                ComItens();
+            if (_servicos.Count == 0)
+                ComServicos();
+            
+            _status = StatusOrdemServicoEnum.Entregue;
+            return this;
+        }
+
         public OrdemServicoBuilder ComItens(params ItemData[] itens)
         {
             if (itens.Length == 0)

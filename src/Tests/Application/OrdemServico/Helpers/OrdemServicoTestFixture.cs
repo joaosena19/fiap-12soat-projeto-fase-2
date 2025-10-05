@@ -20,6 +20,7 @@ namespace Tests.Application.OrdemServico.Helpers
         public Mock<IBuscarOrdemServicoPorCodigoPresenter> BuscarOrdemServicoPorCodigoPresenterMock { get; }
         public Mock<IBuscarOrdemServicoPorIdPresenter> BuscarOrdemServicoPorIdPresenterMock { get; }
         public Mock<IBuscarOrdensServicoPresenter> BuscarOrdensServicoPresenterMock { get; }
+        public Mock<IObterTempoMedioPresenter> ObterTempoMedioPresenterMock { get; }
 
         public AdicionarItemUseCase AdicionarItemUseCase { get; }
         public AdicionarServicosUseCase AdicionarServicosUseCase { get; }
@@ -36,6 +37,7 @@ namespace Tests.Application.OrdemServico.Helpers
         public IniciarDiagnosticoUseCase IniciarDiagnosticoUseCase { get; }
         public RemoverServicoUseCase RemoverServicoUseCase { get; }
         public RemoverItemUseCase RemoverItemUseCase { get; }
+        public ObterTempoMedioUseCase ObterTempoMedioUseCase { get; }
 
         public OrdemServicoTestFixture()
         {
@@ -51,6 +53,7 @@ namespace Tests.Application.OrdemServico.Helpers
             BuscarOrdemServicoPorCodigoPresenterMock = new Mock<IBuscarOrdemServicoPorCodigoPresenter>();
             BuscarOrdemServicoPorIdPresenterMock = new Mock<IBuscarOrdemServicoPorIdPresenter>();
             BuscarOrdensServicoPresenterMock = new Mock<IBuscarOrdensServicoPresenter>();
+            ObterTempoMedioPresenterMock = new Mock<IObterTempoMedioPresenter>();
 
             AdicionarItemUseCase = new AdicionarItemUseCase();
             AdicionarServicosUseCase = new AdicionarServicosUseCase();
@@ -67,6 +70,7 @@ namespace Tests.Application.OrdemServico.Helpers
             IniciarDiagnosticoUseCase = new IniciarDiagnosticoUseCase();
             RemoverServicoUseCase = new RemoverServicoUseCase();
             RemoverItemUseCase = new RemoverItemUseCase();
+            ObterTempoMedioUseCase = new ObterTempoMedioUseCase();
         }
     }
 }
