@@ -1,8 +1,8 @@
 using API.Endpoints.Authentication;
-using Application.Authentication.Dtos;
-using Application.Authentication.Interfaces;
 using FluentAssertions;
+using Infrastructure.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Shared.Enums;
 using Shared.Exceptions;
@@ -26,7 +26,8 @@ namespace Tests.Other.Authentication
 
             // Setup for unit tests
             _authServiceMock = new Mock<IAuthenticationService>();
-            _controller = new AuthenticationController(_authServiceMock.Object);
+            var configMock = new Mock<IConfiguration>();
+            _controller = new AuthenticationController(configMock.Object);
         }
 
         #region Endpoints que precisam de Authorize
@@ -123,85 +124,95 @@ namespace Tests.Other.Authentication
         public void GetToken_Deve_Retornar200OK_Com_TokenResponseDto_Quando_CredenciaisSaoValidas()
         {
             // Arrange
-            var request = new TokenRequestDto("valid-client-id", "valid-client-secret");
-            var expectedResponse = new TokenResponseDto("jwt-token-123", "Bearer", 3600);
-
-            _authServiceMock.Setup(s => s.ValidateCredentialsAndGenerateToken(request))
-                           .Returns(expectedResponse);
+            var request = new TokenRequestDto("admin", "admin");
+            
+            // Setup da configuração mockada
+            var configMock = new Mock<IConfiguration>();
+            configMock.Setup(c => c["ApiCredentials:ClientId"]).Returns("admin");
+            configMock.Setup(c => c["ApiCredentials:ClientSecret"]).Returns("admin");
+            configMock.Setup(c => c["Jwt:Key"]).Returns("xmvsLe9QxIR3BWAWJW4wL+5ZfZrYaohxUaRYSkxteiAn5qEAKDd3xCMn1Bk46ndy6sl4gkVXXvEP/1JowbBp/g==");
+            configMock.Setup(c => c["Jwt:Issuer"]).Returns("OficinaMecanicaApi");
+            configMock.Setup(c => c["Jwt:Audience"]).Returns("AuthorizedServices");
+            
+            var controller = new AuthenticationController(configMock.Object);
 
             // Act
-            var result = _controller.GetToken(request);
+            var result = controller.GetToken(request);
 
             // Assert
             result.Should().NotBeNull();
             result.Result.Should().BeOfType<OkObjectResult>();
 
             var okResult = result.Result as OkObjectResult;
-            okResult!.Value.Should().BeEquivalentTo(expectedResponse);
-
-            _authServiceMock.Verify(s => s.ValidateCredentialsAndGenerateToken(request), Times.Once);
+            var tokenResponse = okResult!.Value as TokenResponseDto;
+            tokenResponse.Should().NotBeNull();
+            tokenResponse!.Token.Should().NotBeNullOrEmpty();
+            tokenResponse.TokenType.Should().Be("Bearer");
+            tokenResponse.ExpiresIn.Should().Be(3600);
         }
 
-        [Fact(DisplayName = "GetToken deve retornar 400 BadRequest quando request é inválido")]
+        [Fact(DisplayName = "GetToken deve lançar DomainException quando request é inválido")]
         [Trait("Método", "GetToken")]
-        public void GetToken_Deve_Retornar400BadRequest_Quando_RequestEhInvalido()
+        public void GetToken_Deve_LancarDomainException_Quando_RequestEhInvalido()
         {
             // Arrange
             var request = new TokenRequestDto("", "");
-            var domainException = new DomainException("ClientId e ClientSecret requeridos.", ErrorType.InvalidInput);
-
-            _authServiceMock.Setup(s => s.ValidateCredentialsAndGenerateToken(request))
-                           .Throws(domainException);
+            var configMock = new Mock<IConfiguration>();
+            configMock.Setup(c => c["ApiCredentials:ClientId"]).Returns("admin");
+            configMock.Setup(c => c["ApiCredentials:ClientSecret"]).Returns("admin");
+            
+            var tokenService = new Mock<ITokenService>();
+            var authService = new AuthenticationService(configMock.Object, tokenService.Object);
+            var controller = new AuthenticationController(configMock.Object);
 
             // Act & Assert
-            var exception = Assert.Throws<DomainException>(() => _controller.GetToken(request));
 
+            var exception = Assert.Throws<DomainException>(() => controller.GetToken(request));
             exception.Message.Should().Be("ClientId e ClientSecret requeridos.");
             exception.ErrorType.Should().Be(ErrorType.InvalidInput);
-
-            _authServiceMock.Verify(s => s.ValidateCredentialsAndGenerateToken(request), Times.Once);
         }
 
-        [Fact(DisplayName = "GetToken deve retornar 401 Unauthorized quando credenciais são inválidas")]
+        [Fact(DisplayName = "GetToken deve lançar DomainException quando credenciais são inválidas")]
         [Trait("Método", "GetToken")]
-        public void GetToken_Deve_Retornar401Unauthorized_Quando_CredenciaisSaoInvalidas()
+        public void GetToken_Deve_LancarDomainException_Quando_CredenciaisSaoInvalidas()
         {
             // Arrange
             var request = new TokenRequestDto("invalid-client-id", "invalid-client-secret");
-            var domainException = new DomainException("Credenciais inválidas.", ErrorType.Unauthorized);
-
-            _authServiceMock.Setup(s => s.ValidateCredentialsAndGenerateToken(request))
-                           .Throws(domainException);
+            var configMock = new Mock<IConfiguration>();
+            configMock.Setup(c => c["ApiCredentials:ClientId"]).Returns("admin");
+            configMock.Setup(c => c["ApiCredentials:ClientSecret"]).Returns("admin");
+            
+            var controller = new AuthenticationController(configMock.Object);
 
             // Act & Assert
-            var exception = Assert.Throws<DomainException>(() => _controller.GetToken(request));
-
+            var exception = Assert.Throws<DomainException>(() => controller.GetToken(request));
             exception.Message.Should().Be("Credenciais inválidas.");
             exception.ErrorType.Should().Be(ErrorType.Unauthorized);
-
-            _authServiceMock.Verify(s => s.ValidateCredentialsAndGenerateToken(request), Times.Once);
         }
 
-        [Fact(DisplayName = "GetToken deve chamar serviço de autenticação com parâmetros corretos")]
+        [Fact(DisplayName = "GetToken deve retornar token quando credenciais são válidas")]
         [Trait("Método", "GetToken")]
-        public void GetToken_Deve_ChamarServicoDeAutenticacao_Com_ParametrosCorretos()
+        public void GetToken_Deve_RetornarToken_Quando_CredenciaisSaoValidas()
         {
             // Arrange
-            var clientId = "test-client-id";
-            var clientSecret = "test-client-secret";
-            var request = new TokenRequestDto(clientId, clientSecret);
-            var expectedResponse = new TokenResponseDto("token", "Bearer", 3600);
-
-            _authServiceMock.Setup(s => s.ValidateCredentialsAndGenerateToken(It.IsAny<TokenRequestDto>()))
-                           .Returns(expectedResponse);
+            var request = new TokenRequestDto("admin", "admin");
+            var configMock = new Mock<IConfiguration>();
+            configMock.Setup(c => c["ApiCredentials:ClientId"]).Returns("admin");
+            configMock.Setup(c => c["ApiCredentials:ClientSecret"]).Returns("admin");
+            configMock.Setup(c => c["Jwt:Key"]).Returns("xmvsLe9QxIR3BWAWJW4wL+5ZfZrYaohxUaRYSkxteiAn5qEAKDd3xCMn1Bk46ndy6sl4gkVXXvEP/1JowbBp/g==");
+            configMock.Setup(c => c["Jwt:Issuer"]).Returns("OficinaMecanicaApi");
+            configMock.Setup(c => c["Jwt:Audience"]).Returns("AuthorizedServices");
+            
+            var controller = new AuthenticationController(configMock.Object);
 
             // Act
-            _controller.GetToken(request);
+            var result = controller.GetToken(request);
 
             // Assert
-            _authServiceMock.Verify(s => s.ValidateCredentialsAndGenerateToken(
-                It.Is<TokenRequestDto>(r => r.ClientId == clientId && r.ClientSecret == clientSecret)),
-                Times.Once);
+            result.Should().NotBeNull();
+            result.Result.Should().BeOfType<OkObjectResult>();
+            var okResult = result.Result as OkObjectResult;
+            okResult!.Value.Should().BeOfType<TokenResponseDto>();
         }
 
         #endregion

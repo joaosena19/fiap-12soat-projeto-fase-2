@@ -1,6 +1,4 @@
-using Application.Authentication.Dtos;
-using Application.Authentication.Interfaces;
-using Application.Authentication.Services;
+using Infrastructure.Authentication;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Moq;
