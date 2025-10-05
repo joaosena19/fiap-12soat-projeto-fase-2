@@ -1,6 +1,10 @@
 using API.Dtos;
+using API.Presenters.OrdemServico;
 using Application.OrdemServico.Dtos;
-using Application.OrdemServico.Interfaces;
+using Application.OrdemServico.Interfaces.External;
+using Infrastructure.Database;
+using Infrastructure.Handlers.OrdemServico;
+using Infrastructure.Repositories.OrdemServico;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,11 +18,24 @@ namespace API.Endpoints.OrdemServico
     [Produces("application/json")]
     public class OrdemServicoController : ControllerBase
     {
-        private readonly IOrdemServicoService _ordemServicoService;
+        private readonly AppDbContext _context;
+        private readonly IServicoExternalService _servicoExternalService;
+        private readonly IEstoqueExternalService _estoqueExternalService;
+        private readonly IVeiculoExternalService _veiculoExternalService;
+        private readonly IClienteExternalService _clienteExternalService;
 
-        public OrdemServicoController(IOrdemServicoService ordemServicoService)
+        public OrdemServicoController(
+            AppDbContext context,
+            IServicoExternalService servicoExternalService,
+            IEstoqueExternalService estoqueExternalService,
+            IVeiculoExternalService veiculoExternalService,
+            IClienteExternalService clienteExternalService)
         {
-            _ordemServicoService = ordemServicoService;
+            _context = context;
+            _servicoExternalService = servicoExternalService;
+            _estoqueExternalService = estoqueExternalService;
+            _veiculoExternalService = veiculoExternalService;
+            _clienteExternalService = clienteExternalService;
         }
 
         /// <summary>
@@ -32,8 +49,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var result = await _ordemServicoService.Buscar();
-            return Ok(result);
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new BuscarOrdensServicoPresenter();
+            var handler = new OrdemServicoHandler();
+            
+            await handler.BuscarOrdensServicoAsync(gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -50,8 +71,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = await _ordemServicoService.BuscarPorId(id);
-            return Ok(result);
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new BuscarOrdemServicoPorIdPresenter();
+            var handler = new OrdemServicoHandler();
+            
+            await handler.BuscarOrdemServicoPorIdAsync(id, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -68,8 +93,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByCodigo(string codigo)
         {
-            var result = await _ordemServicoService.BuscarPorCodigo(codigo);
-            return Ok(result);
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new BuscarOrdemServicoPorCodigoPresenter();
+            var handler = new OrdemServicoHandler();
+            
+            await handler.BuscarOrdemServicoPorCodigoAsync(codigo, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -88,8 +117,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CriarOrdemServicoDto dto)
         {
-            var result = await _ordemServicoService.CriarOrdemServico(dto);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new CriarOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+            
+            await handler.CriarOrdemServicoAsync(dto.VeiculoId, gateway, _veiculoExternalService, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -111,8 +144,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AdicionarServicos(Guid id, [FromBody] AdicionarServicosDto dto)
         {
-            var result = await _ordemServicoService.AdicionarServicos(id, dto);
-            return Ok(result);
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new AdicionarServicosPresenter();
+            var handler = new OrdemServicoHandler();
+
+            await handler.AdicionarServicosAsync(id, dto.ServicosOriginaisIds, gateway, _servicoExternalService, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -134,8 +171,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AdicionarItem(Guid id, [FromBody] AdicionarItemDto dto)
         {
-            var result = await _ordemServicoService.AdicionarItem(id, dto);
-            return Ok(result);
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new AdicionarItemPresenter();
+            var handler = new OrdemServicoHandler();
+
+            await handler.AdicionarItemAsync(id, dto.ItemEstoqueOriginalId, dto.Quantidade, gateway, _estoqueExternalService, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -155,8 +196,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoverServico(Guid id, Guid servicoIncluidoId)
         {
-            await _ordemServicoService.RemoverServico(id, servicoIncluidoId);
-            return NoContent();
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new OperacaoOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+            
+            await handler.RemoverServicoAsync(id, servicoIncluidoId, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -176,8 +221,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoverItem(Guid id, Guid itemIncluidoId)
         {
-            await _ordemServicoService.RemoverItem(id, itemIncluidoId);
-            return NoContent();
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new OperacaoOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+            
+            await handler.RemoverItemAsync(id, itemIncluidoId, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -191,13 +240,16 @@ namespace API.Endpoints.OrdemServico
         /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{id}/cancelar")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Cancelar(Guid id)
         {
-            await _ordemServicoService.Cancelar(id);
-            return NoContent();
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new OperacaoOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+            
+            await handler.CancelarAsync(id, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -218,8 +270,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> IniciarDiagnostico(Guid id)
         {
-            await _ordemServicoService.IniciarDiagnostico(id);
-            return NoContent();
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new OperacaoOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+
+            await handler.IniciarDiagnosticoAsync(id, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -242,8 +298,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GerarOrcamento(Guid id)
         {
-            var result = await _ordemServicoService.GerarOrcamento(id);
-            return Created($"/api/ordens-servico/{id}", result);
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new GerarOrcamentoPresenter();
+            var handler = new OrdemServicoHandler();
+
+            await handler.GerarOrcamentoAsync(id, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -264,8 +324,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AprovarOrcamento(Guid id)
         {
-            await _ordemServicoService.AprovarOrcamento(id);
-            return NoContent();
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new OperacaoOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+
+            await handler.AprovarOrcamentoAsync(id, gateway, _estoqueExternalService, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -286,8 +350,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DesaprovarOrcamento(Guid id)
         {
-            await _ordemServicoService.DesaprovarOrcamento(id);
-            return NoContent();
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new OperacaoOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+
+            await handler.DesaprovarOrcamentoAsync(id, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -308,8 +376,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> FinalizarExecucao(Guid id)
         {
-            await _ordemServicoService.FinalizarExecucao(id);
-            return NoContent();
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new OperacaoOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+
+            await handler.FinalizarExecucaoAsync(id, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -330,8 +402,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Entregar(Guid id)
         {
-            await _ordemServicoService.Entregar(id);
-            return NoContent();
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new OperacaoOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+
+            await handler.EntregarAsync(id, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -350,8 +426,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ObterTempoMedio([FromQuery] int quantidadeDias = 365)
         {
-            var result = await _ordemServicoService.ObterTempoMedio(quantidadeDias);
-            return Ok(result);
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new ObterTempoMedioPresenter();
+            var handler = new OrdemServicoHandler();
+
+            await handler.ObterTempoMedioAsync(quantidadeDias, gateway, presenter);
+            return presenter.ObterResultado();
         }
 
         /// <summary>
@@ -365,12 +445,12 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(RetornoOrdemServicoCompletaDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> BuscaPublica([FromBody] BuscaPublicaOrdemServicoDto dto)
         {
-            var result = await _ordemServicoService.BuscaPublica(dto);
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new BuscaPublicaOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
 
-            if(result is null) //Evitar retornar 204 se vier null, sempre deve retornar 200
-                return new JsonResult(null) { StatusCode = 200 };
-
-            return Ok(result);
+            await handler.BuscaPublicaAsync(dto.CodigoOrdemServico, dto.DocumentoIdentificadorCliente, gateway, _clienteExternalService, presenter);
+            return presenter.ObterResultado();
         }
     }
 }

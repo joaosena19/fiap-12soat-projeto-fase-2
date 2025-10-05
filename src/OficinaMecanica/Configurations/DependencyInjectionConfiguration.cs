@@ -1,9 +1,7 @@
 using Application.Authentication.Interfaces;
 using Application.Authentication.Services;
 using Application.Contracts.Gateways;
-using Application.OrdemServico.Interfaces;
 using Application.OrdemServico.Interfaces.External;
-using Application.OrdemServico.Services;
 using Infrastructure.AntiCorruptionLayer.OrdemServico;
 using Infrastructure.Authentication;
 using Infrastructure.Repositories.Cadastros;
@@ -28,9 +26,6 @@ namespace API.Configurations
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ITokenService, TokenService>();
 
-            // Serviços de ordem de serviço
-            services.AddScoped<IOrdemServicoService, OrdemServicoService>();
-
             // Gateways de cadastros 
             services.AddScoped<IClienteGateway, ClienteRepository>();
             services.AddScoped<IVeiculoGateway, VeiculoRepository>();
@@ -39,8 +34,8 @@ namespace API.Configurations
             // Gateways de estoque
             services.AddScoped<IItemEstoqueGateway, ItemEstoqueRepository>();
 
-            // Repositórios de ordem de serviço
-            services.AddScoped<IOrdemServicoRepository, OrdemServicoRepository>();
+            // Gateways de ordem de serviço
+            services.AddScoped<IOrdemServicoGateway, OrdemServicoRepository>();
 
             // Camada anti-corrupção
             services.AddScoped<IServicoExternalService, ServicoExternalService>();
