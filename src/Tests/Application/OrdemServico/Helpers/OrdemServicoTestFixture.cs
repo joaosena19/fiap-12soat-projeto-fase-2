@@ -16,11 +16,13 @@ namespace Tests.Application.OrdemServico.Helpers
         public Mock<IAdicionarServicosPresenter> AdicionarServicosPresenterMock { get; }
         public Mock<IOperacaoOrdemServicoPresenter> OperacaoOrdemServicoPresenterMock { get; }
         public Mock<IBuscaPublicaOrdemServicoPresenter> BuscaPublicaOrdemServicoPresenterMock { get; }
+        public Mock<IBuscarOrdemServicoPorCodigoPresenter> BuscarOrdemServicoPorCodigoPresenterMock { get; }
 
         public AdicionarItemUseCase AdicionarItemUseCase { get; }
         public AdicionarServicosUseCase AdicionarServicosUseCase { get; }
         public AprovarOrcamentoUseCase AprovarOrcamentoUseCase { get; }
         public BuscaPublicaOrdemServicoUseCase BuscaPublicaOrdemServicoUseCase { get; }
+        public BuscarOrdemServicoPorCodigoUseCase BuscarOrdemServicoPorCodigoUseCase { get; }
 
         public OrdemServicoTestFixture()
         {
@@ -32,11 +34,13 @@ namespace Tests.Application.OrdemServico.Helpers
             AdicionarServicosPresenterMock = new Mock<IAdicionarServicosPresenter>();
             OperacaoOrdemServicoPresenterMock = new Mock<IOperacaoOrdemServicoPresenter>();
             BuscaPublicaOrdemServicoPresenterMock = new Mock<IBuscaPublicaOrdemServicoPresenter>();
+            BuscarOrdemServicoPorCodigoPresenterMock = new Mock<IBuscarOrdemServicoPorCodigoPresenter>();
 
             AdicionarItemUseCase = new AdicionarItemUseCase();
             AdicionarServicosUseCase = new AdicionarServicosUseCase();
             AprovarOrcamentoUseCase = new AprovarOrcamentoUseCase();
             BuscaPublicaOrdemServicoUseCase = new BuscaPublicaOrdemServicoUseCase();
+            BuscarOrdemServicoPorCodigoUseCase = new BuscarOrdemServicoPorCodigoUseCase();
         }
     }
 }
