@@ -1,11 +1,8 @@
 using OrdemServicoAggregate = Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico;
-using Shared.Enums;
 
 namespace Application.Contracts.Presenters;
 
-public interface IBuscaPublicaOrdemServicoPresenter
+public interface IBuscaPublicaOrdemServicoPresenter : IBasePresenter<OrdemServicoAggregate>
 {
-    void ApresentarSucesso(OrdemServicoAggregate ordemServico);
     void ApresentarNaoEncontrado();
-    void ApresentarErro(string mensagem, ErrorType errorType);
 }

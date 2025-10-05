@@ -11,26 +11,32 @@ namespace Tests.Application.OrdemServico.Helpers
         public Mock<IOrdemServicoGateway> OrdemServicoGatewayMock { get; }
         public Mock<IEstoqueExternalService> EstoqueExternalServiceMock { get; }
         public Mock<IServicoExternalService> ServicoExternalServiceMock { get; }
+        public Mock<IClienteExternalService> ClienteExternalServiceMock { get; }
         public Mock<IAdicionarItemPresenter> AdicionarItemPresenterMock { get; }
         public Mock<IAdicionarServicosPresenter> AdicionarServicosPresenterMock { get; }
         public Mock<IOperacaoOrdemServicoPresenter> OperacaoOrdemServicoPresenterMock { get; }
+        public Mock<IBuscaPublicaOrdemServicoPresenter> BuscaPublicaOrdemServicoPresenterMock { get; }
 
         public AdicionarItemUseCase AdicionarItemUseCase { get; }
         public AdicionarServicosUseCase AdicionarServicosUseCase { get; }
         public AprovarOrcamentoUseCase AprovarOrcamentoUseCase { get; }
+        public BuscaPublicaOrdemServicoUseCase BuscaPublicaOrdemServicoUseCase { get; }
 
         public OrdemServicoTestFixture()
         {
             OrdemServicoGatewayMock = new Mock<IOrdemServicoGateway>();
             EstoqueExternalServiceMock = new Mock<IEstoqueExternalService>();
             ServicoExternalServiceMock = new Mock<IServicoExternalService>();
+            ClienteExternalServiceMock = new Mock<IClienteExternalService>();
             AdicionarItemPresenterMock = new Mock<IAdicionarItemPresenter>();
             AdicionarServicosPresenterMock = new Mock<IAdicionarServicosPresenter>();
             OperacaoOrdemServicoPresenterMock = new Mock<IOperacaoOrdemServicoPresenter>();
+            BuscaPublicaOrdemServicoPresenterMock = new Mock<IBuscaPublicaOrdemServicoPresenter>();
 
             AdicionarItemUseCase = new AdicionarItemUseCase();
             AdicionarServicosUseCase = new AdicionarServicosUseCase();
             AprovarOrcamentoUseCase = new AprovarOrcamentoUseCase();
+            BuscaPublicaOrdemServicoUseCase = new BuscaPublicaOrdemServicoUseCase();
         }
     }
 }
