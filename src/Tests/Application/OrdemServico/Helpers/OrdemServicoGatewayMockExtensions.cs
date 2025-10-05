@@ -42,6 +42,22 @@ namespace Tests.Application.OrdemServico.Helpers
         public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.ObterPorCodigoAsync(_codigo)).ThrowsAsync(excecao);
     }
 
+    public class OrdemServicoGatewayObterTodosSetupBuilder
+    {
+        private readonly Mock<IOrdemServicoGateway> _mock;
+
+        public OrdemServicoGatewayObterTodosSetupBuilder(Mock<IOrdemServicoGateway> mock)
+        {
+            _mock = mock;
+        }
+
+        public void Retorna(IEnumerable<OrdemServicoAggregate> ordensServico) => _mock.Setup(g => g.ObterTodosAsync()).ReturnsAsync(ordensServico);
+
+        public void RetornaListaVazia() => _mock.Setup(g => g.ObterTodosAsync()).ReturnsAsync(new List<OrdemServicoAggregate>());
+
+        public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.ObterTodosAsync()).ThrowsAsync(excecao);
+    }
+
     public class OrdemServicoGatewayAtualizarSetupBuilder
     {
         private readonly Mock<IOrdemServicoGateway> _mock;
@@ -135,6 +151,8 @@ namespace Tests.Application.OrdemServico.Helpers
         public static OrdemServicoGatewayObterPorIdSetupBuilder AoObterPorId(this Mock<IOrdemServicoGateway> mock, Guid id) => new OrdemServicoGatewayObterPorIdSetupBuilder(mock, id);
 
         public static OrdemServicoGatewayObterPorCodigoSetupBuilder AoObterPorCodigo(this Mock<IOrdemServicoGateway> mock, string codigo) => new OrdemServicoGatewayObterPorCodigoSetupBuilder(mock, codigo);
+
+        public static OrdemServicoGatewayObterTodosSetupBuilder AoObterTodos(this Mock<IOrdemServicoGateway> mock) => new OrdemServicoGatewayObterTodosSetupBuilder(mock);
 
         public static OrdemServicoGatewayAtualizarSetupBuilder AoAtualizar(this Mock<IOrdemServicoGateway> mock) => new OrdemServicoGatewayAtualizarSetupBuilder(mock);
 

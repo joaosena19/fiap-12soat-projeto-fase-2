@@ -17,12 +17,16 @@ namespace Tests.Application.OrdemServico.Helpers
         public Mock<IOperacaoOrdemServicoPresenter> OperacaoOrdemServicoPresenterMock { get; }
         public Mock<IBuscaPublicaOrdemServicoPresenter> BuscaPublicaOrdemServicoPresenterMock { get; }
         public Mock<IBuscarOrdemServicoPorCodigoPresenter> BuscarOrdemServicoPorCodigoPresenterMock { get; }
+        public Mock<IBuscarOrdemServicoPorIdPresenter> BuscarOrdemServicoPorIdPresenterMock { get; }
+        public Mock<IBuscarOrdensServicoPresenter> BuscarOrdensServicoPresenterMock { get; }
 
         public AdicionarItemUseCase AdicionarItemUseCase { get; }
         public AdicionarServicosUseCase AdicionarServicosUseCase { get; }
         public AprovarOrcamentoUseCase AprovarOrcamentoUseCase { get; }
         public BuscaPublicaOrdemServicoUseCase BuscaPublicaOrdemServicoUseCase { get; }
         public BuscarOrdemServicoPorCodigoUseCase BuscarOrdemServicoPorCodigoUseCase { get; }
+        public BuscarOrdemServicoPorIdUseCase BuscarOrdemServicoPorIdUseCase { get; }
+        public BuscarOrdensServicoUseCase BuscarOrdensServicoUseCase { get; }
 
         public OrdemServicoTestFixture()
         {
@@ -35,12 +39,16 @@ namespace Tests.Application.OrdemServico.Helpers
             OperacaoOrdemServicoPresenterMock = new Mock<IOperacaoOrdemServicoPresenter>();
             BuscaPublicaOrdemServicoPresenterMock = new Mock<IBuscaPublicaOrdemServicoPresenter>();
             BuscarOrdemServicoPorCodigoPresenterMock = new Mock<IBuscarOrdemServicoPorCodigoPresenter>();
+            BuscarOrdemServicoPorIdPresenterMock = new Mock<IBuscarOrdemServicoPorIdPresenter>();
+            BuscarOrdensServicoPresenterMock = new Mock<IBuscarOrdensServicoPresenter>();
 
             AdicionarItemUseCase = new AdicionarItemUseCase();
             AdicionarServicosUseCase = new AdicionarServicosUseCase();
             AprovarOrcamentoUseCase = new AprovarOrcamentoUseCase();
             BuscaPublicaOrdemServicoUseCase = new BuscaPublicaOrdemServicoUseCase();
             BuscarOrdemServicoPorCodigoUseCase = new BuscarOrdemServicoPorCodigoUseCase();
+            BuscarOrdemServicoPorIdUseCase = new BuscarOrdemServicoPorIdUseCase();
+            BuscarOrdensServicoUseCase = new BuscarOrdensServicoUseCase();
         }
     }
 }
