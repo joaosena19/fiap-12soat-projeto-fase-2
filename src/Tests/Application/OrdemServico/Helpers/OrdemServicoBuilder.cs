@@ -152,37 +152,45 @@ namespace Tests.Application.OrdemServico.Helpers
                         break;
                     case StatusOrdemServicoEnum.AguardandoAprovacao:
                         ordemServico.IniciarDiagnostico();
-                        if (ordemServico.ItensIncluidos.Any() || ordemServico.ServicosIncluidos.Any())
+                        // Garante que existe pelo menos um item ou serviço para permitir o orçamento
+                        if (!ordemServico.ItensIncluidos.Any() && !ordemServico.ServicosIncluidos.Any())
                         {
-                            ordemServico.GerarOrcamento();
+                            ordemServico.AdicionarServico(Guid.NewGuid(), _faker.Commerce.ProductName(), _faker.Random.Decimal(30, 200));
                         }
+                        ordemServico.GerarOrcamento();
                         break;
                     case StatusOrdemServicoEnum.EmExecucao:
                         ordemServico.IniciarDiagnostico();
-                        if (ordemServico.ItensIncluidos.Any() || ordemServico.ServicosIncluidos.Any())
+                        // Garante que existe pelo menos um item ou serviço para permitir o orçamento e aprovação
+                        if (!ordemServico.ItensIncluidos.Any() && !ordemServico.ServicosIncluidos.Any())
                         {
-                            ordemServico.GerarOrcamento();
-                            ordemServico.AprovarOrcamento();
+                            ordemServico.AdicionarServico(Guid.NewGuid(), _faker.Commerce.ProductName(), _faker.Random.Decimal(30, 200));
                         }
+                        ordemServico.GerarOrcamento();
+                        ordemServico.AprovarOrcamento();
                         break;
                     case StatusOrdemServicoEnum.Finalizada:
                         ordemServico.IniciarDiagnostico();
-                        if (ordemServico.ItensIncluidos.Any() || ordemServico.ServicosIncluidos.Any())
+                        // Garante que existe pelo menos um item ou serviço para permitir todo o fluxo
+                        if (!ordemServico.ItensIncluidos.Any() && !ordemServico.ServicosIncluidos.Any())
                         {
-                            ordemServico.GerarOrcamento();
-                            ordemServico.AprovarOrcamento();
-                            ordemServico.FinalizarExecucao();
+                            ordemServico.AdicionarServico(Guid.NewGuid(), _faker.Commerce.ProductName(), _faker.Random.Decimal(30, 200));
                         }
+                        ordemServico.GerarOrcamento();
+                        ordemServico.AprovarOrcamento();
+                        ordemServico.FinalizarExecucao();
                         break;
                     case StatusOrdemServicoEnum.Entregue:
                         ordemServico.IniciarDiagnostico();
-                        if (ordemServico.ItensIncluidos.Any() || ordemServico.ServicosIncluidos.Any())
+                        // Garante que existe pelo menos um item ou serviço para permitir todo o fluxo
+                        if (!ordemServico.ItensIncluidos.Any() && !ordemServico.ServicosIncluidos.Any())
                         {
-                            ordemServico.GerarOrcamento();
-                            ordemServico.AprovarOrcamento();
-                            ordemServico.FinalizarExecucao();
-                            ordemServico.Entregar();
+                            ordemServico.AdicionarServico(Guid.NewGuid(), _faker.Commerce.ProductName(), _faker.Random.Decimal(30, 200));
                         }
+                        ordemServico.GerarOrcamento();
+                        ordemServico.AprovarOrcamento();
+                        ordemServico.FinalizarExecucao();
+                        ordemServico.Entregar();
                         break;
                 }
             }
