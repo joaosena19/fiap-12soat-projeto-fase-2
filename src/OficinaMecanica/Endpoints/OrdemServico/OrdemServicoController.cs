@@ -113,6 +113,35 @@ namespace API.Endpoints.OrdemServico
         }
 
         /// <summary>
+        /// Criar uma nova ordem de serviço completa com cliente, veículo, serviços e itens
+        /// </summary>
+        /// <param name="dto">Dados completos para criação da ordem de serviço</param>
+        /// <returns>Ordem de serviço criada com sucesso</returns>
+        /// <response code="201">Ordem de serviço criada com sucesso</response>
+        /// <response code="400">Dados inválidos fornecidos</response>
+        /// <response code="422">Erro de validação ou regra de negócio</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpPost("completa")]
+        [ProducesResponseType(typeof(RetornoOrdemServicoDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CriarCompleta([FromBody] CriarOrdemServicoCompletaDto dto)
+        {
+            var ordemServicoGateway = new OrdemServicoRepository(_context);
+            var clienteGateway = new Infrastructure.Repositories.Cadastros.ClienteRepository(_context);
+            var veiculoGateway = new Infrastructure.Repositories.Cadastros.VeiculoRepository(_context);
+            var servicoGateway = new Infrastructure.Repositories.Cadastros.ServicoRepository(_context);
+            var itemEstoqueGateway = new Infrastructure.Repositories.Estoque.ItemEstoqueRepository(_context);
+            
+            var presenter = new CriarOrdemServicoCompletaPresenter();
+            var useCase = new Application.OrdemServico.UseCases.CriarOrdemServicoCompletaUseCase();
+            
+            await useCase.ExecutarAsync(dto, ordemServicoGateway, clienteGateway, veiculoGateway, servicoGateway, itemEstoqueGateway, presenter);
+            return presenter.ObterResultado();
+        }
+
+        /// <summary>
         /// Adicionar serviços à ordem de serviço
         /// </summary>
         /// <param name="id">ID da ordem de serviço</param>
