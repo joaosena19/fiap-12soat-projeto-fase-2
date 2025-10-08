@@ -278,5 +278,10 @@ namespace Tests.Application.SharedHelpers.Gateways
         {
             mock.Verify(g => g.SalvarAsync(It.IsAny<OrdemServicoAggregate>()), Times.Exactly(vezes));
         }
+
+        public static void NaoDeveTerSalvoOrdemServico(this Mock<IOrdemServicoGateway> mock)
+        {
+            mock.Verify(g => g.SalvarAsync(It.IsAny<OrdemServicoAggregate>()), Times.Never);
+        }
     }
 }

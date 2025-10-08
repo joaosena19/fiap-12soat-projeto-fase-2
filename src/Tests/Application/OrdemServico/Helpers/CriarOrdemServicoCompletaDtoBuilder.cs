@@ -1,6 +1,7 @@
 using Application.OrdemServico.Dtos;
 using Bogus;
 using Domain.Cadastros.Enums;
+using Tests.Helpers;
 
 namespace Tests.Application.OrdemServico.Helpers
 {
@@ -21,7 +22,7 @@ namespace Tests.Application.OrdemServico.Helpers
         public CriarOrdemServicoCompletaDtoBuilder()
         {
             _nomeCliente = _faker.Person.FullName;
-            _documentoCliente = _faker.Random.Replace("###.###.###-##");
+            _documentoCliente = DocumentoHelper.GerarCpfValido();
             _placaVeiculo = _faker.Random.Replace("???-####");
             _modeloVeiculo = _faker.Vehicle.Model();
             _marcaVeiculo = _faker.Vehicle.Manufacturer();
