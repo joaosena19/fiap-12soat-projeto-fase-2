@@ -2,7 +2,7 @@ using Bogus;
 using Domain.OrdemServico.Enums;
 using OrdemServicoAggregate = Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico;
 
-namespace Tests.Application.OrdemServico.Helpers
+namespace Tests.Application.SharedHelpers.AggregateBuilders
 {
     public class OrdemServicoBuilder
     {

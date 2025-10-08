@@ -2,6 +2,8 @@ using Application.Contracts.Presenters;
 using Bogus;
 using Shared.Enums;
 using Tests.Application.Cadastros.Veiculo.Helpers;
+using Tests.Application.SharedHelpers.AggregateBuilders;
+using Tests.Application.SharedHelpers.Gateways;
 using VeiculoAggregate = Domain.Cadastros.Aggregates.Veiculo;
 
 namespace Tests.Application.Cadastros.Veiculo

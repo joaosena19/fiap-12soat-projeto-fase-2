@@ -6,6 +6,9 @@ using Tests.Application.OrdemServico.Helpers;
 using Tests.Helpers;
 using OrdemServicoAggregate = Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico;
 using Domain.OrdemServico.Enums;
+using Tests.Application.SharedHelpers;
+using Tests.Application.SharedHelpers.Gateways;
+using Tests.Application.SharedHelpers.AggregateBuilders;
 
 namespace Tests.Application.OrdemServico
 {

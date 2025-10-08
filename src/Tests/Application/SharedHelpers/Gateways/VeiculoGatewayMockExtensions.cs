@@ -2,7 +2,7 @@ using Application.Contracts.Gateways;
 using Moq;
 using VeiculoAggregate = Domain.Cadastros.Aggregates.Veiculo;
 
-namespace Tests.Application.Cadastros.Veiculo.Helpers
+namespace Tests.Application.SharedHelpers.Gateways
 {
     public class VeiculoGatewayObterPorIdSetupBuilder
     {
@@ -74,7 +74,7 @@ namespace Tests.Application.Cadastros.Veiculo.Helpers
         public void ComCallback(Action<VeiculoAggregate> callback)
         {
             _mock.Setup(g => g.AtualizarAsync(It.IsAny<VeiculoAggregate>()))
-                .Callback<VeiculoAggregate>(callback)
+                .Callback(callback)
                 .ReturnsAsync((VeiculoAggregate veiculo) => veiculo);
         }
     }
@@ -120,5 +120,23 @@ namespace Tests.Application.Cadastros.Veiculo.Helpers
         public static VeiculoGatewaySalvarSetupBuilder AoSalvar(this Mock<IVeiculoGateway> mock) => new VeiculoGatewaySalvarSetupBuilder(mock);
 
         public static VeiculoGatewayObterTodosSetupBuilder AoObterTodos(this Mock<IVeiculoGateway> mock) => new VeiculoGatewayObterTodosSetupBuilder(mock);
+    }
+
+    public static class VeiculoGatewayMockVerifyExtensions
+    {
+        public static void DeveTerSalvadoVeiculo(this Mock<IVeiculoGateway> mock, int vezes = 1)
+        {
+            mock.Verify(g => g.SalvarAsync(It.IsAny<VeiculoAggregate>()), Times.Exactly(vezes));
+        }
+
+        public static void DeveTerObtidoVeiculoPorPlaca(this Mock<IVeiculoGateway> mock, string placa, int vezes = 1)
+        {
+            mock.Verify(g => g.ObterPorPlacaAsync(placa), Times.Exactly(vezes));
+        }
+
+        public static void NaoDeveTerSalvadoVeiculo(this Mock<IVeiculoGateway> mock)
+        {
+            mock.Verify(g => g.SalvarAsync(It.IsAny<VeiculoAggregate>()), Times.Never);
+        }
     }
 }

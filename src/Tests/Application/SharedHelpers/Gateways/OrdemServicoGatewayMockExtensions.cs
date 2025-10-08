@@ -4,7 +4,7 @@ using Moq;
 using OrdemServicoAggregate = Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico;
 using Application.OrdemServico.Dtos.External;
 
-namespace Tests.Application.OrdemServico.Helpers
+namespace Tests.Application.SharedHelpers.Gateways
 {
     public class OrdemServicoGatewayObterPorIdSetupBuilder
     {
@@ -69,7 +69,7 @@ namespace Tests.Application.OrdemServico.Helpers
 
         public void Retorna(OrdemServicoAggregate ordemServico) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<OrdemServicoAggregate>())).ReturnsAsync(ordemServico);
 
-        public void ComCallback(Action<OrdemServicoAggregate> callback) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<OrdemServicoAggregate>())).Callback<OrdemServicoAggregate>(callback).ReturnsAsync((OrdemServicoAggregate os) => os);
+        public void ComCallback(Action<OrdemServicoAggregate> callback) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<OrdemServicoAggregate>())).Callback(callback).ReturnsAsync((OrdemServicoAggregate os) => os);
 
         public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<OrdemServicoAggregate>())).ThrowsAsync(excecao);
     }
@@ -85,7 +85,7 @@ namespace Tests.Application.OrdemServico.Helpers
 
         public void Retorna(OrdemServicoAggregate ordemServico) => _mock.Setup(g => g.SalvarAsync(It.IsAny<OrdemServicoAggregate>())).ReturnsAsync(ordemServico);
 
-        public void ComCallback(Action<OrdemServicoAggregate> callback) => _mock.Setup(g => g.SalvarAsync(It.IsAny<OrdemServicoAggregate>())).Callback<OrdemServicoAggregate>(callback).ReturnsAsync((OrdemServicoAggregate os) => os);
+        public void ComCallback(Action<OrdemServicoAggregate> callback) => _mock.Setup(g => g.SalvarAsync(It.IsAny<OrdemServicoAggregate>())).Callback(callback).ReturnsAsync((OrdemServicoAggregate os) => os);
 
         public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.SalvarAsync(It.IsAny<OrdemServicoAggregate>())).ThrowsAsync(excecao);
     }
@@ -250,5 +250,33 @@ namespace Tests.Application.OrdemServico.Helpers
     public static class VeiculoExternalServiceMockExtensions
     {
         public static VeiculoExternalServiceVerificarExistenciaVeiculoSetupBuilder AoVerificarExistenciaVeiculo(this Mock<IVeiculoExternalService> mock, Guid veiculoId) => new VeiculoExternalServiceVerificarExistenciaVeiculoSetupBuilder(mock, veiculoId);
+    }
+
+    public static class OrdemServicoGatewayMockVerifyExtensions
+    {
+        public static void DeveTerVerificadoExistenciaVeiculo(this Mock<IVeiculoExternalService> mock, Guid veiculoId)
+        {
+            mock.Verify(v => v.VerificarExistenciaVeiculo(veiculoId), Times.Once);
+        }
+
+        public static void DeveTerVerificadoCodigoExistente(this Mock<IOrdemServicoGateway> mock)
+        {
+            mock.Verify(g => g.ObterPorCodigoAsync(It.IsAny<string>()), Times.AtLeastOnce);
+        }
+
+        public static void DeveTerSalvoOrdemServico(this Mock<IOrdemServicoGateway> mock)
+        {
+            mock.Verify(g => g.SalvarAsync(It.IsAny<OrdemServicoAggregate>()), Times.Once);
+        }
+
+        public static void DeveTerObtidoOrdemServicoPorCodigo(this Mock<IOrdemServicoGateway> mock, int vezes = 1)
+        {
+            mock.Verify(g => g.ObterPorCodigoAsync(It.IsAny<string>()), Times.Exactly(vezes));
+        }
+
+        public static void DeveTerSalvadoOrdemServico(this Mock<IOrdemServicoGateway> mock, int vezes = 1)
+        {
+            mock.Verify(g => g.SalvarAsync(It.IsAny<OrdemServicoAggregate>()), Times.Exactly(vezes));
+        }
     }
 }

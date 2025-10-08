@@ -2,7 +2,7 @@ using Application.Contracts.Gateways;
 using Moq;
 using ServicoAggregate = Domain.Cadastros.Aggregates.Servico;
 
-namespace Tests.Application.Cadastros.Servico.Helpers
+namespace Tests.Application.SharedHelpers.Gateways
 {
     public class ServicoGatewayObterPorIdSetupBuilder
     {
@@ -40,7 +40,7 @@ namespace Tests.Application.Cadastros.Servico.Helpers
         public void ComCallback(Action<ServicoAggregate> callback)
         {
             _mock.Setup(g => g.AtualizarAsync(It.IsAny<ServicoAggregate>()))
-                .Callback<ServicoAggregate>(callback)
+                .Callback(callback)
                 .ReturnsAsync((ServicoAggregate servico) => servico);
         }
     }
@@ -56,7 +56,7 @@ namespace Tests.Application.Cadastros.Servico.Helpers
 
         public void Retorna(ServicoAggregate servico) => _mock.Setup(g => g.SalvarAsync(It.IsAny<ServicoAggregate>())).ReturnsAsync(servico);
 
-        public void ComCallback(Action<ServicoAggregate> callback) => _mock.Setup(g => g.SalvarAsync(It.IsAny<ServicoAggregate>())).Callback<ServicoAggregate>(callback).ReturnsAsync((ServicoAggregate servico) => servico);
+        public void ComCallback(Action<ServicoAggregate> callback) => _mock.Setup(g => g.SalvarAsync(It.IsAny<ServicoAggregate>())).Callback(callback).ReturnsAsync((ServicoAggregate servico) => servico);
 
         public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.SalvarAsync(It.IsAny<ServicoAggregate>())).ThrowsAsync(excecao);
     }
@@ -102,5 +102,13 @@ namespace Tests.Application.Cadastros.Servico.Helpers
         public static ServicoGatewaySalvarSetupBuilder AoSalvar(this Mock<IServicoGateway> mock) => new ServicoGatewaySalvarSetupBuilder(mock);
 
         public static ServicoGatewayObterTodosSetupBuilder AoObterTodos(this Mock<IServicoGateway> mock) => new ServicoGatewayObterTodosSetupBuilder(mock);
+    }
+
+    public static class ServicoGatewayMockVerifyExtensions
+    {
+        public static void DeveTerObtidoServicoPorId(this Mock<IServicoGateway> mock, Guid servicoId, int vezes = 1)
+        {
+            mock.Verify(g => g.ObterPorIdAsync(servicoId), Times.Exactly(vezes));
+        }
     }
 }

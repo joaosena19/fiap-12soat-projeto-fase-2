@@ -1,7 +1,8 @@
 using Application.Contracts.Presenters;
-using Moq;
 using Shared.Enums;
 using Tests.Application.Estoque.Helpers;
+using Tests.Application.SharedHelpers.AggregateBuilders;
+using Tests.Application.SharedHelpers.Gateways;
 using ItemEstoqueAggregate = Domain.Estoque.Aggregates.ItemEstoque;
 
 namespace Tests.Application.Estoque

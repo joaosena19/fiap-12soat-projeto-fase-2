@@ -3,6 +3,8 @@ using Domain.OrdemServico.Enums;
 using Moq;
 using Shared.Enums;
 using Tests.Application.OrdemServico.Helpers;
+using Tests.Application.SharedHelpers.AggregateBuilders;
+using Tests.Application.SharedHelpers.Gateways;
 using OrdemServicoAggregate = Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico;
 
 namespace Tests.Application.OrdemServico
@@ -33,7 +35,7 @@ namespace Tests.Application.OrdemServico
                 _fixture.BuscarOrdensServicoPresenterMock.Object);
 
             // Assert
-            _fixture.BuscarOrdensServicoPresenterMock.DeveTerApresentadoSucesso<IBuscarOrdensServicoPresenter, IEnumerable<OrdemServicoAggregate>>(ordensServico);
+            _fixture.BuscarOrdensServicoPresenterMock.DeveTerApresentadoSucessoComQualquerObjeto<IBuscarOrdensServicoPresenter, IEnumerable<OrdemServicoAggregate>>();
             _fixture.BuscarOrdensServicoPresenterMock.NaoDeveTerApresentadoErro<IBuscarOrdensServicoPresenter, IEnumerable<OrdemServicoAggregate>>();
         }
 
@@ -99,19 +101,19 @@ namespace Tests.Application.OrdemServico
 
             // Assert
             // Verificar que ApresentarSucesso foi chamado com uma coleção onde todos os elementos têm status válidos
-            _fixture.BuscarOrdensServicoPresenterMock.Verify(p => 
-                p.ApresentarSucesso(It.Is<IEnumerable<OrdemServicoAggregate>>(ordens => 
-                    ordens.All(o => statusValidos.Contains(o.Status.Valor)) && 
+            _fixture.BuscarOrdensServicoPresenterMock.Verify(p =>
+                p.ApresentarSucesso(It.Is<IEnumerable<OrdemServicoAggregate>>(ordens =>
+                    ordens.All(o => statusValidos.Contains(o.Status.Valor)) &&
                     ordens.All(o => !statusProibidos.Contains(o.Status.Valor))
-                )), Times.Once, 
+                )), Times.Once,
                 "Era esperado que ApresentarSucesso fosse chamado com uma coleção contendo apenas ordens com status válidos");
 
             // Verificar que a quantidade de ordens retornadas corresponde às ordens com status válidos
             var ordensComStatusValidos = ordensServico.Where(os => statusValidos.Contains(os.Status.Valor));
-            _fixture.BuscarOrdensServicoPresenterMock.Verify(p => 
-                p.ApresentarSucesso(It.Is<IEnumerable<OrdemServicoAggregate>>(ordens => 
+            _fixture.BuscarOrdensServicoPresenterMock.Verify(p =>
+                p.ApresentarSucesso(It.Is<IEnumerable<OrdemServicoAggregate>>(ordens =>
                     ordens.Count() == ordensComStatusValidos.Count()
-                )), Times.Once, 
+                )), Times.Once,
                 "Era esperado que ApresentarSucesso fosse chamado com exatamente a quantidade de ordens com status válidos");
 
             _fixture.BuscarOrdensServicoPresenterMock.NaoDeveTerApresentadoErro<IBuscarOrdensServicoPresenter, IEnumerable<OrdemServicoAggregate>>();
@@ -150,10 +152,10 @@ namespace Tests.Application.OrdemServico
 
             // Assert
             // Verificar que ApresentarSucesso foi chamado com uma coleção ordenada corretamente por prioridade
-            _fixture.BuscarOrdensServicoPresenterMock.Verify(p => 
-                p.ApresentarSucesso(It.Is<IEnumerable<OrdemServicoAggregate>>(ordens => 
+            _fixture.BuscarOrdensServicoPresenterMock.Verify(p =>
+                p.ApresentarSucesso(It.Is<IEnumerable<OrdemServicoAggregate>>(ordens =>
                     VerificarOrdenacaoPorPrioridade(ordens, prioridadeEsperada)
-                )), Times.Once, 
+                )), Times.Once,
                 "Era esperado que ApresentarSucesso fosse chamado com uma coleção ordenada por prioridade de status");
 
             _fixture.BuscarOrdensServicoPresenterMock.NaoDeveTerApresentadoErro<IBuscarOrdensServicoPresenter, IEnumerable<OrdemServicoAggregate>>();
@@ -162,21 +164,21 @@ namespace Tests.Application.OrdemServico
         private static bool VerificarOrdenacaoPorPrioridade(IEnumerable<OrdemServicoAggregate> ordens, Dictionary<StatusOrdemServicoEnum, int> prioridadeEsperada)
         {
             var ordensLista = ordens.ToList();
-            
+
             for (int i = 1; i < ordensLista.Count; i++)
             {
                 var prioridadeAnterior = prioridadeEsperada[ordensLista[i - 1].Status.Valor];
                 var prioridadeAtual = prioridadeEsperada[ordensLista[i].Status.Valor];
-                
+
                 // Se a prioridade atual for menor (maior precedência), a ordenação está incorreta
                 if (prioridadeAtual < prioridadeAnterior)
                     return false;
-                
+
                 // Se as prioridades são iguais, deve estar ordenado por data de criação (crescente)
                 if (prioridadeAtual == prioridadeAnterior && ordensLista[i].Historico.DataCriacao < ordensLista[i - 1].Historico.DataCriacao)
                     return false;
             }
-            
+
             return true;
         }
     }

@@ -2,7 +2,7 @@ using Bogus;
 using Tests.Helpers;
 using ClienteAggregate = Domain.Cadastros.Aggregates.Cliente;
 
-namespace Tests.Application.Cadastros.Cliente.Helpers
+namespace Tests.Application.SharedHelpers.AggregateBuilders
 {
     public class ClienteBuilder
     {

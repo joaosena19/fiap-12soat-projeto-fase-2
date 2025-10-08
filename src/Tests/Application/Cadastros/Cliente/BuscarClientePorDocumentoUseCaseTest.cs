@@ -2,6 +2,8 @@ using Application.Contracts.Presenters;
 using Bogus;
 using Shared.Enums;
 using Tests.Application.Cadastros.Cliente.Helpers;
+using Tests.Application.SharedHelpers.AggregateBuilders;
+using Tests.Application.SharedHelpers.Gateways;
 using ClienteAggregate = Domain.Cadastros.Aggregates.Cliente;
 
 namespace Tests.Application.Cadastros.Cliente

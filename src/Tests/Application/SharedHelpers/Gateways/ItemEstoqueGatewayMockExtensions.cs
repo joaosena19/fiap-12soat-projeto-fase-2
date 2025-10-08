@@ -2,7 +2,7 @@ using Application.Contracts.Gateways;
 using Moq;
 using ItemEstoqueAggregate = Domain.Estoque.Aggregates.ItemEstoque;
 
-namespace Tests.Application.Estoque.Helpers
+namespace Tests.Application.SharedHelpers.Gateways
 {
     public class ItemEstoqueGatewayObterPorIdSetupBuilder
     {
@@ -55,7 +55,7 @@ namespace Tests.Application.Estoque.Helpers
 
         public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<ItemEstoqueAggregate>())).ThrowsAsync(excecao);
 
-        public void ComCallback(Action<ItemEstoqueAggregate> callback) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<ItemEstoqueAggregate>())).Callback<ItemEstoqueAggregate>(callback).ReturnsAsync((ItemEstoqueAggregate itemEstoque) => itemEstoque);
+        public void ComCallback(Action<ItemEstoqueAggregate> callback) => _mock.Setup(g => g.AtualizarAsync(It.IsAny<ItemEstoqueAggregate>())).Callback(callback).ReturnsAsync((ItemEstoqueAggregate itemEstoque) => itemEstoque);
     }
 
     public class ItemEstoqueGatewaySalvarSetupBuilder
@@ -69,7 +69,7 @@ namespace Tests.Application.Estoque.Helpers
 
         public void Retorna(ItemEstoqueAggregate itemEstoque) => _mock.Setup(g => g.SalvarAsync(It.IsAny<ItemEstoqueAggregate>())).ReturnsAsync(itemEstoque);
 
-        public void ComCallback(Action<ItemEstoqueAggregate> callback) => _mock.Setup(g => g.SalvarAsync(It.IsAny<ItemEstoqueAggregate>())).Callback<ItemEstoqueAggregate>(callback).ReturnsAsync((ItemEstoqueAggregate itemEstoque) => itemEstoque);
+        public void ComCallback(Action<ItemEstoqueAggregate> callback) => _mock.Setup(g => g.SalvarAsync(It.IsAny<ItemEstoqueAggregate>())).Callback(callback).ReturnsAsync((ItemEstoqueAggregate itemEstoque) => itemEstoque);
 
         public void LancaExcecao(Exception excecao) => _mock.Setup(g => g.SalvarAsync(It.IsAny<ItemEstoqueAggregate>())).ThrowsAsync(excecao);
     }
@@ -99,5 +99,13 @@ namespace Tests.Application.Estoque.Helpers
         public static ItemEstoqueGatewaySalvarSetupBuilder AoSalvar(this Mock<IItemEstoqueGateway> mock) => new ItemEstoqueGatewaySalvarSetupBuilder(mock);
 
         public static ItemEstoqueGatewayObterTodosSetupBuilder AoObterTodos(this Mock<IItemEstoqueGateway> mock) => new ItemEstoqueGatewayObterTodosSetupBuilder(mock);
+    }
+
+    public static class ItemEstoqueGatewayMockVerifyExtensions
+    {
+        public static void DeveTerObtidoItemPorId(this Mock<IItemEstoqueGateway> mock, Guid itemId, int vezes = 1)
+        {
+            mock.Verify(g => g.ObterPorIdAsync(itemId), Times.Exactly(vezes));
+        }
     }
 }

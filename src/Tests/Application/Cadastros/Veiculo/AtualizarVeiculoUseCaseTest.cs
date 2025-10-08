@@ -1,10 +1,11 @@
 using Application.Contracts.Presenters;
+using Domain.Cadastros.Enums;
 using FluentAssertions;
 using Shared.Enums;
 using Tests.Application.Cadastros.Veiculo.Helpers;
-using Tests.Application;
+using Tests.Application.SharedHelpers.AggregateBuilders;
+using Tests.Application.SharedHelpers.Gateways;
 using VeiculoAggregate = Domain.Cadastros.Aggregates.Veiculo;
-using Domain.Cadastros.Enums;
 
 namespace Tests.Application.Cadastros.Veiculo
 {
@@ -44,7 +45,7 @@ namespace Tests.Application.Cadastros.Veiculo
             veiculoAtualizado!.Marca.Valor.Should().Be(novaMarca);
             veiculoAtualizado!.Ano.Valor.Should().Be(novoAno);
             veiculoAtualizado!.Cor.Valor.Should().Be(novaCor);
-            
+
             _fixture.AtualizarVeiculoPresenterMock.DeveTerApresentadoSucessoComQualquerObjeto<IAtualizarVeiculoPresenter, VeiculoAggregate>();
             _fixture.AtualizarVeiculoPresenterMock.NaoDeveTerApresentadoErro<IAtualizarVeiculoPresenter, VeiculoAggregate>();
         }

@@ -2,7 +2,7 @@ using Bogus;
 using Domain.Cadastros.Enums;
 using VeiculoAggregate = Domain.Cadastros.Aggregates.Veiculo;
 
-namespace Tests.Application.Cadastros.Veiculo.Helpers
+namespace Tests.Application.SharedHelpers.AggregateBuilders
 {
     public class VeiculoBuilder
     {

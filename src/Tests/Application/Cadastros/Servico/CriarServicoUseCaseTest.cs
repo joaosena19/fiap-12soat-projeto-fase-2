@@ -2,7 +2,8 @@ using Application.Contracts.Presenters;
 using FluentAssertions;
 using Shared.Enums;
 using Tests.Application.Cadastros.Servico.Helpers;
-using Tests.Helpers;
+using Tests.Application.SharedHelpers.AggregateBuilders;
+using Tests.Application.SharedHelpers.Gateways;
 using ServicoAggregate = Domain.Cadastros.Aggregates.Servico;
 
 namespace Tests.Application.Cadastros.Servico

@@ -1,5 +1,7 @@
 using Shared.Enums;
 using Tests.Application.OrdemServico.Helpers;
+using Tests.Application.SharedHelpers.AggregateBuilders;
+using Tests.Application.SharedHelpers.Gateways;
 
 namespace Tests.Application.OrdemServico
 {

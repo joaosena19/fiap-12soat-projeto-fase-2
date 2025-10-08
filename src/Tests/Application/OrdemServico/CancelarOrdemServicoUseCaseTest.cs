@@ -1,9 +1,8 @@
-using Application.Contracts.Presenters;
-using FluentAssertions;
 using Shared.Enums;
 using Shared.Exceptions;
 using Tests.Application.OrdemServico.Helpers;
-using Tests.Helpers;
+using Tests.Application.SharedHelpers.AggregateBuilders;
+using Tests.Application.SharedHelpers.Gateways;
 
 namespace Tests.Application.OrdemServico
 {

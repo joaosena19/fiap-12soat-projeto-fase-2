@@ -2,6 +2,8 @@ using Moq;
 using Shared.Enums;
 using Shared.Exceptions;
 using Tests.Application.OrdemServico.Helpers;
+using Tests.Application.SharedHelpers.AggregateBuilders;
+using Tests.Application.SharedHelpers.Gateways;
 using OrdemServicoAggregate = Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico;
 
 namespace Tests.Application.OrdemServico

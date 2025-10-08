@@ -2,7 +2,7 @@ using Bogus;
 using Domain.Cadastros.Aggregates;
 using ServicoAggregate = Domain.Cadastros.Aggregates.Servico;
 
-namespace Tests.Application.Cadastros.Servico.Helpers
+namespace Tests.Application.SharedHelpers.AggregateBuilders
 {
     public class ServicoBuilder
     {

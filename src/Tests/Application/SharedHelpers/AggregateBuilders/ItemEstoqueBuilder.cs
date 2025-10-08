@@ -2,7 +2,7 @@ using Bogus;
 using Domain.Estoque.Enums;
 using ItemEstoqueAggregate = Domain.Estoque.Aggregates.ItemEstoque;
 
-namespace Tests.Application.Estoque.Helpers
+namespace Tests.Application.SharedHelpers.AggregateBuilders
 {
     public class ItemEstoqueBuilder
     {
