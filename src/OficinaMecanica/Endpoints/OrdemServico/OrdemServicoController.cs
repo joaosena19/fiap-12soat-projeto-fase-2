@@ -1,3 +1,4 @@
+using API.Attributes;
 using API.Dtos;
 using API.Presenters.OrdemServico;
 using Application.OrdemServico.Dtos;
@@ -470,6 +471,67 @@ namespace API.Endpoints.OrdemServico
 
             var clienteExternalService = new Infrastructure.AntiCorruptionLayer.OrdemServico.ClienteExternalService(new Infrastructure.Repositories.Cadastros.VeiculoRepository(_context), new Infrastructure.Repositories.Cadastros.ClienteRepository(_context));
             await handler.BuscaPublicaAsync(dto.CodigoOrdemServico, dto.DocumentoIdentificadorCliente, gateway, clienteExternalService, presenter);
+            return presenter.ObterResultado();
+        }
+
+        /// <summary>
+        /// Webhook para aprovação de orçamento de ordem de serviço, iniciando sua execução
+        /// </summary>
+        /// <param name="dto">Dados da ordem de serviço</param>
+        /// <returns>Nenhum conteúdo</returns>
+        /// <response code="204">Orçamento aprovado com sucesso</response>
+        /// <response code="400">Dados inválidos fornecidos</response>
+        /// <response code="401">Assinatura HMAC inválida ou ausente</response>
+        /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="422">Erro de regra do domínio</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [AllowAnonymous]
+        [ValidateHmac]
+        [HttpPost("orcamento/aprovar/webhook")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> WebhookAprovarOrcamento([FromBody] WebhookOrcamentoDto dto)
+        {
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new OperacaoOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+
+            var estoqueExternalService = new Infrastructure.AntiCorruptionLayer.OrdemServico.EstoqueExternalService(new Infrastructure.Repositories.Estoque.ItemEstoqueRepository(_context));
+            await handler.AprovarOrcamentoAsync(dto.Id, gateway, estoqueExternalService, presenter);
+            return presenter.ObterResultado();
+        }
+
+        /// <summary>
+        /// Webhook para desaprovação de orçamento ordem de serviço, causando seu cancelamento
+        /// </summary>
+        /// <param name="dto">Dados da ordem de serviço</param>
+        /// <returns>Nenhum conteúdo</returns>
+        /// <response code="204">Orçamento desaprovado com sucesso</response>
+        /// <response code="400">Dados inválidos fornecidos</response>
+        /// <response code="401">Assinatura HMAC inválida ou ausente</response>
+        /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="422">Erro de regra do domínio</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [AllowAnonymous]
+        [ValidateHmac]
+        [HttpPost("orcamento/desaprovar/webhook")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> WebhookDesaprovarOrcamento([FromBody] WebhookOrcamentoDto dto)
+        {
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new OperacaoOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+
+            await handler.DesaprovarOrcamentoAsync(dto.Id, gateway, presenter);
             return presenter.ObterResultado();
         }
     }
