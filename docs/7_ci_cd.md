@@ -1,0 +1,4 @@
+- Explicar como funciona a pipeline de ci
+- Explicar que a main só aceite PR, não dá pra ir direito
+- Explicar que o PR só passa se não der nenhum erro na CI
+- Explicar que ao entrar código novo na master, já roda a CD automaticamente

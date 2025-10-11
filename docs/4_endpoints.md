@@ -1,0 +1,2 @@
+- Explicar como foi alterado cada um dos endpoints requisitados
+- Anexar arquivo com todos os endpoints

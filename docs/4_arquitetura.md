@@ -1,0 +1,1 @@
+- Criar um desenho da arquitetura explicando como cada coisa se comunica, da aplicação em si, do docker, do k8s, do terraform, do github actions etc.

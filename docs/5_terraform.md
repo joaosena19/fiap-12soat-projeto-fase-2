@@ -1,0 +1,3 @@
+- Explicar como está a configuração terraform
+- Explicar que é para AWS
+- Explicar que usei emptyDir() por limitações do aws free tier, mas que num cenário real usuaria um banco persistido
