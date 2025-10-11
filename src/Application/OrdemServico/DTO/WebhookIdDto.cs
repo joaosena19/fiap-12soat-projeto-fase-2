@@ -1,12 +1,12 @@
 namespace Application.OrdemServico.Dtos
 {
     /// <summary>
-    /// DTO para webhook de aprovação/desaprovação de orçamento
+    /// DTO para webhook para passagem de ID
     /// </summary>
-    public class WebhookOrcamentoDto
+    public class WebhookIdDto
     {
         /// <summary>
-        /// ID da ordem de serviço
+        /// ID do recurso
         /// </summary>
         /// <example>00000000-0000-0000-0000-000000000000</example>
         public Guid Id { get; set; }

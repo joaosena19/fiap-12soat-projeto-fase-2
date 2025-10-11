@@ -2,6 +2,7 @@ using Application.OrdemServico.UseCases;
 using Application.Contracts.Gateways;
 using Application.Contracts.Presenters;
 using Application.OrdemServico.Interfaces.External;
+using Domain.OrdemServico.Enums;
 
 namespace Infrastructure.Handlers.OrdemServico
 {
@@ -107,6 +108,12 @@ namespace Infrastructure.Handlers.OrdemServico
         {
             var useCase = new BuscaPublicaOrdemServicoUseCase();
             await useCase.ExecutarAsync(codigoOrdemServico, documentoIdentificadorCliente, gateway, clienteExternalService, presenter);
+        }
+
+        public async Task AlterarStatusAsync(Guid ordemServicoId, StatusOrdemServicoEnum status, IOrdemServicoGateway gateway, IOperacaoOrdemServicoPresenter presenter)
+        {
+            var useCase = new AlterarStatusUseCase();
+            await useCase.ExecutarAsync(ordemServicoId, status, gateway, presenter);
         }
     }
 }

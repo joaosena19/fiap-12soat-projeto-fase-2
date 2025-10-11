@@ -41,6 +41,7 @@ namespace Tests.Application.OrdemServico.Helpers
         public RemoverItemUseCase RemoverItemUseCase { get; }
         public ObterTempoMedioUseCase ObterTempoMedioUseCase { get; }
         public CriarOrdemServicoUseCase CriarOrdemServicoUseCase { get; }
+        public AlterarStatusUseCase AlterarStatusUseCase { get; }
 
         public OrdemServicoTestFixture()
         {
@@ -77,6 +78,7 @@ namespace Tests.Application.OrdemServico.Helpers
             RemoverItemUseCase = new RemoverItemUseCase();
             ObterTempoMedioUseCase = new ObterTempoMedioUseCase();
             CriarOrdemServicoUseCase = new CriarOrdemServicoUseCase();
+            AlterarStatusUseCase = new AlterarStatusUseCase();
         }
     }
 }

@@ -91,7 +91,7 @@ namespace Tests.Integration.OrdemServico
             await _client.PostAsync($"/api/ordens-servico/{ordem.Id}/orcamento", null);
 
             // Preparar DTO do webhook
-            var webhookDto = new WebhookOrcamentoDto { Id = ordem.Id };
+            var webhookDto = new WebhookIdDto { Id = ordem.Id };
 
             // Act
             var response = await _hmacClient.PostAsJsonWithHmacAsync("/api/ordens-servico/orcamento/aprovar/webhook", webhookDto);
@@ -110,7 +110,7 @@ namespace Tests.Integration.OrdemServico
         public async Task WebhookAprovarOrcamento_SemAssinaturaHmac_DeveRetornarStatus401()
         {
             // Arrange
-            var webhookDto = new WebhookOrcamentoDto { Id = Guid.NewGuid() };
+            var webhookDto = new WebhookIdDto { Id = Guid.NewGuid() };
 
             // Act - usando client normal sem HMAC
             var response = await _client.PostAsJsonAsync("/api/ordens-servico/orcamento/aprovar/webhook", webhookDto);
@@ -124,7 +124,7 @@ namespace Tests.Integration.OrdemServico
         public async Task WebhookAprovarOrcamento_ComAssinaturaHmacInvalida_DeveRetornarStatus401()
         {
             // Arrange
-            var webhookDto = new WebhookOrcamentoDto { Id = Guid.NewGuid() };
+            var webhookDto = new WebhookIdDto { Id = Guid.NewGuid() };
 
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/ordens-servico/orcamento/aprovar/webhook");
             request.Headers.Add("X-Signature", "sha256=assinatura_invalida");
@@ -142,7 +142,7 @@ namespace Tests.Integration.OrdemServico
         public async Task WebhookAprovarOrcamento_ComOrdemInexistente_DeveRetornarStatus404()
         {
             // Arrange
-            var webhookDto = new WebhookOrcamentoDto { Id = Guid.NewGuid() };
+            var webhookDto = new WebhookIdDto { Id = Guid.NewGuid() };
 
             // Act
             var response = await _hmacClient.PostAsJsonWithHmacAsync("/api/ordens-servico/orcamento/aprovar/webhook", webhookDto);
@@ -191,7 +191,7 @@ namespace Tests.Integration.OrdemServico
             ordemResponse.EnsureSuccessStatusCode();
             var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
-            var webhookDto = new WebhookOrcamentoDto { Id = ordem!.Id };
+            var webhookDto = new WebhookIdDto { Id = ordem!.Id };
 
             // Act - Tentar aprovar orçamento em ordem sem orçamento (status Recebida)
             var response = await _hmacClient.PostAsJsonWithHmacAsync("/api/ordens-servico/orcamento/aprovar/webhook", webhookDto);
@@ -268,7 +268,7 @@ namespace Tests.Integration.OrdemServico
             await _client.PostAsync($"/api/ordens-servico/{ordem.Id}/orcamento", null);
 
             // Preparar DTO do webhook
-            var webhookDto = new WebhookOrcamentoDto { Id = ordem.Id };
+            var webhookDto = new WebhookIdDto { Id = ordem.Id };
 
             // Act
             var response = await _hmacClient.PostAsJsonWithHmacAsync("/api/ordens-servico/orcamento/desaprovar/webhook", webhookDto);
@@ -287,7 +287,7 @@ namespace Tests.Integration.OrdemServico
         public async Task WebhookDesaprovarOrcamento_SemAssinaturaHmac_DeveRetornarStatus401()
         {
             // Arrange
-            var webhookDto = new WebhookOrcamentoDto { Id = Guid.NewGuid() };
+            var webhookDto = new WebhookIdDto { Id = Guid.NewGuid() };
 
             // Act - usando client normal sem HMAC
             var response = await _client.PostAsJsonAsync("/api/ordens-servico/orcamento/desaprovar/webhook", webhookDto);
@@ -301,7 +301,7 @@ namespace Tests.Integration.OrdemServico
         public async Task WebhookDesaprovarOrcamento_ComOrdemInexistente_DeveRetornarStatus404()
         {
             // Arrange
-            var webhookDto = new WebhookOrcamentoDto { Id = Guid.NewGuid() };
+            var webhookDto = new WebhookIdDto { Id = Guid.NewGuid() };
 
             // Act
             var response = await _hmacClient.PostAsJsonWithHmacAsync("/api/ordens-servico/orcamento/desaprovar/webhook", webhookDto);
@@ -350,13 +350,132 @@ namespace Tests.Integration.OrdemServico
             ordemResponse.EnsureSuccessStatusCode();
             var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
 
-            var webhookDto = new WebhookOrcamentoDto { Id = ordem!.Id };
+            var webhookDto = new WebhookIdDto { Id = ordem!.Id };
 
             // Act - Tentar desaprovar orçamento em ordem sem orçamento (status Recebida)
             var response = await _hmacClient.PostAsJsonWithHmacAsync("/api/ordens-servico/orcamento/desaprovar/webhook", webhookDto);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+        }
+
+        #endregion
+
+        #region Webhook AlterarStatus Tests
+
+        [Fact(DisplayName = "POST /api/ordens-servico/status/webhook deve retornar status 422 quando transição de status for inválida")]
+        [Trait("Method", "WebhookAlterarStatus")]
+        public async Task WebhookAlterarStatus_ComTransicaoInvalida_DeveRetornarStatus422()
+        {
+            // Arrange: cria cliente, veículo e ordem no status Recebida
+            var clienteDto = new CriarClienteDto
+            {
+                Nome = "Cliente AlterarStatus Inválido",
+                DocumentoIdentificador = "45026788050"
+            };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.EnsureSuccessStatusCode();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
+
+            var veiculoDto = new CriarVeiculoDto
+            {
+                ClienteId = cliente!.Id,
+                Placa = "ALT1234",
+                Modelo = "Modelo Alter",
+                Marca = "Marca",
+                Cor = "Preto",
+                Ano = 2023,
+                TipoVeiculo = TipoVeiculoEnum.Carro
+            };
+            var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
+            veiculoResponse.EnsureSuccessStatusCode();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
+
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
+            var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
+            ordemResponse.EnsureSuccessStatusCode();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
+
+            // Tentar alterar diretamente para EmExecucao deve violar regra de domínio
+            var webhookDto = new WebhookAlterarStatusDto { Id = ordem!.Id, Status = StatusOrdemServicoEnum.EmExecucao };
+
+            // Act
+            var response = await _hmacClient.PostAsJsonWithHmacAsync("/api/ordens-servico/status/webhook", webhookDto);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+        }
+
+        [Fact(DisplayName = "POST /api/ordens-servico/status/webhook deve retornar status 401 com assinatura HMAC inválida")]
+        [Trait("Method", "WebhookAlterarStatus")]
+        public async Task WebhookAlterarStatus_ComAssinaturaHmacInvalida_DeveRetornarStatus401()
+        {
+            var webhookDto = new WebhookAlterarStatusDto { Id = Guid.NewGuid(), Status = StatusOrdemServicoEnum.EmDiagnostico };
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/ordens-servico/status/webhook");
+            request.Headers.Add("X-Signature", "sha256=assinatura_invalida");
+            request.Content = JsonContent.Create(webhookDto);
+
+            var response = await _client.SendAsync(request);
+
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact(DisplayName = "POST /api/ordens-servico/status/webhook deve retornar status 204 com dados válidos e HMAC correto")]
+        [Trait("Method", "WebhookAlterarStatus")]
+        public async Task WebhookAlterarStatus_ComDadosValidosEHmacCorreto_DeveRetornarStatus204()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            var clienteDto = new CriarClienteDto
+            {
+                Nome = "Cliente AlterarStatus Sucesso",
+                DocumentoIdentificador = "81248990021"
+            };
+            var clienteResponse = await _client.PostAsJsonAsync("/api/cadastros/clientes", clienteDto);
+            clienteResponse.EnsureSuccessStatusCode();
+            var cliente = await clienteResponse.Content.ReadFromJsonAsync<RetornoClienteDto>();
+
+            var veiculoDto = new CriarVeiculoDto
+            {
+                ClienteId = cliente!.Id,
+                Placa = "ALT2040",
+                Modelo = "Modelo OK",
+                Marca = "Marca",
+                Cor = "Azul",
+                Ano = 2023,
+                TipoVeiculo = TipoVeiculoEnum.Carro
+            };
+            var veiculoResponse = await _client.PostAsJsonAsync("/api/cadastros/veiculos", veiculoDto);
+            veiculoResponse.EnsureSuccessStatusCode();
+            var veiculo = await veiculoResponse.Content.ReadFromJsonAsync<RetornoVeiculoDto>();
+
+            var ordemDto = new CriarOrdemServicoDto { VeiculoId = veiculo!.Id };
+            var ordemResponse = await _client.PostAsJsonAsync("/api/ordens-servico", ordemDto);
+            ordemResponse.EnsureSuccessStatusCode();
+            var ordem = await ordemResponse.Content.ReadFromJsonAsync<RetornoOrdemServicoDto>();
+
+            var webhookDto = new WebhookAlterarStatusDto { Id = ordem!.Id, Status = StatusOrdemServicoEnum.Cancelada };
+
+            var response = await _hmacClient.PostAsJsonWithHmacAsync("/api/ordens-servico/status/webhook", webhookDto);
+
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+            var ordemNoDB = await context.OrdensServico.FirstOrDefaultAsync(o => o.Id == ordem.Id);
+            ordemNoDB.Should().NotBeNull();
+            ordemNoDB!.Status.Valor.Should().Be(StatusOrdemServicoEnum.Cancelada);
+        }
+
+        [Fact(DisplayName = "POST /api/ordens-servico/status/webhook deve retornar status 404 quando ordem não existir")]
+        [Trait("Method", "WebhookAlterarStatus")]
+        public async Task WebhookAlterarStatus_ComOrdemInexistente_DeveRetornarStatus404()
+        {
+            var webhookDto = new WebhookAlterarStatusDto { Id = Guid.NewGuid(), Status = StatusOrdemServicoEnum.EmDiagnostico };
+
+            var response = await _hmacClient.PostAsJsonWithHmacAsync("/api/ordens-servico/status/webhook", webhookDto);
+
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         #endregion

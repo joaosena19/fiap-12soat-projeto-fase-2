@@ -494,7 +494,7 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> WebhookAprovarOrcamento([FromBody] WebhookOrcamentoDto dto)
+        public async Task<IActionResult> WebhookAprovarOrcamento([FromBody] WebhookIdDto dto)
         {
             var gateway = new OrdemServicoRepository(_context);
             var presenter = new OperacaoOrdemServicoPresenter();
@@ -525,13 +525,43 @@ namespace API.Endpoints.OrdemServico
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> WebhookDesaprovarOrcamento([FromBody] WebhookOrcamentoDto dto)
+        public async Task<IActionResult> WebhookDesaprovarOrcamento([FromBody] WebhookIdDto dto)
         {
             var gateway = new OrdemServicoRepository(_context);
             var presenter = new OperacaoOrdemServicoPresenter();
             var handler = new OrdemServicoHandler();
 
             await handler.DesaprovarOrcamentoAsync(dto.Id, gateway, presenter);
+            return presenter.ObterResultado();
+        }
+
+        /// <summary>
+        /// Webhook para alterar o status da ordem de serviço
+        /// </summary>
+        /// <param name="dto">Dados da ordem de serviço e status desejado</param>
+        /// <returns>Nenhum conteúdo</returns>
+        /// <response code="204">Status alterado com sucesso</response>
+        /// <response code="400">Dados inválidos fornecidos</response>
+        /// <response code="401">Assinatura HMAC inválida ou ausente</response>
+        /// <response code="404">Ordem de serviço não encontrada</response>
+        /// <response code="422">Erro de regra do domínio</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [AllowAnonymous]
+        [ValidateHmac]
+        [HttpPost("status/webhook")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> WebhookAlterarStatus([FromBody] WebhookAlterarStatusDto dto)
+        {
+            var gateway = new OrdemServicoRepository(_context);
+            var presenter = new OperacaoOrdemServicoPresenter();
+            var handler = new OrdemServicoHandler();
+
+            await handler.AlterarStatusAsync(dto.Id, dto.Status, gateway, presenter);
             return presenter.ObterResultado();
         }
     }
