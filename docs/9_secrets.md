@@ -1,2 +1,0 @@
-- Explicar todos os secrets que são usados, qual o papel do appsettings (rodar local no iis express), do .env (rodar local com docker), e do secrets.yaml (passar pro k8s)
-- Explicar que estou subindo .env e secrets.yaml para facilitar o uso dos avaliadores, mas que num cenário real não é uma boa prática subir, mas que de qualquer forma, as secrets realmente importantes que a aws usa estão seguras no github action secrets
