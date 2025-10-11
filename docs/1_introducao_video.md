@@ -1,8 +1,6 @@
-# 1. Introdução e Apresentação
+# 1. Introdução e vídeo de apresentação
 
 ## Introdução
-
-- Explicar que essa documentação não compreende tudo 100%, apenas o que é relevante para a fase 2
 
 Este projeto foi desenvolvido como trabalho acadêmico para a segunda fase do curso de Pós-Graduação em Software Architeture pela FIAP. A documentação não reflete o sistema por completo, apenas o que é relevante para a Fase 2.
 
