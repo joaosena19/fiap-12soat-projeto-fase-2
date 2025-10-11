@@ -8,11 +8,11 @@ namespace API.Attributes
     /// <summary>
     /// Atributo para validação de assinatura HMAC em webhooks
     /// </summary>
-    public class ValidateHmacAttribute : ActionFilterAttribute
+    public class ValidateHmacAttribute : Attribute, IAsyncResourceFilter
     {
         private const string SIGNATURE_HEADER = "X-Signature";
 
-        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
         {
             var request = context.HttpContext.Request;
             
@@ -32,9 +32,13 @@ namespace API.Attributes
 
             // Ler o body da requisição
             request.EnableBuffering();
-            using var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true);
-            var payload = await reader.ReadToEndAsync();
-            request.Body.Position = 0; // Reset para permitir leitura novamente pelo controller
+            request.Body.Position = 0;
+            string payload;
+            using (var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true))
+            {
+                payload = await reader.ReadToEndAsync();
+            }
+            request.Body.Position = 0; // Reset para permitir model binding e leitura no controller
 
             // Validar a assinatura
             var hmacService = context.HttpContext.RequestServices.GetRequiredService<IHmacValidationService>();
