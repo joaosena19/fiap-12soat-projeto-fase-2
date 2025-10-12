@@ -1,1 +1,0 @@
-- Explicar como está o kubernetes, especialmente hpa
