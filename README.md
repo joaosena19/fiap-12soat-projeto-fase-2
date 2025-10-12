@@ -6,7 +6,7 @@ Registro FIAP: RM365182
 
 Turma 12SOAT - Software Architecure  
 Grupo individual  
-Grupo 120  
+Grupo 16  
 
 Discord: joaodainese  
 Email: joaosenadainese@gmail.com  
