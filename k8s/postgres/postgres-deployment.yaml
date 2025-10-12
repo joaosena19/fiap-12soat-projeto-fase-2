@@ -77,4 +77,4 @@ spec:
           failureThreshold: 12
       volumes:
         - name: postgres-storage 
-          emptyDir: {} # Usar emptyDir para desenvolvimento local com Minikube
+          emptyDir: {} # Usar emptyDir para não gastar recursos da AWS

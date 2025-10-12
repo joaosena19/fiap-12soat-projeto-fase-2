@@ -1,4 +1,4 @@
-﻿using Application.Cadastros.Interfaces;
+﻿using Application.Contracts.Gateways;
 using Domain.Cadastros.Aggregates;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Infrastructure.Repositories.Cadastros
 {
-    public class ClienteRepository : IClienteRepository
+    public class ClienteRepository : IClienteGateway
     {
         private readonly AppDbContext _context;
 

@@ -1,11 +1,11 @@
-using Application.Estoque.Interfaces;
+using Application.Contracts.Gateways;
 using Domain.Estoque.Aggregates;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.Estoque
 {
-    public class ItemEstoqueRepository : IItemEstoqueRepository
+    public class ItemEstoqueRepository : IItemEstoqueGateway
     {
         private readonly AppDbContext _context;
 

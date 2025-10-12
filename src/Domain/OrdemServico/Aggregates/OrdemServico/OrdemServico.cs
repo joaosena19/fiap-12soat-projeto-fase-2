@@ -183,5 +183,35 @@ namespace Domain.OrdemServico.Aggregates.OrdemServico
             Status = new Status(StatusOrdemServicoEnum.Entregue);
             Historico = Historico.MarcarDataEntrega();
         }
+
+        public void AlterarStatus(StatusOrdemServicoEnum novoStatus)
+        {
+            switch (novoStatus)
+            {
+                case StatusOrdemServicoEnum.Cancelada:
+                    Cancelar();
+                    break;
+                case StatusOrdemServicoEnum.EmDiagnostico:
+                    IniciarDiagnostico();
+                    break;
+                case StatusOrdemServicoEnum.AguardandoAprovacao:
+                    GerarOrcamento();
+                    break;
+                case StatusOrdemServicoEnum.EmExecucao:
+                    IniciarExecucao();
+                    break;
+                case StatusOrdemServicoEnum.Finalizada:
+                    FinalizarExecucao();
+                    break;
+                case StatusOrdemServicoEnum.Entregue:
+                    Entregar();
+                    break;
+                case StatusOrdemServicoEnum.Recebida:
+                    throw new DomainException($"Não é possível alterar o status para '{StatusOrdemServicoEnum.Recebida}'.", ErrorType.DomainRuleBroken);
+                default:
+                    throw new DomainException("Status inválido.", ErrorType.InvalidInput);
+            }
+        }
     }
 }
+    

@@ -72,6 +72,116 @@ namespace Tests.Domain.OrdemServico
 
         #endregion
 
+        #region Testes Metodo AlterarStatus
+
+        [Fact(DisplayName = "AlterarStatus deve chamar Cancelar quando status for Cancelada")]
+        [Trait("Método", "AlterarStatus")]
+        public void AlterarStatus_ComCancelada_DeveChamarCancelar()
+        {
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+
+            ordemServico.AlterarStatus(StatusOrdemServicoEnum.Cancelada);
+
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.Cancelada);
+        }
+
+        [Fact(DisplayName = "AlterarStatus deve chamar IniciarDiagnostico quando status for EmDiagnostico")]
+        [Trait("Método", "AlterarStatus")]
+        public void AlterarStatus_ComEmDiagnostico_DeveChamarIniciarDiagnostico()
+        {
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+
+            ordemServico.AlterarStatus(StatusOrdemServicoEnum.EmDiagnostico);
+
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.EmDiagnostico);
+        }
+
+        [Fact(DisplayName = "AlterarStatus deve chamar GerarOrcamento quando status for AguardandoAprovacao")]
+        [Trait("Método", "AlterarStatus")]
+        public void AlterarStatus_ComAguardandoAprovacao_DeveChamarGerarOrcamento()
+        {
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 10m);
+
+            ordemServico.AlterarStatus(StatusOrdemServicoEnum.AguardandoAprovacao);
+
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.AguardandoAprovacao);
+            ordemServico.Orcamento.Should().NotBeNull();
+        }
+
+        [Fact(DisplayName = "AlterarStatus deve chamar IniciarExecucao quando status for EmExecucao")]
+        [Trait("Método", "AlterarStatus")]
+        public void AlterarStatus_ComEmExecucao_DeveChamarIniciarExecucao()
+        {
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 10m);
+            ordemServico.GerarOrcamento();
+
+            ordemServico.AlterarStatus(StatusOrdemServicoEnum.EmExecucao);
+
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.EmExecucao);
+            ordemServico.Historico.DataInicioExecucao.Should().NotBeNull();
+        }
+
+        [Fact(DisplayName = "AlterarStatus deve chamar FinalizarExecucao quando status for Finalizada")]
+        [Trait("Método", "AlterarStatus")]
+        public void AlterarStatus_ComFinalizada_DeveChamarFinalizarExecucao()
+        {
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 10m);
+            ordemServico.GerarOrcamento();
+            ordemServico.IniciarExecucao();
+
+            ordemServico.AlterarStatus(StatusOrdemServicoEnum.Finalizada);
+
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.Finalizada);
+            ordemServico.Historico.DataFinalizacao.Should().NotBeNull();
+        }
+
+        [Fact(DisplayName = "AlterarStatus deve chamar Entregar quando status for Entregue")]
+        [Trait("Método", "AlterarStatus")]
+        public void AlterarStatus_ComEntregue_DeveChamarEntregar()
+        {
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            ordemServico.IniciarDiagnostico();
+            ordemServico.AdicionarServico(Guid.NewGuid(), "Teste", 10m);
+            ordemServico.GerarOrcamento();
+            ordemServico.IniciarExecucao();
+            ordemServico.FinalizarExecucao();
+
+            ordemServico.AlterarStatus(StatusOrdemServicoEnum.Entregue);
+
+            ordemServico.Status.Valor.Should().Be(StatusOrdemServicoEnum.Entregue);
+            ordemServico.Historico.DataEntrega.Should().NotBeNull();
+        }
+
+        [Fact(DisplayName = "AlterarStatus não deve permitir alterar para Recebida")]
+        [Trait("Método", "AlterarStatus")]
+        public void AlterarStatus_ComRecebida_DeveLancarExcecao()
+        {
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            FluentActions.Invoking(() => ordemServico.AlterarStatus(StatusOrdemServicoEnum.Recebida))
+                .Should().Throw<DomainException>()
+                .WithMessage("*Não é possível alterar o status para 'Recebida'.*");
+        }
+
+        [Fact(DisplayName = "AlterarStatus com status inválido deve lançar exceção")]
+        [Trait("Método", "AlterarStatus")]
+        public void AlterarStatus_ComStatusInvalido_DeveLancarExcecao()
+        {
+            var ordemServico = OrdemServicoAggregate.Criar(Guid.NewGuid());
+            var statusInvalido = (StatusOrdemServicoEnum)999;
+
+            FluentActions.Invoking(() => ordemServico.AlterarStatus(statusInvalido))
+                .Should().Throw<DomainException>()
+                .WithMessage("*Status inválido.*");
+        }
+
+        #endregion
+
         #region Testes ValueObject HistoricoTemporal
 
         [Fact(DisplayName = "Não deve criar histórico temporal se data de criação for vazia")]

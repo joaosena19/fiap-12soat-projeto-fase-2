@@ -1,11 +1,12 @@
-using Application.OrdemServico.Interfaces;
+using Application.Contracts.Gateways;
 using Domain.OrdemServico.Enums;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
+using OrdemServicoAggregate = Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico;
 
 namespace Infrastructure.Repositories.OrdemServico
 {
-    public class OrdemServicoRepository : IOrdemServicoRepository
+    public class OrdemServicoRepository : IOrdemServicoGateway
     {
         private readonly AppDbContext _context;
 
@@ -14,7 +15,7 @@ namespace Infrastructure.Repositories.OrdemServico
             _context = context;
         }
 
-        public async Task<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico> SalvarAsync(Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico ordemServico)
+        public async Task<OrdemServicoAggregate> SalvarAsync(OrdemServicoAggregate ordemServico)
         {
             await _context.OrdensServico.AddAsync(ordemServico);
             await _context.SaveChangesAsync();
@@ -22,7 +23,7 @@ namespace Infrastructure.Repositories.OrdemServico
             return ordemServico;
         }
 
-        public async Task<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico?> ObterPorIdAsync(Guid id)
+        public async Task<OrdemServicoAggregate?> ObterPorIdAsync(Guid id)
         {
             return await _context.OrdensServico
                 .Include(os => os.ServicosIncluidos)
@@ -31,7 +32,7 @@ namespace Infrastructure.Repositories.OrdemServico
                 .FirstOrDefaultAsync(os => os.Id == id);
         }
 
-        public async Task<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico?> ObterPorCodigoAsync(string codigo)
+        public async Task<OrdemServicoAggregate?> ObterPorCodigoAsync(string codigo)
         {
             return await _context.OrdensServico
                 .Include(os => os.ServicosIncluidos)
@@ -40,7 +41,7 @@ namespace Infrastructure.Repositories.OrdemServico
                 .FirstOrDefaultAsync(os => os.Codigo.Valor.Trim().Replace("-", "").ToUpper() == codigo.Trim().Replace("-", "").ToUpper());
         }
 
-        public async Task<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico> AtualizarAsync(Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico ordemServico)
+        public async Task<OrdemServicoAggregate> AtualizarAsync(OrdemServicoAggregate ordemServico)
         {
             // Busca os dados atuais para ver se as entidades filhas de OrdemServico devem ser adicionadas
             var existingOrdemServico = await _context.OrdensServico.AsNoTracking()
@@ -64,7 +65,7 @@ namespace Infrastructure.Repositories.OrdemServico
             return ordemServico;
         }
 
-        public async Task<IEnumerable<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico>> ObterTodosAsync()
+        public async Task<IEnumerable<OrdemServicoAggregate>> ObterTodosAsync()
         {
             return await _context.OrdensServico
                 .Include(os => os.ServicosIncluidos)
@@ -73,7 +74,7 @@ namespace Infrastructure.Repositories.OrdemServico
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Domain.OrdemServico.Aggregates.OrdemServico.OrdemServico>> ObterEntreguesUltimosDiasAsync(int quantidadeDias)
+        public async Task<IEnumerable<OrdemServicoAggregate>> ObterEntreguesUltimosDiasAsync(int quantidadeDias)
         {
             var dataLimite = DateTime.UtcNow.AddDays(-quantidadeDias);
             
