@@ -8,7 +8,7 @@ Disponível completo em [CoverageReport.zip](attachments/CoverageReport.zip).
 
 **Resumo**
 
-![[coverage_report_resumo.png]]
+![Resumo do relatório de cobertura](attachments/coverage_report_resumo.png)
 
 ---
 Anterior: [CI/CD](7_ci_cd.md)  

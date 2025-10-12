@@ -17,7 +17,7 @@ A pipeline de CI é acionada em cada Pull Request para a branch `main`. A branch
    - Valida configurações na pasta `infra/` (quando alterada)
    - Executa `terraform plan` para verificar mudanças propostas
 
-![[pipeline_ci.png]]
+![Pipeline de Integração Contínua](attachments/pipeline_ci.png)
 
 ### Proteção da Branch Main
 
@@ -47,7 +47,7 @@ Após merge na `main`, a pipeline de CD (`deploy.yaml`) executa automaticamente:
    - Aplica configurações no cluster EKS
    - Verifica status do deployment
 
-![[pipeline_cd.png]]
+![Pipeline de Entrega Contínua](attachments/pipeline_cd.png)
 
 ---
 Anterior: [Infraestrutura](6_infraestrutura.md)  
