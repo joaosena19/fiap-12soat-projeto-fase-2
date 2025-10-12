@@ -9,3 +9,6 @@ Este projeto foi desenvolvido como trabalho acadêmico para a segunda fase do cu
 ## Vídeo de apresentação
 
 Disponível em [Youtube](https://youtu.be/a6SSs1XuTbg) e em [Google Drive](https://drive.google.com/file/d/1hl-doibUoOJy-krHbLot0UL2IXFaDIDz/view?usp=sharing).
+
+---
+Próximo: [Instalação e Uso](2_instalacao_uso.md)

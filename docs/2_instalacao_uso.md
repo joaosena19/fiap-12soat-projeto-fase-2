@@ -164,3 +164,7 @@ terraform destroy
     Gere uma assinatura HMAC para o payload específico da requisição, usando algum gerador como [Free Formater GMAC Generator](https://www.freeformatter.com/hmac-generator.html), usando o secret **63f4945d921d599f27ae4fdf5bada3f1**
     
     Envie a assinatura no header **X-Signature**
+
+---
+Anterior: [Introdução e vídeo](1_introducao_video.md)  
+Próximo: [Clean Architecture](3_clean_architecture.md)
