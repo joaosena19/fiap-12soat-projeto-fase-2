@@ -40,7 +40,7 @@ Para publicar a infraestrutura na AWS e fazer o deploy da aplicação em um clus
    kubectl version --client
    ```
 
-4. **Docker instalado** (para construir e publicar a imagem)
+4. **Docker instalado**
    ```bash
    docker --version
    ```
@@ -109,15 +109,7 @@ Para publicar a infraestrutura na AWS e fazer o deploy da aplicação em um clus
    aws eks update-kubeconfig --region us-east-1 --name seu-cluster-eks
    ```
 
-2. **Verificar conexão com o cluster**
-   ```bash
-   kubectl cluster-info
-   kubectl get nodes
-   ```
-
-#### Deploy da Aplicação no Kubernetes
-
-1. **Aplicar configurações do Kubernetes**
+2. **Aplicar configurações do Kubernetes**
    
    Com o cluster EKS já configurado, aplique os manifestos Kubernetes:
    ```bash
@@ -128,18 +120,18 @@ Para publicar a infraestrutura na AWS e fazer o deploy da aplicação em um clus
    kubectl apply -f k8s/api/
    ```
 
-2. **Verificar status do deployment**
+3. **Verificar status do deployment**
    ```bash
    kubectl get pods
    kubectl get services
    ```
 
-3. **Obter o endpoint da aplicação**
+4. **Obter o endpoint da aplicação**
    ```bash
    kubectl get service oficina-mecanica-service
    ```
    
-   O endereço estará no campo EXTERNAL-IP e poderá demorar alguns minutos para ficar disponível.
+   O endereço estará no campo EXTERNAL-IP.
 
 #### Limpeza de Recursos
 
