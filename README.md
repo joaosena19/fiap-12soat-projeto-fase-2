@@ -3,7 +3,7 @@
 Aluno: João Pedro Sena Dainese  
 Registro FIAP: RM365182  
 
-Turma 12SOAT - Software Architecure  
+Turma 12SOAT - Software Architecture  
 Grupo individual  
 Grupo 16  
 
