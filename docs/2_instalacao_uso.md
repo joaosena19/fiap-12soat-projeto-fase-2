@@ -150,7 +150,7 @@ terraform destroy
 ## Autenticação
 
 1. **Autenticação comum**
-    Obtenha o token de autentição no endpoint `/api/authentication/token`, passando as credenciais:
+    Obtenha o token de autenticação no endpoint `/api/authentication/token`, passando as credenciais:
     ```json
     {
         "clientId": "admin",
