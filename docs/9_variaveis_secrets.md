@@ -41,3 +41,6 @@ Os seguintes secrets são utilizados **apenas** na infraestrutura e pipelines de
 Para facilitar a avaliação do projeto, os arquivos contendo secrets (`appsettings.Development.json`, `.env`, `oficina-mecanica-secret.yaml`) estão incluídos no repositório. O objetivo é apenas agilizar a avaliação, e em um cenário real, esses valores não estariam expostos.
 
 Ainda assim, os secrets realmente críticos utilizados pela infraestrutura AWS estão armazenados de forma segura como GitHub Actions Secrets e não estão visíveis no repositório.
+
+---
+Anterior: [Qualidade](8_qualidade.md)

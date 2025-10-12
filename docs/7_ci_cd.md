@@ -48,3 +48,7 @@ Após merge na `main`, a pipeline de CD (`deploy.yaml`) executa automaticamente:
    - Verifica status do deployment
 
 ![[pipeline_cd.png]]
+
+---
+Anterior: [Infraestrutura](6_infraestrutura.md)  
+Próximo: [Qualidade](8_qualidade.md)

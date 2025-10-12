@@ -1,4 +1,4 @@
-# 4. Endpoints
+# 5. Endpoints
 
 ## Endpoints novos/modificados
 
@@ -60,3 +60,7 @@ Acesse pelo Swagger executando a aplicação, ou pela [documentação Redoc disp
     Gere uma assinatura HMAC para o payload específico da requisição, usando algum gerador como [Free Formater GMAC Generator](https://www.freeformatter.com/hmac-generator.html), usando o secret **63f4945d921d599f27ae4fdf5bada3f1**
     
     Envie a assinatura no header **X-Signature**
+
+---
+Anterior: [Arquitetura](4_arquitetura.md)  
+Próximo: [Infraestrutura](6_infraestrutura.md)

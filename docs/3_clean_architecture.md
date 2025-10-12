@@ -68,3 +68,7 @@ A Entidade realiza a ação, garantindo um estado válido através de suas regra
 O Presenter populado então é retornado camada por camada até voltar para o chamador externo, este que tem definido como quer que seja a apresentação.
 
 ![[api_post_criar_cliente_retorno.png]]
+
+---
+Anterior: [Instalação e Uso](2_instalacao_uso.md)  
+Próximo: [Arquitetura](4_arquitetura.md)
