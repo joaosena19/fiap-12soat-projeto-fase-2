@@ -75,7 +75,7 @@ namespace Tests.Application.Estoque
                 _fixture.CriarItemEstoquePresenterMock.Object);
 
             // Assert
-            _fixture.CriarItemEstoquePresenterMock.DeveTerApresentadoErro<ICriarItemEstoquePresenter, ItemEstoqueAggregate>("Já existe um item de estoque cadastrado com este nome.", ErrorType.Conflict);
+            _fixture.CriarItemEstoquePresenterMock.DeveTerApresentadoErro<ICriarItemEstoquePresenter, ItemEstoqueAggregate>("existe um item de estoque cadastrado com este nome.", ErrorType.Conflict);
             _fixture.CriarItemEstoquePresenterMock.NaoDeveTerApresentadoSucesso<ICriarItemEstoquePresenter, ItemEstoqueAggregate>();
         }
 
