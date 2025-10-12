@@ -123,6 +123,7 @@ Para publicar a infraestrutura na AWS e fazer o deploy da aplicação em um clus
    ```bash
    kubectl apply -f k8s/oficina-mecanica-config.yaml
    kubectl apply -f k8s/oficina-mecanica-secret.yaml
+   kubectl apply -f k8s/metrics-server.yaml
    kubectl apply -f k8s/postgres/
    kubectl apply -f k8s/api/
    ```
