@@ -175,7 +175,7 @@ jobs:
           echo "Status dos pods:"
           kubectl get pods -o wide
           echo "Eventos recentes:"
-          kubectl get events --sort-by=.metadata.creationTimestamp --tail=10
+          kubectl get events --sort-by=.metadata.creationTimestamp | tail -10
         
       - name: Verificar o status do deploy
         run: kubectl rollout status deployment/oficina-mecanica-deployment --timeout=300s
