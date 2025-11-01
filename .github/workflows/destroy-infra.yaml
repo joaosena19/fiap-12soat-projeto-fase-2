@@ -118,14 +118,7 @@ jobs:
         shell: bash
         env:
           TF_INPUT: "0"
-        run: |
-          if [ -f terraform.tfvars ]; then
-            echo "Usando terraform.tfvars para variáveis."
-            terraform destroy -auto-approve -input=false -lock-timeout=5m -var-file=terraform.tfvars
-          else
-            echo "Sem terraform.tfvars; utilizando variáveis via TF_VAR_* do ambiente."
-            terraform destroy -auto-approve -input=false -lock-timeout=5m
-
+        run: terraform destroy -auto-approve -input=false -lock-timeout=5m
       - name: Observação sobre o bucket de estado
         shell: bash
         run: |
