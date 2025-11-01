@@ -62,22 +62,35 @@ jobs:
           fi
           echo "cluster_name=$CLUSTER_NAME" >> "$GITHUB_OUTPUT"
 
-      - name: Atualizar kubeconfig (se houver nome de cluster)
+      - name: Verificar existência do cluster EKS
+        id: ekscheck
         if: ${{ steps.setvars.outputs.cluster_name != '' }}
+        shell: bash
+        run: |
+          if aws eks describe-cluster --region "${AWS_REGION}" --name "${{ steps.setvars.outputs.cluster_name }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Cluster EKS encontrado."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Cluster EKS não encontrado. Pulando etapas de kubectl."
+          fi
+
+      - name: Atualizar kubeconfig (se cluster existir)
+        if: ${{ steps.ekscheck.outputs.exists == 'true' }}
         shell: bash
         run: |
           aws eks update-kubeconfig --region "${AWS_REGION}" --name "${{ steps.setvars.outputs.cluster_name }}"
 
       - name: Excluir recursos do Kubernetes (best-effort)
-        if: ${{ steps.setvars.outputs.cluster_name != '' }}
+        if: ${{ steps.ekscheck.outputs.exists == 'true' }}
         continue-on-error: true
         shell: bash
         run: |
-          kubectl delete -f k8s/api --ignore-not-found
-          kubectl delete -f k8s/postgres --ignore-not-found
-          kubectl delete -f k8s/metrics-server.yaml --ignore-not-found
-          kubectl delete -f k8s/oficina-mecanica-config.yaml --ignore-not-found
-          kubectl delete -f k8s/oficina-mecanica-secret.yaml --ignore-not-found
+          if [ -d k8s/api ]; then kubectl delete -f k8s/api --ignore-not-found; fi
+          if [ -d k8s/postgres ]; then kubectl delete -f k8s/postgres --ignore-not-found; fi
+          if [ -f k8s/metrics-server.yaml ]; then kubectl delete -f k8s/metrics-server.yaml --ignore-not-found; fi
+          if [ -f k8s/oficina-mecanica-config.yaml ]; then kubectl delete -f k8s/oficina-mecanica-config.yaml --ignore-not-found; fi
+          if [ -f k8s/oficina-mecanica-secret.yaml ]; then kubectl delete -f k8s/oficina-mecanica-secret.yaml --ignore-not-found; fi
           echo "Aguardando ~100s para liberar LoadBalancers da AWS..."
           for i in {1..10}; do
             kubectl get svc -A || true
