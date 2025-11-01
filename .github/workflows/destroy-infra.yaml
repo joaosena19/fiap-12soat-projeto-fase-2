@@ -36,6 +36,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AWS_REGION: ${{ inputs.region }}
+      TF_VAR_bucket_name: ${{ secrets.TF_VAR_BUCKET_NAME }}
+      TF_VAR_eks_iam_user_name: ${{ secrets.TF_VAR_EKS_IAM_USER_NAME }}
+      TF_VAR_eks_cluster_name: ${{ secrets.TF_VAR_EKS_CLUSTER_NAME }}
+      TF_VAR_eks_node_scaling_desired_size: ${{ secrets.TF_VAR_EKS_NODE_SCALING_DESIRED_SIZE }}
+      TF_VAR_eks_node_scaling_max_size: ${{ secrets.TF_VAR_EKS_NODE_SCALING_MAX_SIZE }}
+      TF_VAR_eks_node_scaling_min_size: ${{ secrets.TF_VAR_EKS_NODE_SCALING_MIN_SIZE }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -112,7 +118,13 @@ jobs:
         shell: bash
         env:
           TF_INPUT: "0"
-        run: terraform destroy -auto-approve -input=false -lock-timeout=5m
+        run: |
+          if [ -f terraform.tfvars ]; then
+            echo "Usando terraform.tfvars para variáveis."
+            terraform destroy -auto-approve -input=false -lock-timeout=5m -var-file=terraform.tfvars
+          else
+            echo "Sem terraform.tfvars; utilizando variáveis via TF_VAR_* do ambiente."
+            terraform destroy -auto-approve -input=false -lock-timeout=5m
 
       - name: Observação sobre o bucket de estado
         shell: bash
