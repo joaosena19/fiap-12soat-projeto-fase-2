@@ -1,0 +1,107 @@
+name: Destruir Infra
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Confirmar destruição de TODA a infraestrutura AWS (EKS, VPC, etc.)"
+        type: boolean
+        required: true
+        default: false
+      type_confirm:
+        description: "Digite 'DESTROY' para confirmar"
+        type: string
+        required: true
+      region:
+        description: "Região da AWS"
+        type: string
+        required: false
+        default: us-east-1
+      cluster_name:
+        description: "Nome do cluster EKS (opcional; vazio usa o secret TF_VAR_EKS_CLUSTER_NAME)"
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: destroy-infra
+  cancel-in-progress: false
+
+jobs:
+  destroy:
+    if: ${{ inputs.confirm == true && inputs.type_confirm == 'DESTROY' }}
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ inputs.region }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar credenciais da AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Instalar kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Definir nome do cluster
+        id: setvars
+        shell: bash
+        run: |
+          CLUSTER_NAME="${{ inputs.cluster_name }}"
+          if [ -z "$CLUSTER_NAME" ]; then
+            CLUSTER_NAME="${{ secrets.TF_VAR_EKS_CLUSTER_NAME }}"
+          fi
+          echo "cluster_name=$CLUSTER_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Atualizar kubeconfig (se houver nome de cluster)
+        if: ${{ steps.setvars.outputs.cluster_name != '' }}
+        shell: bash
+        run: |
+          aws eks update-kubeconfig --region "${AWS_REGION}" --name "${{ steps.setvars.outputs.cluster_name }}"
+
+      - name: Excluir recursos do Kubernetes (best-effort)
+        if: ${{ steps.setvars.outputs.cluster_name != '' }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          kubectl delete -f k8s/api --ignore-not-found
+          kubectl delete -f k8s/postgres --ignore-not-found
+          kubectl delete -f k8s/metrics-server.yaml --ignore-not-found
+          kubectl delete -f k8s/oficina-mecanica-config.yaml --ignore-not-found
+          kubectl delete -f k8s/oficina-mecanica-secret.yaml --ignore-not-found
+          echo "Aguardando ~100s para liberar LoadBalancers da AWS..."
+          for i in {1..10}; do
+            kubectl get svc -A || true
+            sleep 10
+          done
+
+      - name: Instalar Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+
+      - name: Terraform init
+        working-directory: infra
+        shell: bash
+        run: terraform init -input=false -upgrade
+
+      - name: Terraform destroy
+        working-directory: infra
+        shell: bash
+        env:
+          TF_INPUT: "0"
+        run: terraform destroy -auto-approve -input=false -lock-timeout=5m
+
+      - name: Observação sobre o bucket de estado
+        shell: bash
+        run: |
+          echo "O TFSTATE do Terraform (bucket S3) é preservado intencionalmente para evitar perda acidental de estado."
