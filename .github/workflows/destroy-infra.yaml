@@ -118,7 +118,16 @@ jobs:
         shell: bash
         env:
           TF_INPUT: "0"
-        run: terraform destroy -auto-approve -input=false -lock-timeout=5m
+        run: |
+          set -euo pipefail
+          echo "Gerando alvos de destruição (excluindo o bucket do TFSTATE)..."
+          TARGETS=$(terraform state list | grep -v '^aws_s3_bucket\.bucket_fiap_fase2$' | awk '{print "-target=" $0}' | tr '\n' ' ')
+          if [ -n "${TARGETS}" ]; then
+            echo "Executando: terraform destroy ${TARGETS}"
+            terraform destroy -auto-approve -input=false -lock-timeout=5m ${TARGETS}
+          else
+            echo "Nenhum recurso encontrado para destruir (além do bucket do TFSTATE)."
+          fi
       - name: Observação sobre o bucket de estado
         shell: bash
         run: |
