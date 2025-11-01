@@ -22,6 +22,8 @@ services:
       # API Credentials
       - ApiCredentials__ClientId=${ApiCredentials__ClientId}
       - ApiCredentials__ClientSecret=${ApiCredentials__ClientSecret}
+      # Webhook HMAC Secret
+      - Webhook__HmacSecret=${Webhook__HmacSecret}
     depends_on:
       postgres_db:
         condition: service_healthy

@@ -1,4 +1,4 @@
-using Application.Estoque.Interfaces;
+using Application.Contracts.Gateways;
 using Application.OrdemServico.Dtos.External;
 using Application.OrdemServico.Interfaces.External;
 using Domain.Estoque.Enums;
@@ -13,16 +13,16 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
     /// </summary>
     public class EstoqueExternalService : IEstoqueExternalService
     {
-        private readonly IItemEstoqueRepository _itemEstoqueRepository;
+        private readonly IItemEstoqueGateway _estoqueGateway;
 
-        public EstoqueExternalService(IItemEstoqueRepository itemEstoqueRepository)
+        public EstoqueExternalService(IItemEstoqueGateway estoqueGateway)
         {
-            _itemEstoqueRepository = itemEstoqueRepository;
+            _estoqueGateway = estoqueGateway;
         }
 
         public async Task<ItemEstoqueExternalDto?> ObterItemEstoquePorIdAsync(Guid itemId)
         {
-            var item = await _itemEstoqueRepository.ObterPorIdAsync(itemId);
+            var item = await _estoqueGateway.ObterPorIdAsync(itemId);
             
             if (item == null)
                 return null;
@@ -39,7 +39,7 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
 
         public async Task<bool> VerificarDisponibilidadeAsync(Guid itemId, int quantidadeNecessaria)
         {
-            var item = await _itemEstoqueRepository.ObterPorIdAsync(itemId);
+            var item = await _estoqueGateway.ObterPorIdAsync(itemId);
             
             if (item == null)
                 return false;
@@ -49,13 +49,13 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
 
         public async Task AtualizarQuantidadeEstoqueAsync(Guid itemId, int novaQuantidade)
         {
-            var item = await _itemEstoqueRepository.ObterPorIdAsync(itemId);
+            var item = await _estoqueGateway.ObterPorIdAsync(itemId);
             
             if (item == null)
                 throw new DomainException($"Item de estoque com ID {itemId} não encontrado.", ErrorType.ReferenceNotFound);
 
             item.AtualizarQuantidade(novaQuantidade);
-            await _itemEstoqueRepository.AtualizarAsync(item);
+            await _estoqueGateway.AtualizarAsync(item);
         }
 
         /// <summary>

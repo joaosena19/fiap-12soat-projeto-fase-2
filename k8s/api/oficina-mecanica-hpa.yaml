@@ -9,17 +9,10 @@ spec:
     name: oficina-mecanica-deployment
   minReplicas: 1 # Mesmo valor do Deployment
   maxReplicas: 5 
-  metrics: # Escala baseado em CPU e Memória
+  metrics: # Escala baseado em CPU
   - type: Resource 
     resource:
       name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
-        
-  - type: Resource
-    resource:
-      name: memory
       target:
         type: Utilization
         averageUtilization: 70

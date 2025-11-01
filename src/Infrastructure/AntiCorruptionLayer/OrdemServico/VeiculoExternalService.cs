@@ -1,4 +1,4 @@
-using Application.Cadastros.Interfaces;
+using Application.Contracts.Gateways;
 using Application.OrdemServico.Interfaces.External;
 
 namespace Infrastructure.AntiCorruptionLayer.OrdemServico
@@ -8,16 +8,16 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
     /// </summary>
     public class VeiculoExternalService : IVeiculoExternalService
     {
-        private readonly IVeiculoRepository _veiculoRepository;
+        private readonly IVeiculoGateway _veiculoGateway;
 
-        public VeiculoExternalService(IVeiculoRepository veiculoRepository)
+        public VeiculoExternalService(IVeiculoGateway veiculoGateway)
         {
-            _veiculoRepository = veiculoRepository;
+            _veiculoGateway = veiculoGateway;
         }
 
         public async Task<bool> VerificarExistenciaVeiculo(Guid veiculoId)
         {
-            var veiculo = await _veiculoRepository.ObterPorIdAsync(veiculoId);
+            var veiculo = await _veiculoGateway.ObterPorIdAsync(veiculoId);
             return veiculo != null;
         }
     }

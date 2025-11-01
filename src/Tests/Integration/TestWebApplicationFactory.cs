@@ -1,10 +1,9 @@
-using Application;
-using AutoMapper;
 using Infrastructure.Database;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 
@@ -28,6 +27,16 @@ namespace Tests.Integration
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            // Sobrescreve o appsettings para usar o HmacSecret de teste
+            builder.ConfigureAppConfiguration((context, config) =>
+            {
+                var overrides = new Dictionary<string, string>
+                {
+                    ["Webhook:HmacSecret"] = TestHmacUtils.TestHmacSecret
+                };
+                config.AddInMemoryCollection(overrides);
+            });
+
             builder.ConfigureServices(services =>
             {
                 // Remove DbContext atual, com conexão com o banco real
@@ -43,10 +52,7 @@ namespace Tests.Integration
                     options.UseInMemoryDatabase(_databaseName);
                 });
 
-                // Configure AutoMapper for integration tests
-                var mapperConfig = AutoMapperConfig.GetConfiguration();
-                services.AddSingleton(mapperConfig);
-                services.AddSingleton<IMapper>(provider => provider.GetRequiredService<MapperConfiguration>().CreateMapper());
+
             });
 
             base.ConfigureWebHost(builder);

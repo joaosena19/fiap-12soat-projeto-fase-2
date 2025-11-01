@@ -1,4 +1,4 @@
-using Application.Cadastros.Interfaces;
+using Application.Contracts.Gateways;
 using Application.OrdemServico.Dtos.External;
 using Application.OrdemServico.Interfaces.External;
 
@@ -9,16 +9,16 @@ namespace Infrastructure.AntiCorruptionLayer.OrdemServico
     /// </summary>
     public class ServicoExternalService : IServicoExternalService
     {
-        private readonly IServicoRepository _servicoRepository;
+        private readonly IServicoGateway _servicoGateway;
 
-        public ServicoExternalService(IServicoRepository servicoRepository)
+        public ServicoExternalService(IServicoGateway servicoGateway)
         {
-            _servicoRepository = servicoRepository;
+            _servicoGateway = servicoGateway;
         }
 
         public async Task<ServicoExternalDto?> ObterServicoPorIdAsync(Guid servicoId)
         {
-            var servico = await _servicoRepository.ObterPorIdAsync(servicoId);
+            var servico = await _servicoGateway.ObterPorIdAsync(servicoId);
             
             if (servico == null)
                 return null;
